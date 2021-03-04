@@ -1,0 +1,230 @@
+library(jsonlite)
+library(stringr)
+library(dplyr)
+
+get_active_season = function(active_season_url="https://api.wrc.com/contel-page/83388/calendar/active-season/") {
+  jsonlite::fromJSON(active_season_url)$rallyEvents$items
+}
+
+get_eventId_from_name = function(season, name){
+  season[str_detect(season$name,
+                    regex(name, ignore_case = T)), 'id']
+}
+
+results_api = 'https://api.wrc.com/results-api'
+
+get_itinerary = function(eventId) {
+  jsonlite::fromJSON(paste0(results_api,"/rally-event/",
+                            eventId, "/itinerary"))$itineraryLegs
+}
+
+get_startlist = function(eventId, startListId) {
+  startlist_url = paste0(results_api, '/rally-event/',
+                         eventId,'/start-list-external/', startListId)
+  
+  startlist = jsonlite::fromJSON(startlist_url)$startListItems
+  
+  # Order the startlist dataframe by start order
+  startlist %>% arrange(order)
+}
+
+get_sections = function(itinerary){
+  sections = do.call(rbind, itinerary$itinerarySections)
+  sections
+}
+
+get_controls = function(sections){
+  controls = sections$controls %>% bind_rows()
+  controls
+}
+
+get_stages = function(sections){
+  stages = sections$stages %>% bind_rows()
+  stages
+}
+
+# https://stackoverflow.com/a/19265431/454773
+get_stages_lookup = function(stages){
+  stages_lookup = stages$stageId
+  names(stages_lookup) = stages$code
+  stages_lookup
+}
+
+get_stage_id = function(stages, sname, typ='code'){
+  # code, name
+  if (typ=='code')
+    stageId = stages[stages[typ] == sname, 'stageId']
+  else
+    stageId = stages[stringr::str_detect(stages[[typ]], sname), 'stageId']
+  stageId
+}
+
+get_stage_info = function(stages, sid, typ='stageId', clean=TRUE){
+  # stageId, code
+  name=stages[stages[typ] == sid, 'name']
+  distance=stages[stages[typ] == sid, 'distance']
+  if (clean)
+    stringr::str_replace(name, ' (Live TV)', '')
+  
+  c(name=name, distance=distance)
+}
+
+get_rally_entries = function(eventId) {
+  cars_url = paste0(results_api, '/rally-event/',
+                    eventId,'/cars')
+  jsonlite::fromJSON(cars_url)
+}
+
+get_drivers = function(entries){
+  drivers = do.call(cbind, entries$driver)
+  drivers
+}
+
+get_codrivers = function(entries){
+  codrivers = bind_cols(entries$codriver)
+  codrivers
+}
+
+get_person_id = function(drivers, sname, typ='fullName'){
+  # code, fullName
+  if (typ=='code')
+    driverId = drivers[drivers[typ]==sname, 'personId']
+  else
+    driverId = drivers[str_detect(drivers[[typ]],
+                                  regex(sname,
+                                        ignore_case = T)),
+                       'personId']
+  driverId
+}
+
+get_car_data = function(entries){
+  cols = c('entryId', 'driverId', 'codriverId','manufacturerId',
+           'vehicleModel','eligibility', 'classname','manufacturer',
+           'entrantname', 'groupname', 'drivername', 'code',
+           'driverfullname', 'codrivername','codriverfullname'
+  )
+  entries = entries %>%
+    rowwise() %>% 
+    mutate(classname = eventClasses$name) %>%
+    mutate(manufacturer = manufacturer$name) %>%
+    mutate(entrantname = entrant$name) %>%
+    mutate(groupname = group$name) %>%
+    mutate(drivername = driver$abbvName) %>%
+    mutate(driverfullname = driver$fullName) %>%
+    mutate(codrivername = codriver$abbvName) %>%
+    mutate(codriverfullname = codriver$fullName) %>%
+    mutate(code = driver$code) %>%
+    select(all_of(cols))
+  
+  # If we don't cast, it's a non-rankable rowwise df
+  as.data.frame(entries)
+}
+
+get_penalties = function(eventId) {
+  penalties_url = paste0(results_api, '/rally-event/',
+                         eventId, '/penalties')
+  jsonlite::fromJSON(penalties_url)
+}
+
+get_retirements = function(eventId) {
+  retirements_url = paste0(results_api, '/rally-event/',
+                           eventId, '/retirements')
+  jsonlite::fromJSON(retirements_url)
+}
+
+
+get_result = function(eventId) {
+  result_url = paste0(results_api, '/rally-event/',
+                      eventId,'/result')
+  
+  jsonlite::fromJSON(result_url)
+}
+
+
+get_stage_winners = function(eventId) {
+  stage_winners_url = paste0(results_api, '/rally-event/',
+                             eventId,'/stage-winners')
+  
+  jsonlite::fromJSON(stage_winners_url)
+}
+
+get_stage_times = function(eventId, stageId) {
+  stage_times_url = paste0(results_api, '/rally-event/',
+                           eventId, '/stage-times/stage-external/',
+                           stageId)
+  jsonlite::fromJSON(stage_times_url)
+}
+
+library(purrr)
+
+get_stage_times2 = function(stageId, eventId) {
+  get_stage_times(eventId, stageId)
+}
+
+get_multi_stage_times = function(stagelist){
+  multi_stage_times = stagelist %>%
+    map(get_stage_times2, eventId=eventId) %>% 
+    bind_rows()
+  multi_stage_times
+}
+
+get_multi_stage_times_wide = function(multi_stage_times){
+  stage_times_cols = c('entryId', 'stageId', 'elapsedDurationMs')
+  
+  multi_stage_times_wide = multi_stage_times %>% 
+    select(all_of(stage_times_cols)) %>%
+    mutate(elapsedDurationS = elapsedDurationMs / 1000) %>%
+    select(-elapsedDurationMs) %>%
+    group_by(entryId) %>%
+    tidyr::spread(key = stageId,
+                  value = elapsedDurationS) %>%
+    select(c('entryId', as.character(stagelist)))
+  multi_stage_times_wide
+}
+
+get_multi_stage_positions_wide = function(multi_stage_times){
+  stage_positions_cols = c('entryId', 'stageId', 'position')
+  
+  multi_stage_positions_wide = multi_stage_times %>% 
+    select(all_of(stage_positions_cols)) %>%
+    group_by(entryId) %>%
+    tidyr::spread(key = stageId,
+                  value = position) %>%
+    select(c('entryId', as.character(stagelist)))
+}
+
+get_splits = function(eventId, stageId){
+  splits_url=paste0(results_api, '/rally-event/', eventId,
+                    '/split-times/stage-external/', stageId)
+  
+  jsonlite::fromJSON(splits_url)
+}
+
+get_driver_splits = function(splits){
+  driver_splits = splits$entrySplitPointTimes$splitPointTimes %>%
+    bind_rows() %>%
+    mutate(elapsedDurationS = elapsedDurationMs / 1000) %>%
+    select(-elapsedDurationMs)
+  driver_splits
+}
+
+get_split_cols = function(splits){
+  split_cols =  as.character(arrange(splits$splitPoints, distance)$splitPointId)
+  split_cols
+}
+
+get_driver_splits_wide = function(driver_splits, splits){
+  split_cols =  get_split_cols(splits)
+  splits_cols = c('entryId', 'splitPointId', 'elapsedDurationS')
+  
+  driver_splits_wide = driver_splits %>% 
+    group_by(entryId) %>%
+    select(all_of(splits_cols)) %>%
+    tidyr::spread(key = splitPointId,
+                  value = elapsedDurationS) %>%
+    select(all_of(c('entryId', split_cols))) %>%
+    # If we don't cast, it's a
+    # non-rankable rowwise df
+    as.data.frame()
+  driver_splits_wide
+}

@@ -1,0 +1,8 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/finding-stage-pace-")
+```
+# Finding Pace Across Stages
+
+As well as visualising stage results purely in terms of time and position differences, we can also use stage time data and stage distances as a basis for some simple stage pace calculations.
+
