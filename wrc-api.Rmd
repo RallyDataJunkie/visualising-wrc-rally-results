@@ -353,6 +353,53 @@ get_stage_winners = function(eventId) {
 get_stage_winners(eventId) %>% head(2)
 ```
 
+## Stage Result
+
+At the end of each stage, there are actually two different sorts of results data availbe: data relating to the result of the stage itself, and data relating to how the stage result affected the overall rally position.
+
+Let's start by getting the overall rally result at the end of a particular stage. Note that the overall result does not include the stage ID in the returned data so we need to add it in:
+
+```{r}
+get_overall_result = function(eventId, stageId) {
+  overall_url = paste0(results_api, '/rally-event/',
+                           eventId, '/stage-result/stage-external/',
+                           stageId)
+  jsonlite::fromJSON(overall_url) %>%
+    # Also add in the stage ID
+    mutate(stageId = stageId)
+}
+
+overall_result = get_overall_result(eventId, stageId)
+
+overall_result %>% head(2)
+```
+
+### Getting Stage Results for Multiple Stages
+
+It will be convenient to be able to retrieve overall results for multiple stages from one function call. One way of achieving that is to create a function to retrieve the details for a single specified stage that can be applied via a `purrr::map()` function call to a list of the stage IDs we want overall results data for: 
+
+```{r}
+library(purrr)
+
+get_overall_result2 = function(stageId, eventId) {
+  get_overall_result(eventId, stageId)
+}
+
+get_multi_overall = function(stagelist){
+  multi_overall = stagelist %>%
+    map(get_overall_result2, eventId=eventId) %>% 
+    bind_rows()
+  multi_overall
+}
+
+# Specify the stage IDs for multiple stages
+stagelist = c(1747,	1743)
+
+multi_overall_results = get_multi_overall(stagelist)
+  
+multi_overall_results %>% tail(2)
+```
+
 ## Stage Times
 
 We can get the stage times for each stage on a rally by event and stage ID:
@@ -370,18 +417,14 @@ stage_times = get_stage_times(eventId, stageId)
 stage_times %>% head(2)
 ```
 
-### Getting Long Stage Times for Multiple Stages
+### Getting Stage Times for Multiple Stages
 
-It will be convenient to be able to retrieve stage times for multiple stages from one function call. One way of achieving that is to create a function to retrieve the details for a single specified stage that can be applied via a `purrr::map()` function call applied to the list of stage IDs we want results data for: 
+It will also be convenient to be able to retrieve stage times for multiple stages from a single function call. We can take the same approach we used previously:
 
 ```{r message=F, warning=F}
-library(purrr)
-
 get_stage_times2 = function(stageId, eventId) {
                               get_stage_times(eventId, stageId)
                             }
-
-stagelist = c(1747,	1743)
 
 get_multi_stage_times = function(stagelist){
   multi_stage_times = stagelist %>%
@@ -394,7 +437,6 @@ multi_stage_times = get_multi_stage_times(stagelist)
   
 multi_stage_times %>% tail(2)
 ```
-
 
 ### Getting Wide Stage Times for Multiple Stages
 
@@ -419,7 +461,6 @@ multi_stage_times_wide = get_multi_stage_times_wide(multi_stage_times)
 
 multi_stage_times_wide %>% head(2)
 ```
-
 
 ### Getting Wide Stage Positions
 
@@ -477,9 +518,6 @@ To view the split times for a specific driver, we can index into the dataframe u
 splits$entrySplitPointTimes[splits$entrySplitPointTimes['entryId']==ogierEntryId,]$splitPointTimes
 ```
 
-```{r}
-splits$entrySplitPointTimes
-```
 ### Driver Split Times Detail
 
 We can get a flatter structure over all drivers, converting the elapsed duration in milliseconds to seconds along the way:

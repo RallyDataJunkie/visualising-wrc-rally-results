@@ -1,0 +1,153 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/stage-results-")
+```
+# Visualising Results for a Single Stage
+
+In this chapter, we'll introduce some basic chart and chartable techniques for displaying stage timing and results data.
+
+## Load Base Data
+
+To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:
+
+```{r message=F, warning=F}
+source('code/wrc-api.R')
+
+s = get_active_season()
+eventId = get_eventId_from_name(s, 'arctic')
+
+entries = get_rally_entries(eventId)
+
+itinerary = get_itinerary(eventId)
+sections = get_sections(itinerary)
+stages = get_stages(sections)
+stages_lookup = get_stages_lookup(stages)
+```
+
+Get a sample stage ID:
+
+```{r}
+stageId = stages_lookup[['SS3']]
+```
+
+## Get Stage Results Data
+
+Start by loading in some stage times data and previewing the columns available to us:
+
+```{r}
+stage_times = get_stage_times(eventId, stageId)
+
+colnames(stage_times)
+```
+
+## Previewing Stage Results Data
+
+Just using the stage restuls data, how might we display it?
+
+Let's start with a view of the top 10. We can use the `knitr::kable()` function to provide a styled version of the table that slightly improves its appearance:
+
+```{r}
+library(knitr)
+
+kable( head(stage_times, 10))
+```
+
+The data itself looks quite cryptic, so we need to convert it to something a little bit more human readable. To enrich the display, we might want to add in information relating to a stage, rather than just refer to it by stage ID, or to describe each entry in rather more detail than just by the entry ID.
+
+The styling of the table also means that not all the columns may be displayed, so reducing the number of columns would presumably help address that, in part at least.
+
+### Adding Entry Metadata
+
+n the first instance, it would probably make sense to pull in some human readable  data about each entry:
+
+```{r}
+cars = get_car_data(entries)
+
+cars %>% head(2)
+```
+
+We can the merge this data into out original table, and filter out some of the less useful columns. We'll also limit ourselve to just the top 10 results:
+
+```{r}
+top10_display_cols_base = c('position', 'identifier', 'code',
+                            #'drivername', 'codrivername',
+                            #'groupname', 'entrantname',
+                            #'classname', 'eligibility',
+                            #'elapsedDuration',
+                            # gap is the time delta between a driver
+                            # and the leader; diff (or interval)
+                            # is the difference between a driver
+                            # and the driver immediately ahead
+                            'TimeInS', 'gap', 'diff')
+
+top10_stage_times = stage_times %>%
+                      # A minor optimisation step to 
+                      # limit the amount of merging
+                      arrange(position) %>%
+                      head(10) %>%
+                      # Merge in the entries data
+                      merge(cars, by='entryId')  %>%
+                      # Convert millseconds to seconds
+                      mutate(TimeInS = elapsedDurationMs/1000,
+                             gap = diffFirstMs/1000,
+                             diff = diffPrevMs/1000)  %>%
+                      # Limit columns and set column order
+                      select(all_of(top10_display_cols_base)) %>%
+                      # The merge may upset the row order
+                      # so reset the order again
+                      arrange(position) %>%
+                      # Improve column names by remaming them
+                      rename(Pos=position,
+                             Car = identifier,
+                             Code = code,
+                             `Time (s)` = TimeInS,
+                             Gap = gap, Diff = diff)
+
+kable( top10_stage_times )
+```
+
+## Adding Stage Metadata
+
+To improve the table further, we may want to add a caption to the tabledescribing the stage to which the results actually refer.
+
+The caption might include the stage code and the stage name, for example, and perhaps the stage distance. It might also be handy to retrieve the stage number so that if we are displaying several tables, we can check we present the stages in the correct running order:
+
+```{r}
+stage_cols = c('stageId', 'number', 'name', 'distance', 'code')
+
+stage_info = stages %>%
+                select(all_of(stage_cols)) %>%
+                # Tidy up the stage name
+                mutate(name = str_replace(name, ' \\(Live TV\\)', ''))
+
+stage_info %>% head(2)
+```
+
+We can create a caption for our selected stage using what essentially amounts to a string template:
+
+```{r}
+stage_info_ = stage_info[stage_info['stageId']==stageId,]
+# paste0() ensures there are no separators between substrings
+caption = paste0('Stage ', stage_info_$code,
+                 ', ', stage_info_$name, ' (',
+                 stage_info_$distance, 'km)')
+
+caption
+```
+
+Let's add a caption to our `kable()` table, noting that by default the `boodown` script used to create the rendered version of the original Rmd file automatically adds a table number to the caption:
+
+```{r}
+kable( top10_stage_times, caption = caption)
+```
+
+## Rebasing the Stage Results
+
+That sort of table is typical of many a motorsport timing results table. But can we do more with the data, or reveal any new insights from it?
+
+The table is design is actually very powerful. For any driver, we can see how far off the stage winning time they were (the `Gap`) and by summing appropriate  `Diff` values you can quickly determine the time difference between any two drivers.
+
+However, if we are interested in a particular driver, we can "rebase" the table to show the time differences between that driver and the other drivers explictly.
+
+
+

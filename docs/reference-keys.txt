@@ -1,3 +1,4 @@
+tab:unnamed-chunk-47
 introduction
 accessing-data-from-the-wrc-live-timing-api
 current-season-rallies
@@ -8,10 +9,19 @@ stage-details
 competitor-details
 penalties-and-retirements
 results-and-stage-winner
+stage-result
+getting-stage-results-for-multiple-stages
 stage-times
-getting-long-stage-times-for-multiple-stages
+getting-stage-times-for-multiple-stages
 getting-wide-stage-times-for-multiple-stages
 getting-wide-stage-positions
 split-times
 driver-split-times-detail
 wide-driver-split-times
+visualising-results-for-a-single-stage
+load-base-data
+get-stage-results-data
+previewing-stage-results-data
+adding-entry-metadata
+adding-stage-metadata
+rebasing-the-stage-results

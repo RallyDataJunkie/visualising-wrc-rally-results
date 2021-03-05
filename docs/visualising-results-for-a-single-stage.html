@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>3 Visualising Results for a Single Stage | Visualising WRC Rally Timing and Results Data</title>
+  <meta name="description" content="An introduction to visualising timing and results data for WRC rally events." />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="3 Visualising Results for a Single Stage | Visualising WRC Rally Timing and Results Data" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="An introduction to visualising timing and results data for WRC rally events." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="3 Visualising Results for a Single Stage | Visualising WRC Rally Timing and Results Data" />
+  
+  <meta name="twitter:description" content="An introduction to visualising timing and results data for WRC rally events." />
+  
+
+<meta name="author" content="Tony Hirst" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="accessing-data-from-the-wrc-live-timing-api.html"/>
+
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./"><strong>Visualising WRC Rally Results and Timing Data</strong></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Index</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html"><i class="fa fa-check"></i><b>2</b> Accessing Data from the WRC Live Timing API</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#current-season-rallies"><i class="fa fa-check"></i><b>2.1</b> Current Season Rallies</a></li>
+<li class="chapter" data-level="2.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#itinerary-lookup"><i class="fa fa-check"></i><b>2.2</b> Itinerary Lookup</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#leg-sections"><i class="fa fa-check"></i><b>2.2.1</b> Leg Sections</a></li>
+<li class="chapter" data-level="2.2.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#time-controls"><i class="fa fa-check"></i><b>2.2.2</b> Time Controls</a></li>
+<li class="chapter" data-level="2.2.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-details"><i class="fa fa-check"></i><b>2.2.3</b> Stage Details</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#competitor-details"><i class="fa fa-check"></i><b>2.3</b> Competitor Details</a></li>
+<li class="chapter" data-level="2.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#penalties-and-retirements"><i class="fa fa-check"></i><b>2.4</b> Penalties and Retirements</a></li>
+<li class="chapter" data-level="2.5" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#results-and-stage-winner"><i class="fa fa-check"></i><b>2.5</b> Results and Stage Winner</a></li>
+<li class="chapter" data-level="2.6" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-result"><i class="fa fa-check"></i><b>2.6</b> Stage Result</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-results-for-multiple-stages"><i class="fa fa-check"></i><b>2.6.1</b> Getting Stage Results for Multiple Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-times"><i class="fa fa-check"></i><b>2.7</b> Stage Times</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.1</b> Getting Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="2.7.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.2</b> Getting Wide Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="2.7.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-positions"><i class="fa fa-check"></i><b>2.7.3</b> Getting Wide Stage Positions</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#split-times"><i class="fa fa-check"></i><b>2.8</b> Split Times</a>
+<ul>
+<li class="chapter" data-level="2.8.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#driver-split-times-detail"><i class="fa fa-check"></i><b>2.8.1</b> Driver Split Times Detail</a></li>
+<li class="chapter" data-level="2.8.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#wide-driver-split-times"><i class="fa fa-check"></i><b>2.8.2</b> Wide Driver Split Times</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html"><i class="fa fa-check"></i><b>3</b> Visualising Results for a Single Stage</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#load-base-data"><i class="fa fa-check"></i><b>3.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="3.2" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#get-stage-results-data"><i class="fa fa-check"></i><b>3.2</b> Get Stage Results Data</a></li>
+<li class="chapter" data-level="3.3" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#previewing-stage-results-data"><i class="fa fa-check"></i><b>3.3</b> Previewing Stage Results Data</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-entry-metadata"><i class="fa fa-check"></i><b>3.3.1</b> Adding Entry Metadata</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-stage-metadata"><i class="fa fa-check"></i><b>3.4</b> Adding Stage Metadata</a></li>
+<li class="chapter" data-level="3.5" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#rebasing-the-stage-results"><i class="fa fa-check"></i><b>3.5</b> Rebasing the Stage Results</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://rallydatajunkie.com/"><em>RallyDataJunkie.com</em></a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Visualising WRC Rally Timing and Results Data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="visualising-results-for-a-single-stage" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Visualising Results for a Single Stage</h1>
+<p>In this chapter, we’ll introduce some basic chart and chartable techniques for displaying stage timing and results data.</p>
+<div id="load-base-data" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Load Base Data</h2>
+<p>To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="visualising-results-for-a-single-stage.html#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span>
+<span id="cb75-2"><a href="visualising-results-for-a-single-stage.html#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="visualising-results-for-a-single-stage.html#cb75-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb75-4"><a href="visualising-results-for-a-single-stage.html#cb75-4" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb75-5"><a href="visualising-results-for-a-single-stage.html#cb75-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-6"><a href="visualising-results-for-a-single-stage.html#cb75-6" aria-hidden="true" tabindex="-1"></a>entries <span class="ot">=</span> <span class="fu">get_rally_entries</span>(eventId)</span>
+<span id="cb75-7"><a href="visualising-results-for-a-single-stage.html#cb75-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-8"><a href="visualising-results-for-a-single-stage.html#cb75-8" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb75-9"><a href="visualising-results-for-a-single-stage.html#cb75-9" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb75-10"><a href="visualising-results-for-a-single-stage.html#cb75-10" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb75-11"><a href="visualising-results-for-a-single-stage.html#cb75-11" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span></code></pre></div>
+<p>Get a sample stage ID:</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="visualising-results-for-a-single-stage.html#cb76-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
+</div>
+<div id="get-stage-results-data" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Get Stage Results Data</h2>
+<p>Start by loading in some stage times data and previewing the columns available to us:</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="visualising-results-for-a-single-stage.html#cb77-1" aria-hidden="true" tabindex="-1"></a>stage_times <span class="ot">=</span> <span class="fu">get_stage_times</span>(eventId, stageId)</span>
+<span id="cb77-2"><a href="visualising-results-for-a-single-stage.html#cb77-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-3"><a href="visualising-results-for-a-single-stage.html#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(stage_times)</span></code></pre></div>
+<pre><code>##  [1] &quot;stageTimeId&quot;       &quot;stageId&quot;           &quot;entryId&quot;          
+##  [4] &quot;elapsedDurationMs&quot; &quot;elapsedDuration&quot;   &quot;status&quot;           
+##  [7] &quot;source&quot;            &quot;position&quot;          &quot;diffFirstMs&quot;      
+## [10] &quot;diffFirst&quot;         &quot;diffPrevMs&quot;        &quot;diffPrev&quot;</code></pre>
+</div>
+<div id="previewing-stage-results-data" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Previewing Stage Results Data</h2>
+<p>Just using the stage restuls data, how might we display it?</p>
+<p>Let’s start with a view of the top 10. We can use the <code>knitr::kable()</code> function to provide a styled version of the table that slightly improves its appearance:</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="visualising-results-for-a-single-stage.html#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb79-2"><a href="visualising-results-for-a-single-stage.html#cb79-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-3"><a href="visualising-results-for-a-single-stage.html#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>( <span class="fu">head</span>(stage_times, <span class="dv">10</span>))</span></code></pre></div>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="12%" />
+<col width="11%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="8%" />
+<col width="11%" />
+<col width="7%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">stageTimeId</th>
+<th align="right">stageId</th>
+<th align="right">entryId</th>
+<th align="right">elapsedDurationMs</th>
+<th align="left">elapsedDuration</th>
+<th align="left">status</th>
+<th align="left">source</th>
+<th align="right">position</th>
+<th align="right">diffFirstMs</th>
+<th align="left">diffFirst</th>
+<th align="right">diffPrevMs</th>
+<th align="left">diffPrev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">96580</td>
+<td align="right">1750</td>
+<td align="right">21536</td>
+<td align="right">834500</td>
+<td align="left">00:13:54.5000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="left">00:00:00</td>
+<td align="right">0</td>
+<td align="left">00:00:00</td>
+</tr>
+<tr class="even">
+<td align="right">96474</td>
+<td align="right">1750</td>
+<td align="right">21532</td>
+<td align="right">835500</td>
+<td align="left">00:13:55.5000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">2</td>
+<td align="right">1000</td>
+<td align="left">00:00:01</td>
+<td align="right">1000</td>
+<td align="left">00:00:01</td>
+</tr>
+<tr class="odd">
+<td align="right">96623</td>
+<td align="right">1750</td>
+<td align="right">21539</td>
+<td align="right">839100</td>
+<td align="left">00:13:59.1000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">3</td>
+<td align="right">4600</td>
+<td align="left">00:00:04.6000000</td>
+<td align="right">3600</td>
+<td align="left">00:00:03.6000000</td>
+</tr>
+<tr class="even">
+<td align="right">96509</td>
+<td align="right">1750</td>
+<td align="right">21533</td>
+<td align="right">840200</td>
+<td align="left">00:14:00.2000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">4</td>
+<td align="right">5700</td>
+<td align="left">00:00:05.7000000</td>
+<td align="right">1100</td>
+<td align="left">00:00:01.1000000</td>
+</tr>
+<tr class="odd">
+<td align="right">96656</td>
+<td align="right">1750</td>
+<td align="right">21538</td>
+<td align="right">841900</td>
+<td align="left">00:14:01.9000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">5</td>
+<td align="right">7400</td>
+<td align="left">00:00:07.4000000</td>
+<td align="right">1700</td>
+<td align="left">00:00:01.7000000</td>
+</tr>
+<tr class="even">
+<td align="right">96624</td>
+<td align="right">1750</td>
+<td align="right">21530</td>
+<td align="right">842000</td>
+<td align="left">00:14:02</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">6</td>
+<td align="right">7500</td>
+<td align="left">00:00:07.5000000</td>
+<td align="right">100</td>
+<td align="left">00:00:00.1000000</td>
+</tr>
+<tr class="odd">
+<td align="right">96693</td>
+<td align="right">1750</td>
+<td align="right">21534</td>
+<td align="right">843200</td>
+<td align="left">00:14:03.2000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">7</td>
+<td align="right">8700</td>
+<td align="left">00:00:08.7000000</td>
+<td align="right">1200</td>
+<td align="left">00:00:01.2000000</td>
+</tr>
+<tr class="even">
+<td align="right">96480</td>
+<td align="right">1750</td>
+<td align="right">21540</td>
+<td align="right">844300</td>
+<td align="left">00:14:04.3000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">8</td>
+<td align="right">9800</td>
+<td align="left">00:00:09.8000000</td>
+<td align="right">1100</td>
+<td align="left">00:00:01.1000000</td>
+</tr>
+<tr class="odd">
+<td align="right">96523</td>
+<td align="right">1750</td>
+<td align="right">21531</td>
+<td align="right">845800</td>
+<td align="left">00:14:05.8000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">9</td>
+<td align="right">11300</td>
+<td align="left">00:00:11.3000000</td>
+<td align="right">1500</td>
+<td align="left">00:00:01.5000000</td>
+</tr>
+<tr class="even">
+<td align="right">96419</td>
+<td align="right">1750</td>
+<td align="right">21537</td>
+<td align="right">846900</td>
+<td align="left">00:14:06.9000000</td>
+<td align="left">Completed</td>
+<td align="left">Default</td>
+<td align="right">10</td>
+<td align="right">12400</td>
+<td align="left">00:00:12.4000000</td>
+<td align="right">1100</td>
+<td align="left">00:00:01.1000000</td>
+</tr>
+</tbody>
+</table>
+<p>The data itself looks quite cryptic, so we need to convert it to something a little bit more human readable. To enrich the display, we might want to add in information relating to a stage, rather than just refer to it by stage ID, or to describe each entry in rather more detail than just by the entry ID.</p>
+<p>The styling of the table also means that not all the columns may be displayed, so reducing the number of columns would presumably help address that, in part at least.</p>
+<div id="adding-entry-metadata" class="section level3" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Adding Entry Metadata</h3>
+<p>n the first instance, it would probably make sense to pull in some human readable data about each entry:</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="visualising-results-for-a-single-stage.html#cb80-1" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span>
+<span id="cb80-2"><a href="visualising-results-for-a-single-stage.html#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="visualising-results-for-a-single-stage.html#cb80-3" aria-hidden="true" tabindex="-1"></a>cars <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   entryId driverId codriverId manufacturerId vehicleModel eligibility classname
+## 1   21530      670       3027             84    Yaris WRC           M       RC1
+## 2   21531      534        553             84    Yaris WRC           M       RC1
+##   manufacturer             entrantname groupname identifier drivername code
+## 1       Toyota TOYOTA GAZOO RACING WRT       WRC          1   S. OGIER  OGI
+## 2       Toyota TOYOTA GAZOO RACING WRT       WRC         33   E. EVANS  EVA
+##    driverfullname codrivername codriverfullname
+## 1 Sébastien OGIER J. INGRASSIA Julien INGRASSIA
+## 2     Elfyn EVANS    S. MARTIN     Scott MARTIN</code></pre>
+<p>We can the merge this data into out original table, and filter out some of the less useful columns. We’ll also limit ourselve to just the top 10 results:</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="visualising-results-for-a-single-stage.html#cb82-1" aria-hidden="true" tabindex="-1"></a>top10_display_cols_base <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;position&#39;</span>, <span class="st">&#39;identifier&#39;</span>, <span class="st">&#39;code&#39;</span>,</span>
+<span id="cb82-2"><a href="visualising-results-for-a-single-stage.html#cb82-2" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#&#39;drivername&#39;, &#39;codrivername&#39;,</span></span>
+<span id="cb82-3"><a href="visualising-results-for-a-single-stage.html#cb82-3" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#&#39;groupname&#39;, &#39;entrantname&#39;,</span></span>
+<span id="cb82-4"><a href="visualising-results-for-a-single-stage.html#cb82-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#&#39;classname&#39;, &#39;eligibility&#39;,</span></span>
+<span id="cb82-5"><a href="visualising-results-for-a-single-stage.html#cb82-5" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#&#39;elapsedDuration&#39;,</span></span>
+<span id="cb82-6"><a href="visualising-results-for-a-single-stage.html#cb82-6" aria-hidden="true" tabindex="-1"></a>                            <span class="co"># gap is the time delta between a driver</span></span>
+<span id="cb82-7"><a href="visualising-results-for-a-single-stage.html#cb82-7" aria-hidden="true" tabindex="-1"></a>                            <span class="co"># and the leader; diff (or interval)</span></span>
+<span id="cb82-8"><a href="visualising-results-for-a-single-stage.html#cb82-8" aria-hidden="true" tabindex="-1"></a>                            <span class="co"># is the difference between a driver</span></span>
+<span id="cb82-9"><a href="visualising-results-for-a-single-stage.html#cb82-9" aria-hidden="true" tabindex="-1"></a>                            <span class="co"># and the driver immediately ahead</span></span>
+<span id="cb82-10"><a href="visualising-results-for-a-single-stage.html#cb82-10" aria-hidden="true" tabindex="-1"></a>                            <span class="st">&#39;TimeInS&#39;</span>, <span class="st">&#39;gap&#39;</span>, <span class="st">&#39;diff&#39;</span>)</span>
+<span id="cb82-11"><a href="visualising-results-for-a-single-stage.html#cb82-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-12"><a href="visualising-results-for-a-single-stage.html#cb82-12" aria-hidden="true" tabindex="-1"></a>top10_stage_times <span class="ot">=</span> stage_times <span class="sc">%&gt;%</span></span>
+<span id="cb82-13"><a href="visualising-results-for-a-single-stage.html#cb82-13" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># A minor optimisation step to </span></span>
+<span id="cb82-14"><a href="visualising-results-for-a-single-stage.html#cb82-14" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># limit the amount of merging</span></span>
+<span id="cb82-15"><a href="visualising-results-for-a-single-stage.html#cb82-15" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span></span>
+<span id="cb82-16"><a href="visualising-results-for-a-single-stage.html#cb82-16" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb82-17"><a href="visualising-results-for-a-single-stage.html#cb82-17" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Merge in the entries data</span></span>
+<span id="cb82-18"><a href="visualising-results-for-a-single-stage.html#cb82-18" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">merge</span>(cars, <span class="at">by=</span><span class="st">&#39;entryId&#39;</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb82-19"><a href="visualising-results-for-a-single-stage.html#cb82-19" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Convert millseconds to seconds</span></span>
+<span id="cb82-20"><a href="visualising-results-for-a-single-stage.html#cb82-20" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">mutate</span>(<span class="at">TimeInS =</span> elapsedDurationMs<span class="sc">/</span><span class="dv">1000</span>,</span>
+<span id="cb82-21"><a href="visualising-results-for-a-single-stage.html#cb82-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">gap =</span> diffFirstMs<span class="sc">/</span><span class="dv">1000</span>,</span>
+<span id="cb82-22"><a href="visualising-results-for-a-single-stage.html#cb82-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">diff =</span> diffPrevMs<span class="sc">/</span><span class="dv">1000</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb82-23"><a href="visualising-results-for-a-single-stage.html#cb82-23" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Limit columns and set column order</span></span>
+<span id="cb82-24"><a href="visualising-results-for-a-single-stage.html#cb82-24" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">select</span>(<span class="fu">all_of</span>(top10_display_cols_base)) <span class="sc">%&gt;%</span></span>
+<span id="cb82-25"><a href="visualising-results-for-a-single-stage.html#cb82-25" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># The merge may upset the row order</span></span>
+<span id="cb82-26"><a href="visualising-results-for-a-single-stage.html#cb82-26" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># so reset the order again</span></span>
+<span id="cb82-27"><a href="visualising-results-for-a-single-stage.html#cb82-27" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span></span>
+<span id="cb82-28"><a href="visualising-results-for-a-single-stage.html#cb82-28" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Improve column names by remaming them</span></span>
+<span id="cb82-29"><a href="visualising-results-for-a-single-stage.html#cb82-29" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">rename</span>(<span class="at">Pos=</span>position,</span>
+<span id="cb82-30"><a href="visualising-results-for-a-single-stage.html#cb82-30" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Car =</span> identifier,</span>
+<span id="cb82-31"><a href="visualising-results-for-a-single-stage.html#cb82-31" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Code =</span> code,</span>
+<span id="cb82-32"><a href="visualising-results-for-a-single-stage.html#cb82-32" aria-hidden="true" tabindex="-1"></a>                             <span class="st">`</span><span class="at">Time (s)</span><span class="st">`</span> <span class="ot">=</span> TimeInS,</span>
+<span id="cb82-33"><a href="visualising-results-for-a-single-stage.html#cb82-33" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Gap =</span> gap, <span class="at">Diff =</span> diff)</span>
+<span id="cb82-34"><a href="visualising-results-for-a-single-stage.html#cb82-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-35"><a href="visualising-results-for-a-single-stage.html#cb82-35" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>( top10_stage_times )</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Pos</th>
+<th align="left">Car</th>
+<th align="left">Code</th>
+<th align="right">Time (s)</th>
+<th align="right">Gap</th>
+<th align="right">Diff</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">8</td>
+<td align="left">TÄN</td>
+<td align="right">834.5</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">11</td>
+<td align="left">NEU</td>
+<td align="right">835.5</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">2</td>
+<td align="left">SOL</td>
+<td align="right">839.1</td>
+<td align="right">4.6</td>
+<td align="right">3.6</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">69</td>
+<td align="left">ROV</td>
+<td align="right">840.2</td>
+<td align="right">5.7</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">42</td>
+<td align="left">BRE</td>
+<td align="right">841.9</td>
+<td align="right">7.4</td>
+<td align="right">1.7</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">1</td>
+<td align="left">OGI</td>
+<td align="right">842.0</td>
+<td align="right">7.5</td>
+<td align="right">0.1</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">18</td>
+<td align="left">KAT</td>
+<td align="right">843.2</td>
+<td align="right">8.7</td>
+<td align="right">1.2</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">7</td>
+<td align="left">LOU</td>
+<td align="right">844.3</td>
+<td align="right">9.8</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">33</td>
+<td align="left">EVA</td>
+<td align="right">845.8</td>
+<td align="right">11.3</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">3</td>
+<td align="left">SUN</td>
+<td align="right">846.9</td>
+<td align="right">12.4</td>
+<td align="right">1.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="adding-stage-metadata" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Adding Stage Metadata</h2>
+<p>To improve the table further, we may want to add a caption to the tabledescribing the stage to which the results actually refer.</p>
+<p>The caption might include the stage code and the stage name, for example, and perhaps the stage distance. It might also be handy to retrieve the stage number so that if we are displaying several tables, we can check we present the stages in the correct running order:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="visualising-results-for-a-single-stage.html#cb83-1" aria-hidden="true" tabindex="-1"></a>stage_cols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;number&#39;</span>, <span class="st">&#39;name&#39;</span>, <span class="st">&#39;distance&#39;</span>, <span class="st">&#39;code&#39;</span>)</span>
+<span id="cb83-2"><a href="visualising-results-for-a-single-stage.html#cb83-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-3"><a href="visualising-results-for-a-single-stage.html#cb83-3" aria-hidden="true" tabindex="-1"></a>stage_info <span class="ot">=</span> stages <span class="sc">%&gt;%</span></span>
+<span id="cb83-4"><a href="visualising-results-for-a-single-stage.html#cb83-4" aria-hidden="true" tabindex="-1"></a>                <span class="fu">select</span>(<span class="fu">all_of</span>(stage_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb83-5"><a href="visualising-results-for-a-single-stage.html#cb83-5" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Tidy up the stage name</span></span>
+<span id="cb83-6"><a href="visualising-results-for-a-single-stage.html#cb83-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">str_replace</span>(name, <span class="st">&#39; </span><span class="sc">\\</span><span class="st">(Live TV</span><span class="sc">\\</span><span class="st">)&#39;</span>, <span class="st">&#39;&#39;</span>))</span>
+<span id="cb83-7"><a href="visualising-results-for-a-single-stage.html#cb83-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-8"><a href="visualising-results-for-a-single-stage.html#cb83-8" aria-hidden="true" tabindex="-1"></a>stage_info <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   stageId number          name distance code
+## 1    1747      1 Sarriojärvi 1    31.05  SS1
+## 2    1743      2 Sarriojärvi 2    31.05  SS2</code></pre>
+<p>We can create a caption for our selected stage using what essentially amounts to a string template:</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="visualising-results-for-a-single-stage.html#cb85-1" aria-hidden="true" tabindex="-1"></a>stage_info_ <span class="ot">=</span> stage_info[stage_info[<span class="st">&#39;stageId&#39;</span>]<span class="sc">==</span>stageId,]</span>
+<span id="cb85-2"><a href="visualising-results-for-a-single-stage.html#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="co"># paste0() ensures there are no separators between substrings</span></span>
+<span id="cb85-3"><a href="visualising-results-for-a-single-stage.html#cb85-3" aria-hidden="true" tabindex="-1"></a>caption <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&#39;Stage &#39;</span>, stage_info_<span class="sc">$</span>code,</span>
+<span id="cb85-4"><a href="visualising-results-for-a-single-stage.html#cb85-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&#39;, &#39;</span>, stage_info_<span class="sc">$</span>name, <span class="st">&#39; (&#39;</span>,</span>
+<span id="cb85-5"><a href="visualising-results-for-a-single-stage.html#cb85-5" aria-hidden="true" tabindex="-1"></a>                 stage_info_<span class="sc">$</span>distance, <span class="st">&#39;km)&#39;</span>)</span>
+<span id="cb85-6"><a href="visualising-results-for-a-single-stage.html#cb85-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-7"><a href="visualising-results-for-a-single-stage.html#cb85-7" aria-hidden="true" tabindex="-1"></a>caption</span></code></pre></div>
+<pre><code>## [1] &quot;Stage SS3, Mustalampi 1 (24.43km)&quot;</code></pre>
+<p>Let’s add a caption to our <code>kable()</code> table, noting that by default the <code>boodown</code> script used to create the rendered version of the original Rmd file automatically adds a table number to the caption:</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="visualising-results-for-a-single-stage.html#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>( top10_stage_times, <span class="at">caption =</span> caption)</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-47">Table 3.1: </span>Stage SS3, Mustalampi 1 (24.43km)</caption>
+<thead>
+<tr class="header">
+<th align="right">Pos</th>
+<th align="left">Car</th>
+<th align="left">Code</th>
+<th align="right">Time (s)</th>
+<th align="right">Gap</th>
+<th align="right">Diff</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">8</td>
+<td align="left">TÄN</td>
+<td align="right">834.5</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">11</td>
+<td align="left">NEU</td>
+<td align="right">835.5</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">2</td>
+<td align="left">SOL</td>
+<td align="right">839.1</td>
+<td align="right">4.6</td>
+<td align="right">3.6</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">69</td>
+<td align="left">ROV</td>
+<td align="right">840.2</td>
+<td align="right">5.7</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">42</td>
+<td align="left">BRE</td>
+<td align="right">841.9</td>
+<td align="right">7.4</td>
+<td align="right">1.7</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">1</td>
+<td align="left">OGI</td>
+<td align="right">842.0</td>
+<td align="right">7.5</td>
+<td align="right">0.1</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">18</td>
+<td align="left">KAT</td>
+<td align="right">843.2</td>
+<td align="right">8.7</td>
+<td align="right">1.2</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">7</td>
+<td align="left">LOU</td>
+<td align="right">844.3</td>
+<td align="right">9.8</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">33</td>
+<td align="left">EVA</td>
+<td align="right">845.8</td>
+<td align="right">11.3</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">3</td>
+<td align="left">SUN</td>
+<td align="right">846.9</td>
+<td align="right">12.4</td>
+<td align="right">1.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rebasing-the-stage-results" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Rebasing the Stage Results</h2>
+<p>That sort of table is typical of many a motorsport timing results table. But can we do more with the data, or reveal any new insights from it?</p>
+<p>The table is design is actually very powerful. For any driver, we can see how far off the stage winning time they were (the <code>Gap</code>) and by summing appropriate <code>Diff</code> values you can quickly determine the time difference between any two drivers.</p>
+<p>However, if we are interested in a particular driver, we can “rebase” the table to show the time differences between that driver and the other drivers explictly.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="accessing-data-from-the-wrc-live-timing-api.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": {}
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/stage-results.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/stage-results.Rmd",
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section",
+"scroll_highlight": true
+},
+"toc_depth": 3,
+"toolbar": {
+"position": "fixed"
+},
+"search": true,
+"info": true
+});
+});
+</script>
+
+</body>
+
+</html>

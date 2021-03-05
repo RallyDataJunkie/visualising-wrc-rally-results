@@ -1,6 +1,7 @@
 library(jsonlite)
 library(stringr)
 library(dplyr)
+library(purrr)
 
 get_active_season = function(active_season_url="https://api.wrc.com/contel-page/83388/calendar/active-season/") {
   jsonlite::fromJSON(active_season_url)$rallyEvents$items
@@ -64,7 +65,7 @@ get_stage_info = function(stages, sid, typ='stageId', clean=TRUE){
   name=stages[stages[typ] == sid, 'name']
   distance=stages[stages[typ] == sid, 'distance']
   if (clean)
-    stringr::str_replace(name, ' (Live TV)', '')
+    stringr::str_replace(name, ' \\(Live TV\\)', '')
   
   c(name=name, distance=distance)
 }
@@ -98,9 +99,10 @@ get_person_id = function(drivers, sname, typ='fullName'){
 }
 
 get_car_data = function(entries){
-  cols = c('entryId', 'driverId', 'codriverId','manufacturerId',
+  cols = c('entryId', 'driverId', 'codriverId', 'manufacturerId',
            'vehicleModel','eligibility', 'classname','manufacturer',
-           'entrantname', 'groupname', 'drivername', 'code',
+           'entrantname', 'groupname', 
+           'identifier', 'drivername', 'code',
            'driverfullname', 'codrivername','codriverfullname'
   )
   entries = entries %>%
@@ -148,14 +150,32 @@ get_stage_winners = function(eventId) {
   jsonlite::fromJSON(stage_winners_url)
 }
 
+get_overall_result = function(eventId, stageId) {
+  overall_url = paste0(results_api, '/rally-event/',
+                       eventId, '/stage-result/stage-external/',
+                       stageId)
+  jsonlite::fromJSON(overall_url) %>%
+    # Also add in the stage ID
+    mutate(stageId = stageId)
+}
+
+get_overall_result2 = function(stageId, eventId) {
+  get_overall_result(eventId, stageId)
+}
+
+get_multi_overall = function(stagelist){
+  multi_overall = stagelist %>%
+    map(get_overall_result2, eventId=eventId) %>% 
+    bind_rows()
+  multi_overall
+}
+
 get_stage_times = function(eventId, stageId) {
   stage_times_url = paste0(results_api, '/rally-event/',
                            eventId, '/stage-times/stage-external/',
                            stageId)
   jsonlite::fromJSON(stage_times_url)
 }
-
-library(purrr)
 
 get_stage_times2 = function(stageId, eventId) {
   get_stage_times(eventId, stageId)

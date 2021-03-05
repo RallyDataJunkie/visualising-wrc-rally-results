@@ -6,3 +6,24 @@ knitr::opts_chunk$set(fig.path = "images/finding-stage-pace-")
 
 As well as visualising stage results purely in terms of time and position differences, we can also use stage time data and stage distances as a basis for some simple stage pace calculations.
 
+## Load Base Data
+
+To get the splits data from a stading start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:
+
+```{r message=F, warning=F}
+source('code/wrc-api.R')
+
+s = get_active_season()
+eventId = get_eventId_from_name(s, 'arctic')
+
+itinerary = get_itinerary(eventId)
+sections = get_sections(itinerary)
+stages = get_stages(sections)
+stages_lookup = get_stages_lookup(stages)
+```
+
+Get a sample stage ID:
+
+```{r}
+stageId = stages_lookup[['SS3']]
+```
