@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1 Introduction | Visualising WRC Rally Timing and Results Data</title>
+  <title>7 Finding Pace Across Splits | Visualising WRC Rally Timing and Results Data</title>
   <meta name="description" content="An introduction to visualising timing and results data for WRC rally events." />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1 Introduction | Visualising WRC Rally Timing and Results Data" />
+  <meta property="og:title" content="7 Finding Pace Across Splits | Visualising WRC Rally Timing and Results Data" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1 Introduction | Visualising WRC Rally Timing and Results Data" />
+  <meta name="twitter:title" content="7 Finding Pace Across Splits | Visualising WRC Rally Timing and Results Data" />
   
   <meta name="twitter:description" content="An introduction to visualising timing and results data for WRC rally events." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="accessing-data-from-the-wrc-live-timing-api.html"/>
+<link rel="prev" href="visualising-split-times.html"/>
+
 <script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -257,19 +257,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="introduction" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
-<p>For fans of WRC, the live timing data screens as well as results from <em>ewrc-results.com</em> provide up-to-date information about timing and results over the course of an event weekend, as well as a historical results for the current season (WRC) as well as back into the mists of time (<em>ewrc-results</em>).</p>
-<p>In this recipe collection, I’ll describe various ways of visualising WRC rally results and timing data using data retrieved from the WRC results API. Many of the techniques should also apply directly to data retrieved from other services, such as <em>ewrc-results.com</em> if the data is appropriately represented.</p>
+<div id="finding-pace-across-splits" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Finding Pace Across Splits</h1>
+<p>We have already seen how we can perform pace calculations on stage level data and use pace maps and off-the-pace charts to visualise pace over the course of a rally.</p>
+<p>But in WRC rallies at least, the stages are often long enough, and the promoter well resourced enough, to merit the collection of split data data at various split points along a stage. So in this chapter, we’ll review how we can create pace charts and apply the techniques to plotting progress <em>within</em> a stage, across stage splits.</p>
+<div id="load-base-data-4" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Load Base Data</h2>
+<p>As ever, load in the helper functions:</p>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="finding-pace-across-splits.html#cb207-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
+<p>And get the base data:</p>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="finding-pace-across-splits.html#cb208-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb208-2"><a href="finding-pace-across-splits.html#cb208-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb208-3"><a href="finding-pace-across-splits.html#cb208-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb208-4"><a href="finding-pace-across-splits.html#cb208-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb208-5"><a href="finding-pace-across-splits.html#cb208-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb208-6"><a href="finding-pace-across-splits.html#cb208-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb208-7"><a href="finding-pace-across-splits.html#cb208-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb208-8"><a href="finding-pace-across-splits.html#cb208-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb208-9"><a href="finding-pace-across-splits.html#cb208-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
+<span id="cb208-10"><a href="finding-pace-across-splits.html#cb208-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<p>Get a sample stage ID:</p>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="finding-pace-across-splits.html#cb209-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="accessing-data-from-the-wrc-live-timing-api.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="visualising-split-times.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -300,7 +318,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/intro.Rmd",
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/finding-splits-pace.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -308,7 +326,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/intro.Rmd",
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/finding-splits-pace.Rmd",
 "text": null
 },
 "download": null,

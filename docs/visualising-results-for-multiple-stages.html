@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>1 Introduction | Visualising WRC Rally Timing and Results Data</title>
+  <title>4 Visualising Results for Multiple Stages | Visualising WRC Rally Timing and Results Data</title>
   <meta name="description" content="An introduction to visualising timing and results data for WRC rally events." />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="1 Introduction | Visualising WRC Rally Timing and Results Data" />
+  <meta property="og:title" content="4 Visualising Results for Multiple Stages | Visualising WRC Rally Timing and Results Data" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="1 Introduction | Visualising WRC Rally Timing and Results Data" />
+  <meta name="twitter:title" content="4 Visualising Results for Multiple Stages | Visualising WRC Rally Timing and Results Data" />
   
   <meta name="twitter:description" content="An introduction to visualising timing and results data for WRC rally events." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="accessing-data-from-the-wrc-live-timing-api.html"/>
+<link rel="prev" href="visualising-results-for-a-single-stage.html"/>
+<link rel="next" href="finding-pace-across-stages.html"/>
 <script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -257,19 +257,97 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="introduction" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
-<p>For fans of WRC, the live timing data screens as well as results from <em>ewrc-results.com</em> provide up-to-date information about timing and results over the course of an event weekend, as well as a historical results for the current season (WRC) as well as back into the mists of time (<em>ewrc-results</em>).</p>
-<p>In this recipe collection, I’ll describe various ways of visualising WRC rally results and timing data using data retrieved from the WRC results API. Many of the techniques should also apply directly to data retrieved from other services, such as <em>ewrc-results.com</em> if the data is appropriately represented.</p>
+<div id="visualising-results-for-multiple-stages" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Visualising Results for Multiple Stages</h1>
+<p>As well as visualising the results for a single stage, we might want to visualise the results over multiple stages. The basic overall results can be retrieved from a single call to the WRC results API, but to view the stage times and rankings across multiple stages requires retrieving detailed for each stage and then combining it into a single dataframe.</p>
+<div id="load-base-data-1" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Load Base Data</h2>
+<p>To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in.</p>
+<p>To begin with, load in our WRC API helper functions:</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="visualising-results-for-multiple-stages.html#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
+<p>Now let’s grab some data:</p>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="visualising-results-for-multiple-stages.html#cb120-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb120-2"><a href="visualising-results-for-multiple-stages.html#cb120-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb120-3"><a href="visualising-results-for-multiple-stages.html#cb120-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb120-4"><a href="visualising-results-for-multiple-stages.html#cb120-4" aria-hidden="true" tabindex="-1"></a>entries <span class="ot">=</span> <span class="fu">get_rally_entries</span>(eventId)</span>
+<span id="cb120-5"><a href="visualising-results-for-multiple-stages.html#cb120-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb120-6"><a href="visualising-results-for-multiple-stages.html#cb120-6" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb120-7"><a href="visualising-results-for-multiple-stages.html#cb120-7" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb120-8"><a href="visualising-results-for-multiple-stages.html#cb120-8" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb120-9"><a href="visualising-results-for-multiple-stages.html#cb120-9" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span></code></pre></div>
+</div>
+<div id="retrieving-stage-results-for-multiple-stages" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Retrieving Stage Results for Multiple Stages</h2>
+<p>We can retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:</p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="visualising-results-for-multiple-stages.html#cb121-1" aria-hidden="true" tabindex="-1"></a>stage_list <span class="ot">=</span> <span class="fu">get_stage_list</span>(stages)</span>
+<span id="cb121-2"><a href="visualising-results-for-multiple-stages.html#cb121-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb121-3"><a href="visualising-results-for-multiple-stages.html#cb121-3" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="ot">=</span> <span class="fu">get_multi_stage_times</span>(stage_list)</span>
+<span id="cb121-4"><a href="visualising-results-for-multiple-stages.html#cb121-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb121-5"><a href="visualising-results-for-multiple-stages.html#cb121-5" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##     stageTimeId stageId entryId elapsedDurationMs  elapsedDuration    status
+## 539       96810    1749   21571           1301693 00:21:41.6930000 Completed
+## 540       96793    1749   21541                NA             &lt;NA&gt;       DNS
+##      source position diffFirstMs        diffFirst diffPrevMs         diffPrev
+## 539 Default       52      699224 00:11:39.2240000     153590 00:02:33.5900000
+## 540 Default       NA          NA             &lt;NA&gt;         NA             &lt;NA&gt;</code></pre>
+<p>We can then cast the data to a wide format:</p>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="visualising-results-for-multiple-stages.html#cb123-1" aria-hidden="true" tabindex="-1"></a>multi_stage_times_wide <span class="ot">=</span> <span class="fu">get_multi_stage_times_wide</span>(multi_stage_times, stage_list)</span>
+<span id="cb123-2"><a href="visualising-results-for-multiple-stages.html#cb123-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb123-3"><a href="visualising-results-for-multiple-stages.html#cb123-3" aria-hidden="true" tabindex="-1"></a>multi_stage_times_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 11
+## # Groups:   entryId [2]
+##   entryId `1747` `1743` `1750` `1751` `1748` `1745` `1744` `1742` `1746` `1749`
+##     &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1   21530   980.   980    842    548.   751.   854.   557.  1364    615    604.
+## 2   21531   974.   968.   846.   547.   750.   854.   553.   784.   608.   608.</code></pre>
+<p>To improve the look of the table, we might use stage codes and driver codes to label the columns and identify the rows.</p>
+<p>Get the stage codes:</p>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="visualising-results-for-multiple-stages.html#cb125-1" aria-hidden="true" tabindex="-1"></a>stages_lookup_code <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages, <span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;code&#39;</span>)</span>
+<span id="cb125-2"><a href="visualising-results-for-multiple-stages.html#cb125-2" aria-hidden="true" tabindex="-1"></a>stages_lookup_code</span></code></pre></div>
+<pre><code>##   1747   1743   1750   1751   1748   1745   1744   1742   1746   1749 
+##  &quot;SS1&quot;  &quot;SS2&quot;  &quot;SS3&quot;  &quot;SS4&quot;  &quot;SS5&quot;  &quot;SS6&quot;  &quot;SS7&quot;  &quot;SS8&quot;  &quot;SS9&quot; &quot;SS10&quot;</code></pre>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="visualising-results-for-multiple-stages.html#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a stage code mapping function</span></span>
+<span id="cb127-2"><a href="visualising-results-for-multiple-stages.html#cb127-2" aria-hidden="true" tabindex="-1"></a>stage_code_map <span class="ot">=</span> <span class="cf">function</span>(stageId)</span>
+<span id="cb127-3"><a href="visualising-results-for-multiple-stages.html#cb127-3" aria-hidden="true" tabindex="-1"></a>  stages_lookup_code[[<span class="fu">as.character</span>(stageId)]]</span>
+<span id="cb127-4"><a href="visualising-results-for-multiple-stages.html#cb127-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-5"><a href="visualising-results-for-multiple-stages.html#cb127-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Map stage ID column names to stage codes</span></span>
+<span id="cb127-6"><a href="visualising-results-for-multiple-stages.html#cb127-6" aria-hidden="true" tabindex="-1"></a>stage_codes <span class="ot">=</span> <span class="fu">unlist</span>(purrr<span class="sc">::</span><span class="fu">map</span>(stage_list,</span>
+<span id="cb127-7"><a href="visualising-results-for-multiple-stages.html#cb127-7" aria-hidden="true" tabindex="-1"></a>                                <span class="cf">function</span> (x) <span class="fu">stage_code_map</span>(x)))</span>
+<span id="cb127-8"><a href="visualising-results-for-multiple-stages.html#cb127-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-9"><a href="visualising-results-for-multiple-stages.html#cb127-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(multi_stage_times_wide) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>,stage_codes)</span>
+<span id="cb127-10"><a href="visualising-results-for-multiple-stages.html#cb127-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-11"><a href="visualising-results-for-multiple-stages.html#cb127-11" aria-hidden="true" tabindex="-1"></a>multi_stage_times_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 11
+## # Groups:   entryId [2]
+##   entryId   SS1   SS2   SS3   SS4   SS5   SS6   SS7   SS8   SS9  SS10
+##     &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1   21530  980.  980   842   548.  751.  854.  557. 1364   615   604.
+## 2   21531  974.  968.  846.  547.  750.  854.  553.  784.  608.  608.</code></pre>
+<p>Finally, let’s replace the entry ID with the driver code and put the columns into a sensible order:</p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="visualising-results-for-multiple-stages.html#cb129-1" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span>
+<span id="cb129-2"><a href="visualising-results-for-multiple-stages.html#cb129-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-3"><a href="visualising-results-for-multiple-stages.html#cb129-3" aria-hidden="true" tabindex="-1"></a>multi_stage_times_wide <span class="ot">=</span> multi_stage_times_wide <span class="sc">%&gt;%</span></span>
+<span id="cb129-4"><a href="visualising-results-for-multiple-stages.html#cb129-4" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">merge</span>(cars[,<span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>,<span class="st">&#39;code&#39;</span>)],</span>
+<span id="cb129-5"><a href="visualising-results-for-multiple-stages.html#cb129-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">by=</span><span class="st">&#39;entryId&#39;</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb129-6"><a href="visualising-results-for-multiple-stages.html#cb129-6" aria-hidden="true" tabindex="-1"></a>                            <span class="co"># Limit columns and set column order</span></span>
+<span id="cb129-7"><a href="visualising-results-for-multiple-stages.html#cb129-7" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">select</span>(<span class="sc">-</span><span class="st">&#39;entryId&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb129-8"><a href="visualising-results-for-multiple-stages.html#cb129-8" aria-hidden="true" tabindex="-1"></a>                            <span class="co"># Move last column to first</span></span>
+<span id="cb129-9"><a href="visualising-results-for-multiple-stages.html#cb129-9" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">select</span>(<span class="st">&#39;code&#39;</span>, <span class="fu">everything</span>())</span>
+<span id="cb129-10"><a href="visualising-results-for-multiple-stages.html#cb129-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-11"><a href="visualising-results-for-multiple-stages.html#cb129-11" aria-hidden="true" tabindex="-1"></a>multi_stage_times_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   code   SS1   SS2   SS3   SS4   SS5   SS6   SS7    SS8   SS9    SS10
+## 1  OGI 980.5 980.0 842.0 548.5 751.2 853.7 556.7 1364.0 615.0 604.272
+## 2  EVA 974.5 968.2 845.8 546.6 750.2 853.6 552.6  784.1 607.5 608.028</code></pre>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="accessing-data-from-the-wrc-live-timing-api.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="visualising-results-for-a-single-stage.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="finding-pace-across-stages.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -300,7 +378,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/intro.Rmd",
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/multi-stage-results.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -308,7 +386,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/intro.Rmd",
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/multi-stage-results.Rmd",
 "text": null
 },
 "download": null,

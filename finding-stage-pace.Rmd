@@ -12,7 +12,7 @@ In this chapter, we look at some simple pace calculations, rebase pace values re
 
 ## Load Base Data
 
-To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in.
+To get the stage data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages, and from that access the stage ID for the stage or stages we are interested in.
 
 Load in the helper functions:
 
@@ -20,7 +20,7 @@ Load in the helper functions:
 source('code/wrc-api.R')
 ```
 
-And get the data:
+And get the base data:
 
 ```{r}
 s = get_active_season()

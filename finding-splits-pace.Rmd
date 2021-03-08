@@ -1,0 +1,40 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/finding-splits-pace-")
+```
+# Finding Pace Across Splits
+
+We have already seen how we can perform pace calculations on stage level data and use pace maps and off-the-pace charts to visualise pace over the course of a rally.
+
+But in WRC rallies at least, the stages are often long enough, and the promoter well resourced enough, to merit the collection of split data data at various split points along a stage. So in this chapter, we'll review how we can create pace charts and apply the techniques to plotting progress *within* a stage, across stage splits.
+
+
+## Load Base Data
+
+As ever, load in the helper functions:
+
+```{r message=F, warning=F}
+source('code/wrc-api.R')
+```
+
+And get the base data:
+
+```{r}
+s = get_active_season()
+eventId = get_eventId_from_name(s, 'arctic')
+
+itinerary = get_itinerary(eventId)
+sections = get_sections(itinerary)
+stages = get_stages(sections)
+stages_lookup = get_stages_lookup(stages)
+
+# Driver details
+cars = get_car_data(entries)
+```
+
+Get a sample stage ID:
+
+```{r}
+stageId = stages_lookup[['SS3']]
+```
+

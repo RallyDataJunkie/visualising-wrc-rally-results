@@ -31,8 +31,11 @@ heatmap-style-column-cell-backgrounds
 an-aside-calculating-diff-and-gap-times
 rebasing-stage-results
 colour-highlighting-rebased-values
-finding-pace-across-stages
+visualising-results-for-multiple-stages
 load-base-data-1
+retrieving-stage-results-for-multiple-stages
+finding-pace-across-stages
+load-base-data-2
 defining-pace
 calculating-stage-pace
 calculating-pace-for-a-single-stage
@@ -41,7 +44,7 @@ rebasing-stage-pace
 visualising-stage-pace-using-pace-maps
 off-the-pace-charts
 visualising-split-times
-load-base-data-2
+load-base-data-3
 get-splits-data
 wide-driver-split-times-1
 rebasing-split-times
@@ -50,3 +53,5 @@ finding-the-rank-position-at-each-split-point
 finding-split-section-durations
 finding-split-section-ranks
 adding-overall-stage-time-to-the-split-times
+finding-pace-across-splits
+load-base-data-4
