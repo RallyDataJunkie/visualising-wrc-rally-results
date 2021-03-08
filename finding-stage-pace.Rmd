@@ -47,6 +47,12 @@ When used as a rebased difference measure between drivers, pace difference allow
 
 Basic pace itself is given as $\textrm{pace}=\textrm{time}/\textrm{distance}$.
 
+Developing our rally algebra, we might identify the stage distance for stage $S$ as $d_S$. For a stage time by driver $i$ of ${_S}t_i$ the stage pace ${_S}p_i$ for driver $i$ on stage $S$ is then given as:
+
+$$
+{_S}p_i = \frac{{_S}t_i}{d_S}
+$$
+
 ## Calculating Stage Pace
 
 We can calculate stage pace from stage times and stage distances.
@@ -164,6 +170,7 @@ pace_wide = get_multi_stage_generic_wide(multi_stage_pace,
 
 pace_wide %>% head(3)
 ```
+
 ## Rebasing Stage Pace
 
 We can rebase the stage pace according to a specific driver:
@@ -177,7 +184,13 @@ pace_wide_rebased = rebase(pace_wide, example_driver, stage_codes,
 pace_wide_rebased %>% head(3)
 ```
 
-## Visualising Stage Pace
+More abstractly, the rebased pace, ${_S}p_i^j$, for driver $i$ relative to driver $j$ on stage $S$ is given as:
+
+$$
+{_S}p_i^j = {_S}p_i - {_S}p_j = \frac{{_S}t_i - {_S}t_j}{d_S} = \frac{{_S}t_i^j}{d_S}
+$$
+
+## Visualising Stage Pace Using Pace Maps
 
 To compare pace, it is useful to look at rebased pace times relative to a particular driver and also indicate the length of stage with which particular pace levels are associated.
 
@@ -232,7 +245,6 @@ g0 + geom_text(aes(x=(start_dist+cum_dist)/2,
                    color=pace>0),
                 position = position_dodge(15), size=1) +
       ylim(-0.5,2) + theme_classic() + theme(legend.position="none")
-
 ```
 
 
@@ -267,7 +279,6 @@ g + geom_rect(data=pace_long[pace_long$code_driver=='EVA',],
                    ymax = ifelse(pace>0,pace,0),
                    fill = pace>0, alpha=0.7)) +
     theme(legend.position="none")
-
 ```
 
 To highlight stages, we could add a "banner" to the chart:
@@ -277,11 +288,127 @@ g + geom_rect(data=pace_long[pace_long$code_driver==example_driver,],
               aes(xmin=0, xmax=max(cum_dist),
                   ymin = 1.8,  ymax = 2.0,
                   alpha=0), fill = 'black') +
-   geom_text(data=pace_long[pace_long$code_driver==example_driver,],
-             aes(label=code, y=1.9, x=(cum_dist + start_dist)/2),
-             color='yellow', size=3) +
-  geom_segment(data=pace_long[pace_long$code_driver==example_driver,],
+    geom_text(data=pace_long[pace_long$code_driver==example_driver,],
+              aes(x=(cum_dist + start_dist)/2, label=code),
+              y=1.9, color='yellow', size=3) +
+    geom_segment(data=pace_long[pace_long$code_driver==example_driver,],
                  aes(x=cum_dist, xend=cum_dist,
-                       y=1.8, yend=2.0), color='yellow') +
-   theme(legend.position="none")
+                    y=1.8, yend=2.0), color='yellow') +
+    theme(legend.position="none")
+```
+
+## Off-the-Pace Charts
+
+Another way or reviewing pace is to consider the gap to leader, or rebased gap to a particular driver across the stages, using distance into stage along the x-axis to locate the x-value and gap (measured in seconds) along the y-axis. A moment's consideration suggests that the gradient ($\textrm{change_in_gap}/\textrm{change_in_distance}$) is a measure of pace. The slope of the line thus indicates relative pace between the focal driver and the other drivers.
+
+As with the pace map, if we have the data in a long, tidy form, we can create charts from it quite straightforwardly. So let's add in the accumulated distance into stage and accumulated stage time for each time:
+
+```{r}
+off_the_pace = multi_stage_pace %>%
+                           merge(stages[,c('stageId', 'cum_dist')],
+                                 by='stageId') %>%
+                          arrange(number) %>%
+                          group_by(code_driver) %>%
+                          mutate(totalDurationS = cumsum(elapsedDurationS))
+
+off_the_pace %>% head(3)
+```
+
+Now we can create a basic off-the pace chart:
+
+```{r off-the-pace-basic, warning=FALSE}
+ggplot(off_the_pace, aes(x=cum_dist, y=totalDurationS,
+                         color=code_driver)) + geom_line()
+```
+
+As with the pace map, the chart is often most informative if we rebase it relative to a particular driver.
+
+Let's create a wide dataframe to simplify the rebasing process:
+
+```{r}
+off_the_pace_wide = get_multi_stage_generic_wide(off_the_pace,
+                                         stage_codes, 'totalDurationS',
+                                         group_key=c('code_driver'),
+                                         spread_key='code')
+
+off_the_pace_wide %>% head(3)
+```
+
+Now we can rebase:
+
+```{r}
+off_the_pace_wide_rebased = rebase(off_the_pace_wide,
+                                   example_driver, stage_codes,
+                                   id_col='code_driver')
+
+off_the_pace_wide_rebased %>% head(3)
+```
+
+And cast back to the long, tidy form:
+
+```{r}
+off_the_pace_long = off_the_pace_wide_rebased %>% 
+                        gather(code, totalDurationGapS,
+                               stage_range['start']:stage_range['end']) %>%
+                               merge(stages[,c('code', 'cum_dist')],
+                                     by='code')
+
+off_the_pace_long %>% head(3)
+```
+
+And now we can plot the simple rebased off-the-pace chart:
+
+```{r off-the-pace-rebased, warning=FALSE}
+g_otp = ggplot(off_the_pace_long, aes(x=cum_dist, y=totalDurationGapS,
+                                      color=code_driver)) +
+            geom_line() +
+            # Retain the points outside the limits
+            # We can also flip the coordinate axis
+            coord_cartesian(ylim=c(100, -100)) + theme_classic()
+
+g_otp
+```
+
+Trivially, we might try to add labels at the end of each line:
+
+```{r off-the-pace-end1, warning=FALSE}
+off_the_pace_end = off_the_pace_long %>% filter(cum_dist == max(cum_dist))
+                                                
+g_otp + geom_text(data = off_the_pace_end,
+                  aes(x = cum_dist+ 10, y = totalDurationGapS,
+                      label = code_driver, color = code_driver)) +
+        theme(legend.position="none")
+```
+However, there are various other packages that provide alternative ways of doing this, including `directlabels` and `ggrepel`.
+
+For example, using `directlabels`:
+
+```{r off-the-pace-labeled1, warning=FALSE}
+library(directlabels)
+
+g_otp +
+    geom_dl(aes(label = code_driver, x=cum_dist+2),
+            # cex is text label size
+            method = list('last.bumpup', cex = 0.5)) +
+    theme(legend.position="none")
+    
+```
+
+And using `ggrepel`, which also has the advantage of adding labels for drivers who curves are really of the pace, albeit not in an obviously natural order:
+
+```{r off-the-pace-labeled2, warning=FALSE}
+g_otp + ggrepel::geom_text_repel(data = off_the_pace_end,
+                                 aes(label = code_driver),
+                                 size = 3) +
+        theme(legend.position="none")
+```
+
+The `gghighlight` package is also useful in highlighting traces, as well as usefully automatically labeling highlighted lines:
+
+```{r off-the-pace-highlight, warning=FALSE}
+g_otp +
+    gghighlight::gghighlight(code_driver=='EVA',
+                             unhighlighted_params=list(alpha=0.1)) +
+    theme(legend.position="none")
+  
 ```

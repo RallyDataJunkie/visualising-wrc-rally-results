@@ -38,7 +38,8 @@ calculating-stage-pace
 calculating-pace-for-a-single-stage
 calculating-pace-for-multiple-stages
 rebasing-stage-pace
-visualising-stage-pace
+visualising-stage-pace-using-pace-maps
+off-the-pace-charts
 visualising-split-times
 load-base-data-2
 get-splits-data
