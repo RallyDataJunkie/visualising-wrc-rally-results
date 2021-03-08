@@ -8,11 +8,17 @@ As well as visualising stage results purely in terms of time and position differ
 
 ## Load Base Data
 
-To get the splits data from a stading start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:
+To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in.
+
+Load in the helper functions:
 
 ```{r message=F, warning=F}
 source('code/wrc-api.R')
+```
 
+And get the data:
+
+```{r}
 s = get_active_season()
 eventId = get_eventId_from_name(s, 'arctic')
 
@@ -20,10 +26,262 @@ itinerary = get_itinerary(eventId)
 sections = get_sections(itinerary)
 stages = get_stages(sections)
 stages_lookup = get_stages_lookup(stages)
+
+# Driver details
+cars = get_car_data(entries)
 ```
 
 Get a sample stage ID:
 
 ```{r}
 stageId = stages_lookup[['SS3']]
+```
+
+## Defining Pace
+
+With variable stage distances on a stage rally, metrics such as average speed provide one way of comparing performances across stage, calculated as $\textrm{stage_time}/\textrm{stage_distance}$ with units of *kilometers* or *miles per hour*.
+
+A more useful measure, particularly in rally terms, is the notion of *pace*, typically given with units of *seconds per kilometer*. *Speed* tells us much quickly a car covers distance in unit time; *pace* gives us an indication of how much time is required to travel a unit distance.
+
+When used as a rebased difference measure between drivers, pace difference allows us to rapidly calculate how much time a driver is likely to gain or lose over a particular stage distance as per the word equation $\textrm{time_gain}=\textrm{stage_distance}\cdot\textrm{pace_difference}$.
+
+Basic pace itself is given as $\textrm{pace}=\textrm{time}/\textrm{distance}$.
+
+## Calculating Stage Pace
+
+We can calculate stage pace from stage times and stage distances.
+
+We can find stages distances directly from the `stages` dataframe:
+
+```{r}
+stages %>% select(c('code','distance')) %>% head(3)
+```
+
+### Calculating Pace for a Single Stage
+
+Let's start by looking a single stage using a recipe we have used before:
+
+```{r}
+# Example stage code
+stage_code = 'SS3'
+
+stageId = stages_lookup[[stage_code]]
+
+# Get the stage distance
+stage_distance = stages[stages['code']==stage_code, 'distance']
+
+# Get driver metadata
+cars = get_car_data(entries)
+
+# Create stage times with merged in driver metadata
+stage_times = get_stage_times(eventId, stageId) %>%
+                      arrange(position) %>%
+                      head(10) %>%
+                      # Merge in the entries data
+                      merge(cars, by='entryId')  %>%
+                      # Convert milliseconds to seconds
+                      mutate(TimeInS = elapsedDurationMs/1000)  %>%
+                      # Limit columns and set column order
+                      select(c('position', 'identifier',
+                               'code', 'TimeInS')) %>%
+                      # The merge may upset the row order
+                      # so reset the order again
+                      arrange(position) %>%
+                      # Improve column names by renaming them
+                      rename(Pos=position,
+                             Car = identifier,
+                             Code = code,
+                             `Time (s)` = TimeInS)
+
+formattable(stage_times )
+```
+
+We can now calculate pace as the stage time divided by the stage distance:
+
+```{r}
+stage_times$pace = stage_times$'Time (s)' / stage_distance
+
+stage_times
+```
+
+### Calculating Pace for Multiple Stages
+
+First, let's get the data for all the stages:
+
+```{r}
+stage_list = get_stage_list(stages)
+
+multi_stage_times = get_multi_stage_times(stage_list)
+  
+multi_stage_times %>% tail(2)
+```
+
+We can generate the pace by adding the stage distance as an extra column and performing the pace calculation.
+
+We'll also take the opportunity to merge in driver metadata and limit cars to WRC group entries:
+
+```{r}
+multi_stage_pace = multi_stage_times %>%
+                    merge(stages[,c('stageId' ,'distance',
+                                    'number', 'code')],
+                          by='stageId') %>%
+                    mutate(elapsedDurationS = elapsedDurationMs / 1000,
+                            pace = elapsedDurationS / distance) %>%
+                    merge(cars[,c('entryId','drivername',
+                                  'code', 'groupname')],
+                                    by='entryId',
+                          suffixes=c('','_driver')) %>%
+                    filter(groupname=='WRC') %>%
+                    select(c('stageId', 'number', 'code_driver',
+                             'elapsedDurationS', 'pace', 'code'))  %>%
+                    arrange(number, elapsedDurationS)
+
+multi_stage_pace %>% head(3)
+```
+Create a mapping from stage ID to stage codes and cast the ordered list of stage Ids to an ordered list of stage codes:
+
+```{r}
+# Create a stage code mapping function
+stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
+stage_code_map = function(stageId)
+  stages_lookup_code[[as.character(stageId)]]
+
+# Map stage ID column names to stage codes
+stage_codes = unlist(purrr::map(stage_list,
+                                function (x) stage_code_map(x)))
+stage_codes
+```
+
+Use the generic widener function to widen the pace dataframe to give the pace for each driver on each stage:
+
+```{r}
+pace_wide = get_multi_stage_generic_wide(multi_stage_pace,
+                                         stage_codes, 'pace',
+                                         # Unique group keys required
+                                         # Driver code not guaranteed unique
+                                         group_key=c('code_driver'),
+                                         spread_key='code')
+
+pace_wide %>% head(3)
+```
+## Rebasing Stage Pace
+
+We can rebase the stage pace according to a specific driver:
+
+```{r}
+example_driver = pace_wide[2,]$code_driver
+
+pace_wide_rebased = rebase(pace_wide, example_driver, stage_codes,
+                           id_col='code_driver')
+
+pace_wide_rebased %>% head(3)
+```
+
+## Visualising Stage Pace
+
+To compare pace, it is useful to look at rebased pace times relative to a particular driver and also indicate the length of stage with which particular pace levels are associated.
+
+We can do this with a chart that presents distance into stage along the horizontal x-axis and relative pace on the y axis, using a line to indicate the pace for each driver relative to a specified driver.
+
+One of the easiest way of plotting charts is to plot from a tidy dataframe, so let's cast the rebased wide pace dataframe back to a long form and also add in the distance into stage at the start and end of each stage:
+
+```{r}
+library(tidyr)
+
+stage_range = c(start=stage_codes[1],
+                end=stage_codes[length(stage_codes)])
+
+stages$cum_dist = cumsum(stages$distance)
+stages$start_dist = c(0, stages$cum_dist[-length(stages$cum_dist)])
+
+pace_long = pace_wide_rebased %>% 
+                gather(code, pace,
+                       stage_range['start']:stage_range['end']) %>%
+                merge(stages[,c('code', 'start_dist', 'cum_dist')],
+                          by='code')
+  
+pace_long %>% head(3)
+```
+
+We can now construct a chart using line segments to represent the pace for each driver on each stage:
+
+```{r basic_stage_pace, message=FALSE, warning=FALSE}
+library(ggplot2)
+
+g0 = ggplot(pace_long, aes(group=code_driver)) +
+      geom_hline(yintercept = 0,
+                 colour='lightgrey', linetype='dotted') +
+      geom_segment(aes(x=start_dist, xend=cum_dist,
+                       y=pace, yend=pace),
+                   color = 'lightgrey')
+
+g = g0 + geom_text(aes(x=(start_dist+cum_dist)/2,y=pace+0.03,
+                    label=code_driver,group=code_driver),
+                position = position_dodge(15), size=1) +
+      ylim(-0.5,2) + theme_classic()
+
+g
+```
+
+We could highlight positive and negative differences in the label colourings:
+
+```{r posneg_highlighted_stage_pace, warning=FALSE}
+g0 + geom_text(aes(x=(start_dist+cum_dist)/2,
+                   y=ifelse(pace>0,pace+0.03,pace-0.03),
+                    label=code_driver,group=code_driver,
+                   color=pace>0),
+                position = position_dodge(15), size=1) +
+      ylim(-0.5,2) + theme_classic() + theme(legend.position="none")
+
+```
+
+
+We can also highlight values for a particular driver:
+
+```{r driver_highlighted_stage_pace, warning=FALSE}
+g + geom_segment(data=pace_long[pace_long$code_driver=='EVA',],
+                 aes(x=start_dist, xend=cum_dist,
+                       y=pace, yend=pace, color = pace>0)) +
+   theme(legend.position="none")
+```
+
+Or abuse the `gghiglight` package to modify the aesthetics of unselected items:
+
+```{r driver_highlighted_stage_pace2, warning=FALSE}
+g + gghighlight::gghighlight(code_driver=='EVA',
+                             unhighlighted_params=list(alpha=0.1))
+```
+Alternatively, abuse `gghighlight()` again with a negative form of selection to highlight items:
+
+```{r driver_highlighted_stage_pace3, warning=FALSE}
+g + gghighlight::gghighlight(code_driver!='EVA',label_key=code_driver,
+                             unhighlighted_params=list(color='blue'))
+```
+
+We could even add a transparency layer bar to highlight the pace difference compared to a particular driver:
+
+```{r block_highlighted_stage_pace, warning=FALSE}
+g + geom_rect(data=pace_long[pace_long$code_driver=='EVA',],
+              aes(xmin=start_dist, xmax=cum_dist,
+                   ymin = ifelse(pace>0,0,pace),
+                   ymax = ifelse(pace>0,pace,0),
+                   fill = pace>0, alpha=0.7)) +
+    theme(legend.position="none")
+
+```
+
+To highlight stages, we could add a "banner" to the chart:
+
+```{r banner_highlighted_stage_pace, warning=FALSE}
+g + geom_rect(data=pace_long[pace_long$code_driver==example_driver,],
+              aes(xmin=0, xmax=max(cum_dist),
+                  ymin = 1.8,  ymax = 2.0,
+                  alpha=0), fill = 'black') +
+   geom_text(data=pace_long[pace_long$code_driver==example_driver,],
+             aes(label=code, y=1.9, x=(cum_dist + start_dist)/2),
+             color='yellow', size=3) +
+  geom_segment(data=pace_long[pace_long$code_driver==example_driver,],
+                 aes(x=cum_dist, xend=cum_dist,
+                       y=1.8, yend=2.0), color='yellow') +
+   theme(legend.position="none")
 ```

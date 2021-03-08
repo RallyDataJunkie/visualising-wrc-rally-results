@@ -50,6 +50,25 @@
 
 
 
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/formattable_widget-binding-0.2.1/formattable_widget.js"></script>
+<link href="libs/jquery-sparkline-2.1.2/jquery.sparkline.css" rel="stylesheet" />
+<script src="libs/jquery-sparkline-2.1.2/jquery.sparkline.js"></script>
+<script src="libs/sparkline-binding-2.0/sparkline.js"></script>
 
 
 <style type="text/css">
@@ -155,6 +174,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.7.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.1</b> Getting Stage Times for Multiple Stages</a></li>
 <li class="chapter" data-level="2.7.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.2</b> Getting Wide Stage Times for Multiple Stages</a></li>
 <li class="chapter" data-level="2.7.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-positions"><i class="fa fa-check"></i><b>2.7.3</b> Getting Wide Stage Positions</a></li>
+<li class="chapter" data-level="2.7.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-generic-wide-dataframes"><i class="fa fa-check"></i><b>2.7.4</b> Getting Generic Wide Dataframes</a></li>
 </ul></li>
 <li class="chapter" data-level="2.8" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#split-times"><i class="fa fa-check"></i><b>2.8</b> Split Times</a>
 <ul>
@@ -170,8 +190,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-entry-metadata"><i class="fa fa-check"></i><b>3.3.1</b> Adding Entry Metadata</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-stage-metadata"><i class="fa fa-check"></i><b>3.4</b> Adding Stage Metadata</a></li>
-<li class="chapter" data-level="3.5" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#rebasing-the-stage-results"><i class="fa fa-check"></i><b>3.5</b> Rebasing the Stage Results</a></li>
+<li class="chapter" data-level="3.4" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-stage-metadata-to-table-captions"><i class="fa fa-check"></i><b>3.4</b> Adding Stage Metadata to Table Captions</a></li>
+<li class="chapter" data-level="3.5" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#colour-highlighting-stage-results"><i class="fa fa-check"></i><b>3.5</b> Colour Highlighting Stage Results</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#heatmap-style-column-cell-backgrounds"><i class="fa fa-check"></i><b>3.5.1</b> Heatmap Style Column Cell Backgrounds</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#an-aside-calculating-diff-and-gap-times"><i class="fa fa-check"></i><b>3.6</b> An Aside — Calculating DIFF and GAP times</a></li>
+<li class="chapter" data-level="3.7" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#rebasing-stage-results"><i class="fa fa-check"></i><b>3.7</b> Rebasing Stage Results</a></li>
+<li class="chapter" data-level="3.8" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#colour-highlighting-rebased-values"><i class="fa fa-check"></i><b>3.8</b> Colour Highlighting Rebased Values</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>4</b> Finding Pace Across Stages</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#load-base-data-1"><i class="fa fa-check"></i><b>4.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="4.2" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#defining-pace"><i class="fa fa-check"></i><b>4.2</b> Defining Pace</a></li>
+<li class="chapter" data-level="4.3" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-stage-pace"><i class="fa fa-check"></i><b>4.3</b> Calculating Stage Pace</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-pace-for-a-single-stage"><i class="fa fa-check"></i><b>4.3.1</b> Calculating Pace for a Single Stage</a></li>
+<li class="chapter" data-level="4.3.2" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-pace-for-multiple-stages"><i class="fa fa-check"></i><b>4.3.2</b> Calculating Pace for Multiple Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#rebasing-stage-pace"><i class="fa fa-check"></i><b>4.4</b> Rebasing Stage Pace</a></li>
+<li class="chapter" data-level="4.5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#visualising-stage-pace"><i class="fa fa-check"></i><b>4.5</b> Visualising Stage Pace</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="visualising-split-times.html"><a href="visualising-split-times.html"><i class="fa fa-check"></i><b>5</b> Visualising Split Times</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="visualising-split-times.html"><a href="visualising-split-times.html#load-base-data-2"><i class="fa fa-check"></i><b>5.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="5.2" data-path="visualising-split-times.html"><a href="visualising-split-times.html#get-splits-data"><i class="fa fa-check"></i><b>5.2</b> Get Splits Data</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="visualising-split-times.html"><a href="visualising-split-times.html#wide-driver-split-times-1"><i class="fa fa-check"></i><b>5.2.1</b> Wide Driver Split Times</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="visualising-split-times.html"><a href="visualising-split-times.html#rebasing-split-times"><i class="fa fa-check"></i><b>5.3</b> Rebasing Split Times</a></li>
+<li class="chapter" data-level="5.4" data-path="visualising-split-times.html"><a href="visualising-split-times.html#visualising-rebased-split-times-using-sparklines"><i class="fa fa-check"></i><b>5.4</b> Visualising Rebased Split Times Using Sparklines</a></li>
+<li class="chapter" data-level="5.5" data-path="visualising-split-times.html"><a href="visualising-split-times.html#finding-the-rank-position-at-each-split-point"><i class="fa fa-check"></i><b>5.5</b> Finding the Rank Position at Each Split Point</a></li>
+<li class="chapter" data-level="5.6" data-path="visualising-split-times.html"><a href="visualising-split-times.html#finding-split-section-durations"><i class="fa fa-check"></i><b>5.6</b> Finding Split Section Durations</a>
+<ul>
+<li class="chapter" data-level="5.6.1" data-path="visualising-split-times.html"><a href="visualising-split-times.html#finding-split-section-ranks"><i class="fa fa-check"></i><b>5.6.1</b> Finding Split Section Ranks</a></li>
+</ul></li>
+<li class="chapter" data-level="5.7" data-path="visualising-split-times.html"><a href="visualising-split-times.html#adding-overall-stage-time-to-the-split-times"><i class="fa fa-check"></i><b>5.7</b> Adding Overall Stage Time to the Split Times</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://rallydatajunkie.com/"><em>RallyDataJunkie.com</em></a></li>
@@ -196,7 +250,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>For fans of WRC, the live timing data screens as well as results from <em>ewrc-results.com</em> provide up-to-date information about timing and results over the course of an event weekend, as well as a historical results for the current season (WRC) as well as back into the mists of time (<em>ewrc-results</em>).</p>
-<p>In this recipe collection, I’ll describe various ways of visualising WRC rally results and timing data using data retrieved from the WRC results API. Many of the techniques should also apply directly to data retreived from other services, such as <em>ewrc-results.com</em> if the data is appropriately represented.</p>
+<p>In this recipe collection, I’ll describe various ways of visualising WRC rally results and timing data using data retrieved from the WRC results API. Many of the techniques should also apply directly to data retrieved from other services, such as <em>ewrc-results.com</em> if the data is appropriately represented.</p>
 
 </div>
             </section>
@@ -262,6 +316,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

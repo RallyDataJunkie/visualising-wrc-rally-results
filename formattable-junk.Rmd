@@ -1,0 +1,80 @@
+
+Although the `formattable()` function does not directly support  colour bars that change color, and direction, depending on whether the associated value is positive or negative, we can create a custom formatter that does provide such a view over the data.
+As well as left and right directed coloured bars,
+
+For example, if we use our rebased data set, we can highlight the positive and negative gaps to each other driver:
+
+```{r}
+# https://github.com/renkun-ken/formattable/issues/95#issuecomment-364459116
+pm_color_bar <- function(color1 = "lightgreen", color2 = "pink", ...){
+  formatter("span",
+            style = function(x) style(
+              display = "inline-block",
+              float = ifelse(x >= 0, "right", "left"),
+              "text-align" = ifelse(x >= 0, "right", "left"),
+              "margin-left" = ifelse(x >= 0, "0%", "50%"),
+              "margin-right" = ifelse(x >= 0,"50%", "0%"),
+              "border-radius" = "4px",
+              "background-color" = ifelse(x >= 0, color1, color2),
+              width = percent(0.5*proportion(abs(as.numeric(x)), ...))
+            ))
+}
+
+formattable(rov_rebased_gap,
+            list(Gap = pm_color_bar()))
+```
+
+A problem with this is that the width of the cell used to colour the bar also sets the text width. Instead, we need to separate the background from the text:
+
+```{r}
+bg = function(x, xnorm, color, ...) {
+  if (color=='pink'){
+    start = percent(0)
+    mid = percent(xnorm)
+    end = percent(0.5)
+  } else {
+    start=percent(0)
+    mid = percent(0.5)
+    end = percent(xnorm)
+  }
+  #paste("linear-gradient(90deg,", color, pc,", transparent ",pc,")")
+  #paste0("linear-gradient(90deg,transparent ", start,"%,", color," ",start,"%, color ",end,"%, transparent")
+  #paste0("linear-gradient(90deg,transparent ", 0,"%", color," ",50,"% ",color,  75,"% transparent")
+  #paste("linear-gradient(90deg,", color, pc,", transparent ",pc,")")
+  #paste0("linear-gradient(90deg,transparent ",start,",", color, " ",start,", transparent ",end,")")
+  paste("linear-gradient(90deg,transparent ",start,",",
+        color, mid,
+        ", transparent", end,")")
+} 
+```
+save to png
+
+(https://stackoverflow.com/questions/38833219/command-for-exporting-saving-table-made-with-formattable-package-in-r)
+
+https://rdrr.io/cran/rbokeh/man/widget2png.html
+
+https://rdrr.io/cran/htmlwidgets/man/saveWidget.html
+
+https://www.r-graph-gallery.com/159-save-interactive-streamgraph-to-static-image-png.html
+
+
+https://github.com/renkun-ken/formattable/issues/26
+
+
+```{r}
+pm_color_bar2 <- function(color1 = "lightgreen", color2 = "pink", ...){
+  formatter("span",
+            style = function(x) style(
+              display = "inline-block",
+              #"text-align" = 'center',
+              "border-radius" = "4px",
+              # We need to use the linear gradient approach
+              #"background" = "linear-gradient(90deg,#d65f5f 89.2%, transparent 89.2%)"#,
+              "width"='10em',
+              "background" = bg(x, xnormalize(x), ifelse(x >= 0, color1, color2))
+            ))
+}
+
+formattable(rov_rebased_gap,
+            list(Gap = pm_color_bar2()))
+```

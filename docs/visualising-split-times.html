@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5 Visualising Split Times | Visualising WRC Rally Timing and Results Data</title>
+  <meta name="description" content="An introduction to visualising timing and results data for WRC rally events." />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5 Visualising Split Times | Visualising WRC Rally Timing and Results Data" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="An introduction to visualising timing and results data for WRC rally events." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5 Visualising Split Times | Visualising WRC Rally Timing and Results Data" />
+  
+  <meta name="twitter:description" content="An introduction to visualising timing and results data for WRC rally events." />
+  
+
+<meta name="author" content="Tony Hirst" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="finding-pace-across-stages.html"/>
+
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/formattable_widget-binding-0.2.1/formattable_widget.js"></script>
+<link href="libs/jquery-sparkline-2.1.2/jquery.sparkline.css" rel="stylesheet" />
+<script src="libs/jquery-sparkline-2.1.2/jquery.sparkline.js"></script>
+<script src="libs/sparkline-binding-2.0/sparkline.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./"><strong>Visualising WRC Rally Results and Timing Data</strong></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Index</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html"><i class="fa fa-check"></i><b>2</b> Accessing Data from the WRC Live Timing API</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#current-season-rallies"><i class="fa fa-check"></i><b>2.1</b> Current Season Rallies</a></li>
+<li class="chapter" data-level="2.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#itinerary-lookup"><i class="fa fa-check"></i><b>2.2</b> Itinerary Lookup</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#leg-sections"><i class="fa fa-check"></i><b>2.2.1</b> Leg Sections</a></li>
+<li class="chapter" data-level="2.2.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#time-controls"><i class="fa fa-check"></i><b>2.2.2</b> Time Controls</a></li>
+<li class="chapter" data-level="2.2.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-details"><i class="fa fa-check"></i><b>2.2.3</b> Stage Details</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#competitor-details"><i class="fa fa-check"></i><b>2.3</b> Competitor Details</a></li>
+<li class="chapter" data-level="2.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#penalties-and-retirements"><i class="fa fa-check"></i><b>2.4</b> Penalties and Retirements</a></li>
+<li class="chapter" data-level="2.5" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#results-and-stage-winner"><i class="fa fa-check"></i><b>2.5</b> Results and Stage Winner</a></li>
+<li class="chapter" data-level="2.6" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-result"><i class="fa fa-check"></i><b>2.6</b> Stage Result</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-results-for-multiple-stages"><i class="fa fa-check"></i><b>2.6.1</b> Getting Stage Results for Multiple Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-times"><i class="fa fa-check"></i><b>2.7</b> Stage Times</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.1</b> Getting Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="2.7.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.2</b> Getting Wide Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="2.7.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-positions"><i class="fa fa-check"></i><b>2.7.3</b> Getting Wide Stage Positions</a></li>
+<li class="chapter" data-level="2.7.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-generic-wide-dataframes"><i class="fa fa-check"></i><b>2.7.4</b> Getting Generic Wide Dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#split-times"><i class="fa fa-check"></i><b>2.8</b> Split Times</a>
+<ul>
+<li class="chapter" data-level="2.8.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#driver-split-times-detail"><i class="fa fa-check"></i><b>2.8.1</b> Driver Split Times Detail</a></li>
+<li class="chapter" data-level="2.8.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#wide-driver-split-times"><i class="fa fa-check"></i><b>2.8.2</b> Wide Driver Split Times</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html"><i class="fa fa-check"></i><b>3</b> Visualising Results for a Single Stage</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#load-base-data"><i class="fa fa-check"></i><b>3.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="3.2" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#get-stage-results-data"><i class="fa fa-check"></i><b>3.2</b> Get Stage Results Data</a></li>
+<li class="chapter" data-level="3.3" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#previewing-stage-results-data"><i class="fa fa-check"></i><b>3.3</b> Previewing Stage Results Data</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-entry-metadata"><i class="fa fa-check"></i><b>3.3.1</b> Adding Entry Metadata</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-stage-metadata-to-table-captions"><i class="fa fa-check"></i><b>3.4</b> Adding Stage Metadata to Table Captions</a></li>
+<li class="chapter" data-level="3.5" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#colour-highlighting-stage-results"><i class="fa fa-check"></i><b>3.5</b> Colour Highlighting Stage Results</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#heatmap-style-column-cell-backgrounds"><i class="fa fa-check"></i><b>3.5.1</b> Heatmap Style Column Cell Backgrounds</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#an-aside-calculating-diff-and-gap-times"><i class="fa fa-check"></i><b>3.6</b> An Aside — Calculating DIFF and GAP times</a></li>
+<li class="chapter" data-level="3.7" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#rebasing-stage-results"><i class="fa fa-check"></i><b>3.7</b> Rebasing Stage Results</a></li>
+<li class="chapter" data-level="3.8" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#colour-highlighting-rebased-values"><i class="fa fa-check"></i><b>3.8</b> Colour Highlighting Rebased Values</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>4</b> Finding Pace Across Stages</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#load-base-data-1"><i class="fa fa-check"></i><b>4.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="4.2" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#defining-pace"><i class="fa fa-check"></i><b>4.2</b> Defining Pace</a></li>
+<li class="chapter" data-level="4.3" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-stage-pace"><i class="fa fa-check"></i><b>4.3</b> Calculating Stage Pace</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-pace-for-a-single-stage"><i class="fa fa-check"></i><b>4.3.1</b> Calculating Pace for a Single Stage</a></li>
+<li class="chapter" data-level="4.3.2" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-pace-for-multiple-stages"><i class="fa fa-check"></i><b>4.3.2</b> Calculating Pace for Multiple Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#rebasing-stage-pace"><i class="fa fa-check"></i><b>4.4</b> Rebasing Stage Pace</a></li>
+<li class="chapter" data-level="4.5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#visualising-stage-pace"><i class="fa fa-check"></i><b>4.5</b> Visualising Stage Pace</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="visualising-split-times.html"><a href="visualising-split-times.html"><i class="fa fa-check"></i><b>5</b> Visualising Split Times</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="visualising-split-times.html"><a href="visualising-split-times.html#load-base-data-2"><i class="fa fa-check"></i><b>5.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="5.2" data-path="visualising-split-times.html"><a href="visualising-split-times.html#get-splits-data"><i class="fa fa-check"></i><b>5.2</b> Get Splits Data</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="visualising-split-times.html"><a href="visualising-split-times.html#wide-driver-split-times-1"><i class="fa fa-check"></i><b>5.2.1</b> Wide Driver Split Times</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="visualising-split-times.html"><a href="visualising-split-times.html#rebasing-split-times"><i class="fa fa-check"></i><b>5.3</b> Rebasing Split Times</a></li>
+<li class="chapter" data-level="5.4" data-path="visualising-split-times.html"><a href="visualising-split-times.html#visualising-rebased-split-times-using-sparklines"><i class="fa fa-check"></i><b>5.4</b> Visualising Rebased Split Times Using Sparklines</a></li>
+<li class="chapter" data-level="5.5" data-path="visualising-split-times.html"><a href="visualising-split-times.html#finding-the-rank-position-at-each-split-point"><i class="fa fa-check"></i><b>5.5</b> Finding the Rank Position at Each Split Point</a></li>
+<li class="chapter" data-level="5.6" data-path="visualising-split-times.html"><a href="visualising-split-times.html#finding-split-section-durations"><i class="fa fa-check"></i><b>5.6</b> Finding Split Section Durations</a>
+<ul>
+<li class="chapter" data-level="5.6.1" data-path="visualising-split-times.html"><a href="visualising-split-times.html#finding-split-section-ranks"><i class="fa fa-check"></i><b>5.6.1</b> Finding Split Section Ranks</a></li>
+</ul></li>
+<li class="chapter" data-level="5.7" data-path="visualising-split-times.html"><a href="visualising-split-times.html#adding-overall-stage-time-to-the-split-times"><i class="fa fa-check"></i><b>5.7</b> Adding Overall Stage Time to the Split Times</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://rallydatajunkie.com/"><em>RallyDataJunkie.com</em></a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Visualising WRC Rally Timing and Results Data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="visualising-split-times" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Visualising Split Times</h1>
+<p>In this chapter we’ll explore some of the ways in which we might visualise the split times on a stage. We can do these either either on a time basis, or we can explore the time differences in terms of <em>pace</em> differences by normalising the split times over split distances.</p>
+<p>We’ll also see how we can make split time comparisons as gaps relative to a specified driver, rather than the stage winner as well as calculating times to complete each split (that is, the difference between consecutive split times for a particular driver).</p>
+<p>From the split section times, we can also calculate various derived measures, such as the ultimate possible stage time, based on the sum of fastest times to complete each split section.</p>
+<p>Having access to split times also sets up the potential for rating the performance of a driver on each split against various stage and stage route metrics, such as road order or route metrics such as the “wiggliness” of the split section, although these will not be covered here.</p>
+<div id="load-base-data-2" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Load Base Data</h2>
+<p>To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:</p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="visualising-split-times.html#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span>
+<span id="cb146-2"><a href="visualising-split-times.html#cb146-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb146-3"><a href="visualising-split-times.html#cb146-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb146-4"><a href="visualising-split-times.html#cb146-4" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb146-5"><a href="visualising-split-times.html#cb146-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb146-6"><a href="visualising-split-times.html#cb146-6" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb146-7"><a href="visualising-split-times.html#cb146-7" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb146-8"><a href="visualising-split-times.html#cb146-8" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb146-9"><a href="visualising-split-times.html#cb146-9" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb146-10"><a href="visualising-split-times.html#cb146-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb146-11"><a href="visualising-split-times.html#cb146-11" aria-hidden="true" tabindex="-1"></a><span class="co"># For driver details</span></span>
+<span id="cb146-12"><a href="visualising-split-times.html#cb146-12" aria-hidden="true" tabindex="-1"></a>entries <span class="ot">=</span> <span class="fu">get_rally_entries</span>(eventId)</span>
+<span id="cb146-13"><a href="visualising-split-times.html#cb146-13" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<p>As a working example, let’s define an example stage by its code:</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="visualising-split-times.html#cb147-1" aria-hidden="true" tabindex="-1"></a>stage_code <span class="ot">=</span> <span class="st">&#39;SS3&#39;</span></span></code></pre></div>
+<p>Get a sample stage ID:</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="visualising-split-times.html#cb148-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[stage_code]]</span></code></pre></div>
+</div>
+<div id="get-splits-data" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Get Splits Data</h2>
+<p>We can load the splits data if we know the event and stage ID:</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="visualising-split-times.html#cb149-1" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">=</span> <span class="fu">get_splits</span>(eventId, stageId)</span></code></pre></div>
+<p>The split times represented the accumulated time going the the stage at each split point. However, the split times <em>do not</em> include the overall stage time, so we need to be mindful that if we want to report on a stage the split times in and of themselves do not contain any information about the final section of the stage between the final split point and the stage finish line.</p>
+<p>The splits data actually comprises two dataframes. The first is the splits locations:</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="visualising-split-times.html#cb150-1" aria-hidden="true" tabindex="-1"></a>get_split_locations <span class="ot">=</span> <span class="cf">function</span>(splits){</span>
+<span id="cb150-2"><a href="visualising-split-times.html#cb150-2" aria-hidden="true" tabindex="-1"></a>  splits_locations <span class="ot">=</span> splits<span class="sc">$</span>splitPoints</span>
+<span id="cb150-3"><a href="visualising-split-times.html#cb150-3" aria-hidden="true" tabindex="-1"></a>  splits_locations</span>
+<span id="cb150-4"><a href="visualising-split-times.html#cb150-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb150-5"><a href="visualising-split-times.html#cb150-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-6"><a href="visualising-split-times.html#cb150-6" aria-hidden="true" tabindex="-1"></a>splits_locations <span class="ot">=</span> <span class="fu">get_split_locations</span>(splits)</span>
+<span id="cb150-7"><a href="visualising-split-times.html#cb150-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-8"><a href="visualising-split-times.html#cb150-8" aria-hidden="true" tabindex="-1"></a>splits_locations <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   splitPointId stageId number distance
+## 1         3593    1750      5    23.21
+## 2         3601    1750      2     9.02</code></pre>
+<p>To produce a wide data frame of split times by driver, we need to be able to reference the split codes ordered by the distance into the stage of each split point:</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="visualising-split-times.html#cb152-1" aria-hidden="true" tabindex="-1"></a>get_split_cols <span class="ot">=</span> <span class="cf">function</span>(splits){</span>
+<span id="cb152-2"><a href="visualising-split-times.html#cb152-2" aria-hidden="true" tabindex="-1"></a>  split_cols <span class="ot">=</span>  <span class="fu">as.character</span>(<span class="fu">arrange</span>(splits<span class="sc">$</span>splitPoints,</span>
+<span id="cb152-3"><a href="visualising-split-times.html#cb152-3" aria-hidden="true" tabindex="-1"></a>                                     distance)<span class="sc">$</span>splitPointId)</span>
+<span id="cb152-4"><a href="visualising-split-times.html#cb152-4" aria-hidden="true" tabindex="-1"></a>  split_cols</span>
+<span id="cb152-5"><a href="visualising-split-times.html#cb152-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb152-6"><a href="visualising-split-times.html#cb152-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb152-7"><a href="visualising-split-times.html#cb152-7" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">=</span> <span class="fu">get_split_cols</span>(splits)</span>
+<span id="cb152-8"><a href="visualising-split-times.html#cb152-8" aria-hidden="true" tabindex="-1"></a>split_cols</span></code></pre></div>
+<pre><code>## [1] &quot;3615&quot; &quot;3601&quot; &quot;3621&quot; &quot;3617&quot; &quot;3593&quot;</code></pre>
+<p>For reference, we can also get the full stage distance from the <code>stages</code> dataframe:</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="visualising-split-times.html#cb154-1" aria-hidden="true" tabindex="-1"></a>stages[stages[<span class="st">&#39;code&#39;</span>]<span class="sc">==</span>stage_code, <span class="st">&#39;distance&#39;</span>]</span></code></pre></div>
+<pre><code>## [1] 24.43</code></pre>
+<p>The second dataframe returned from the splits API call contains the splits times, accessed via the <code>get_driver_splits()</code> function defined previously and imported from the <em>wrc-api.R</em> file. The data is returned in a long format, with each row describing a single split time for a particular driver on the single stage the split times were retrieved for.</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="visualising-split-times.html#cb156-1" aria-hidden="true" tabindex="-1"></a>driver_splits <span class="ot">=</span> <span class="fu">get_driver_splits</span>(splits)</span>
+<span id="cb156-2"><a href="visualising-split-times.html#cb156-2" aria-hidden="true" tabindex="-1"></a>driver_splits <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   splitPointTimeId splitPointId entryId elapsedDuration         splitDateTime
+## 1           123482         3615   21540       PT2M41.4S 2021-02-27T07:10:41.4
+## 2           123483         3601   21540       PT4M32.5S 2021-02-27T07:12:32.5
+##            splitDateTimeLocal elapsedDurationS
+## 1 2021-02-27T09:10:41.4+02:00            161.4
+## 2 2021-02-27T09:12:32.5+02:00            272.5</code></pre>
+<div id="wide-driver-split-times-1" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Wide Driver Split Times</h3>
+<p>We then cast the the driver split points into a wide format using the split point codes, ordered by split distance into the stage, as the widened column names:</p>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="visualising-split-times.html#cb158-1" aria-hidden="true" tabindex="-1"></a>get_splits_wide <span class="ot">=</span> <span class="cf">function</span>(splits){</span>
+<span id="cb158-2"><a href="visualising-split-times.html#cb158-2" aria-hidden="true" tabindex="-1"></a>    driver_splits <span class="ot">=</span> <span class="fu">get_driver_splits</span>(splits)</span>
+<span id="cb158-3"><a href="visualising-split-times.html#cb158-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb158-4"><a href="visualising-split-times.html#cb158-4" aria-hidden="true" tabindex="-1"></a>    split_cols <span class="ot">=</span>  <span class="fu">get_split_cols</span>(splits)</span>
+<span id="cb158-5"><a href="visualising-split-times.html#cb158-5" aria-hidden="true" tabindex="-1"></a>    splits_cols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>, <span class="st">&#39;splitPointId&#39;</span>, <span class="st">&#39;elapsedDurationS&#39;</span>)</span>
+<span id="cb158-6"><a href="visualising-split-times.html#cb158-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb158-7"><a href="visualising-split-times.html#cb158-7" aria-hidden="true" tabindex="-1"></a>    splits_wide <span class="ot">=</span> driver_splits <span class="sc">%&gt;%</span> </span>
+<span id="cb158-8"><a href="visualising-split-times.html#cb158-8" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">group_by</span>(entryId) <span class="sc">%&gt;%</span></span>
+<span id="cb158-9"><a href="visualising-split-times.html#cb158-9" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">select</span>(<span class="fu">all_of</span>(splits_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb158-10"><a href="visualising-split-times.html#cb158-10" aria-hidden="true" tabindex="-1"></a>                      tidyr<span class="sc">::</span><span class="fu">spread</span>(<span class="at">key =</span> splitPointId,</span>
+<span id="cb158-11"><a href="visualising-split-times.html#cb158-11" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">value =</span> elapsedDurationS) <span class="sc">%&gt;%</span></span>
+<span id="cb158-12"><a href="visualising-split-times.html#cb158-12" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>, split_cols))) <span class="sc">%&gt;%</span></span>
+<span id="cb158-13"><a href="visualising-split-times.html#cb158-13" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># If we don&#39;t cast, it&#39;s a</span></span>
+<span id="cb158-14"><a href="visualising-split-times.html#cb158-14" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># non-rankable rowwise df</span></span>
+<span id="cb158-15"><a href="visualising-split-times.html#cb158-15" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.data.frame</span>()</span>
+<span id="cb158-16"><a href="visualising-split-times.html#cb158-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb158-17"><a href="visualising-split-times.html#cb158-17" aria-hidden="true" tabindex="-1"></a>    splits_wide</span>
+<span id="cb158-18"><a href="visualising-split-times.html#cb158-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Rather than retrieve the split times into a long format, with one row per driver split, we can now retrieve the data into a wide form with one row per driver and a column for each split on the stage:</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="visualising-split-times.html#cb159-1" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="ot">=</span> <span class="fu">get_splits_wide</span>(splits)</span>
+<span id="cb159-2"><a href="visualising-split-times.html#cb159-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-3"><a href="visualising-split-times.html#cb159-3" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   entryId  3615  3601  3621  3617  3593
+## 1   21530 161.7 272.3 471.3 690.4 789.2
+## 2   21531 162.3 273.7 472.3 692.1 792.4</code></pre>
+</div>
+</div>
+<div id="rebasing-split-times" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Rebasing Split Times</h2>
+<p>The split times describe the split times recorded for each driver, but in many situations we may be interested in knowing the difference in split times for a specific driver relative to every other driver.</p>
+<p>More formally, for drivers <span class="math inline">\(j\)</span> on stage <span class="math inline">\(S\)</span> and split <span class="math inline">\(s\)</span>, we find the rebased stage times relative to driver <span class="math inline">\(j\)</span> as:</p>
+<p><span class="math display">\[
+{_{S,s}}t_{i}^{j} = {_{S,s}}t_{i} - {_{S,s}}t_{j}
+\]</span>
+although we may want to negate that value depending on the sense of whether we want to focus on times from the selected driver’s perspective, or from the perspective of the field of drivers they are being rebased against.
+.
+To calculate the rebased times, we note that the wide dataframe format gives rows containing the split times for each driver, which is to say <span class="math inline">\({_{S,*}}t_i\)</span>.</p>
+<p>To calculate the rebased times, we can simply subtract the row corresponding to the driver we want to rebase relative to, from the other driver rows:</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="visualising-split-times.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://stackoverflow.com/a/32267785/454773</span></span>
+<span id="cb161-2"><a href="visualising-split-times.html#cb161-2" aria-hidden="true" tabindex="-1"></a>rebase <span class="ot">=</span> <span class="cf">function</span>(df, id, rebase_cols,</span>
+<span id="cb161-3"><a href="visualising-split-times.html#cb161-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">id_col=</span><span class="st">&#39;entryId&#39;</span>, <span class="at">base=</span><span class="cn">FALSE</span>,  <span class="at">base_id=</span><span class="cn">FALSE</span>) {</span>
+<span id="cb161-4"><a href="visualising-split-times.html#cb161-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb161-5"><a href="visualising-split-times.html#cb161-5" aria-hidden="true" tabindex="-1"></a>  df_ <span class="ot">=</span>  df</span>
+<span id="cb161-6"><a href="visualising-split-times.html#cb161-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb161-7"><a href="visualising-split-times.html#cb161-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The rebase values are the ones</span></span>
+<span id="cb161-8"><a href="visualising-split-times.html#cb161-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we want to subtract from each row</span></span>
+<span id="cb161-9"><a href="visualising-split-times.html#cb161-9" aria-hidden="true" tabindex="-1"></a>  rebase_vals <span class="ot">=</span> <span class="fu">c</span>(df[df[[id_col]]<span class="sc">==</span>id, rebase_cols])</span>
+<span id="cb161-10"><a href="visualising-split-times.html#cb161-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb161-11"><a href="visualising-split-times.html#cb161-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Do the rebasing</span></span>
+<span id="cb161-12"><a href="visualising-split-times.html#cb161-12" aria-hidden="true" tabindex="-1"></a>  df_[,rebase_cols] <span class="ot">=</span>  df[,rebase_cols] <span class="sc">-</span> rebase_vals</span>
+<span id="cb161-13"><a href="visualising-split-times.html#cb161-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb161-14"><a href="visualising-split-times.html#cb161-14" aria-hidden="true" tabindex="-1"></a>  df_[[id_col]] <span class="ot">=</span> df[[id_col]]</span>
+<span id="cb161-15"><a href="visualising-split-times.html#cb161-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb161-16"><a href="visualising-split-times.html#cb161-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return just the rebased and identifier columns or the</span></span>
+<span id="cb161-17"><a href="visualising-split-times.html#cb161-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># whole dataframe</span></span>
+<span id="cb161-18"><a href="visualising-split-times.html#cb161-18" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">=</span> rebase_cols</span>
+<span id="cb161-19"><a href="visualising-split-times.html#cb161-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (base_id)</span>
+<span id="cb161-20"><a href="visualising-split-times.html#cb161-20" aria-hidden="true" tabindex="-1"></a>    cols <span class="ot">=</span> <span class="fu">c</span>(id_col, cols)</span>
+<span id="cb161-21"><a href="visualising-split-times.html#cb161-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (base)</span>
+<span id="cb161-22"><a href="visualising-split-times.html#cb161-22" aria-hidden="true" tabindex="-1"></a>    df_ <span class="sc">%&gt;%</span> <span class="fu">select</span>(cols)</span>
+<span id="cb161-23"><a href="visualising-split-times.html#cb161-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb161-24"><a href="visualising-split-times.html#cb161-24" aria-hidden="true" tabindex="-1"></a>    df_</span>
+<span id="cb161-25"><a href="visualising-split-times.html#cb161-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s try it with an example driver:</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="visualising-split-times.html#cb162-1" aria-hidden="true" tabindex="-1"></a>ogierEntryId <span class="ot">=</span> <span class="fu">get_person_id</span>(cars, <span class="st">&#39;ogier&#39;</span>, <span class="at">ret=</span><span class="st">&#39;entryId&#39;</span>)</span>
+<span id="cb162-2"><a href="visualising-split-times.html#cb162-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb162-3"><a href="visualising-split-times.html#cb162-3" aria-hidden="true" tabindex="-1"></a>ogier_rebased <span class="ot">=</span> <span class="fu">rebase</span>(splits_wide, ogierEntryId, split_cols)</span>
+<span id="cb162-4"><a href="visualising-split-times.html#cb162-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb162-5"><a href="visualising-split-times.html#cb162-5" aria-hidden="true" tabindex="-1"></a>ogier_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div>
+<pre><code>##    entryId 3615 3601 3621 3617 3593
+## 1    21530  0.0  0.0  0.0  0.0  0.0
+## 2    21531  0.6  1.4  1.0  1.7  3.2
+## 3    21532 -2.6 -3.7 -5.5 -7.7 -6.5
+## 4    21533 -2.1 -1.7 -3.0 -3.8 -2.3
+## 5    21534 -0.3 -2.0 -1.5 -0.9  0.7
+## 6    21535  4.1  6.0  8.0 10.0 11.2
+## 7    21536 -4.2 -5.0 -7.5 -9.2 -7.6
+## 8    21537  0.1  2.2  3.0  3.8  5.0
+## 9    21538 -3.3 -2.0 -0.1 -2.0 -0.7
+## 10   21539  1.9  2.8  0.0 -2.1 -2.5</code></pre>
+</div>
+<div id="visualising-rebased-split-times-using-sparklines" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Visualising Rebased Split Times Using Sparklines</h2>
+<p>If we cast the data back to a tidy long form data, we can easily generate a graphical summary from the long form data:</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="visualising-split-times.html#cb164-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb164-2"><a href="visualising-split-times.html#cb164-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb164-3"><a href="visualising-split-times.html#cb164-3" aria-hidden="true" tabindex="-1"></a>ogier_rebased_long <span class="ot">&lt;-</span> ogier_rebased <span class="sc">%&gt;%</span></span>
+<span id="cb164-4"><a href="visualising-split-times.html#cb164-4" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">gather</span>(<span class="at">key =</span><span class="st">&quot;Split&quot;</span>,</span>
+<span id="cb164-5"><a href="visualising-split-times.html#cb164-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">value =</span><span class="st">&quot;TimeInS&quot;</span>,</span>
+<span id="cb164-6"><a href="visualising-split-times.html#cb164-6" aria-hidden="true" tabindex="-1"></a>                               split_cols)</span></code></pre></div>
+<pre><code>## Note: Using an external vector in selections is ambiguous.
+## ℹ Use `all_of(split_cols)` instead of `split_cols` to silence this message.
+## ℹ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
+## This message is displayed once per session.</code></pre>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="visualising-split-times.html#cb166-1" aria-hidden="true" tabindex="-1"></a>ogier_rebased_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div>
+<pre><code>##    entryId Split TimeInS
+## 1    21530  3615     0.0
+## 2    21531  3615     0.6
+## 3    21532  3615    -2.6
+## 4    21533  3615    -2.1
+## 5    21534  3615    -0.3
+## 6    21535  3615     4.1
+## 7    21536  3615    -4.2
+## 8    21537  3615     0.1
+## 9    21538  3615    -3.3
+## 10   21539  3615     1.9</code></pre>
+<p>For example, we can use the <code>sparkline::spk_chr()</code> function to generate an HTML sparkline widget that we can embed in a <code>formattable::formattable()</code> generated table:</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="visualising-split-times.html#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(formattable)</span>
+<span id="cb168-2"><a href="visualising-split-times.html#cb168-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sparkline)</span>
+<span id="cb168-3"><a href="visualising-split-times.html#cb168-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-4"><a href="visualising-split-times.html#cb168-4" aria-hidden="true" tabindex="-1"></a>ogier_sparkline <span class="ot">&lt;-</span> ogier_rebased_long <span class="sc">%&gt;%</span></span>
+<span id="cb168-5"><a href="visualising-split-times.html#cb168-5" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">group_by</span>(entryId) <span class="sc">%&gt;%</span></span>
+<span id="cb168-6"><a href="visualising-split-times.html#cb168-6" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">summarize</span>(<span class="at">spk_ =</span> <span class="fu">spk_chr</span>(TimeInS, <span class="at">type =</span><span class="st">&quot;bar&quot;</span>))</span>
+<span id="cb168-7"><a href="visualising-split-times.html#cb168-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-8"><a href="visualising-split-times.html#cb168-8" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to create an htmlwidget form of the table</span></span>
+<span id="cb168-9"><a href="visualising-split-times.html#cb168-9" aria-hidden="true" tabindex="-1"></a>out <span class="ot">=</span> <span class="fu">as.htmlwidget</span>(<span class="fu">formattable</span>(<span class="fu">head</span>(ogier_sparkline, <span class="dv">5</span>)))</span>
+<span id="cb168-10"><a href="visualising-split-times.html#cb168-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-11"><a href="visualising-split-times.html#cb168-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The table also has a requirement on the sparkline package</span></span>
+<span id="cb168-12"><a href="visualising-split-times.html#cb168-12" aria-hidden="true" tabindex="-1"></a>out<span class="sc">$</span>dependencies <span class="ot">=</span> <span class="fu">c</span>(out<span class="sc">$</span>dependencies,</span>
+<span id="cb168-13"><a href="visualising-split-times.html#cb168-13" aria-hidden="true" tabindex="-1"></a>                     htmlwidgets<span class="sc">:::</span><span class="fu">widget_dependencies</span>(<span class="st">&quot;sparkline&quot;</span>,</span>
+<span id="cb168-14"><a href="visualising-split-times.html#cb168-14" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;sparkline&quot;</span>))</span>
+<span id="cb168-15"><a href="visualising-split-times.html#cb168-15" aria-hidden="true" tabindex="-1"></a>out</span></code></pre></div>
+<div id="htmlwidget-a804d26e273279a37518" class="formattable_widget html-widget" style="width:100%;height:480px;" width="100%" height="480"></div>
+<script type="application/json" data-for="htmlwidget-a804d26e273279a37518">{"x":{"html":"<table class=\"table table-condensed\">\n <thead>\n  <tr>\n   <th style=\"text-align:right;\"> entryId <\/th>\n   <th style=\"text-align:right;\"> spk_ <\/th>\n  <\/tr>\n <\/thead>\n<tbody>\n  <tr>\n   <td style=\"text-align:right;\"> 21530 <\/td>\n   <td style=\"text-align:right;\"> <span id=\"htmlwidget-e3e8534876e8ec1cb358\" class=\"sparkline html-widget\"><\/span>\n<script type=\"application/json\" data-for=\"htmlwidget-e3e8534876e8ec1cb358\">{\"x\":{\"values\":[0,0,0,0,0],\"options\":{\"type\":\"bar\",\"height\":20,\"width\":60},\"width\":60,\"height\":20},\"evals\":[],\"jsHooks\":[]}<\/script> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> 21531 <\/td>\n   <td style=\"text-align:right;\"> <span id=\"htmlwidget-8e9a129d7b49a8999a99\" class=\"sparkline html-widget\"><\/span>\n<script type=\"application/json\" data-for=\"htmlwidget-8e9a129d7b49a8999a99\">{\"x\":{\"values\":[0.600000000000023,1.39999999999998,1,1.70000000000005,3.19999999999993],\"options\":{\"type\":\"bar\",\"height\":20,\"width\":60},\"width\":60,\"height\":20},\"evals\":[],\"jsHooks\":[]}<\/script> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> 21532 <\/td>\n   <td style=\"text-align:right;\"> <span id=\"htmlwidget-e623a8f0b1adc57e2612\" class=\"sparkline html-widget\"><\/span>\n<script type=\"application/json\" data-for=\"htmlwidget-e623a8f0b1adc57e2612\">{\"x\":{\"values\":[-2.59999999999999,-3.69999999999999,-5.5,-7.69999999999993,-6.5],\"options\":{\"type\":\"bar\",\"height\":20,\"width\":60},\"width\":60,\"height\":20},\"evals\":[],\"jsHooks\":[]}<\/script> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> 21533 <\/td>\n   <td style=\"text-align:right;\"> <span id=\"htmlwidget-08da752416a1392ad510\" class=\"sparkline html-widget\"><\/span>\n<script type=\"application/json\" data-for=\"htmlwidget-08da752416a1392ad510\">{\"x\":{\"values\":[-2.09999999999999,-1.69999999999999,-3,-3.79999999999995,-2.30000000000007],\"options\":{\"type\":\"bar\",\"height\":20,\"width\":60},\"width\":60,\"height\":20},\"evals\":[],\"jsHooks\":[]}<\/script> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> 21534 <\/td>\n   <td style=\"text-align:right;\"> <span id=\"htmlwidget-bf962c9b6b3b72713ad8\" class=\"sparkline html-widget\"><\/span>\n<script type=\"application/json\" data-for=\"htmlwidget-bf962c9b6b3b72713ad8\">{\"x\":{\"values\":[-0.299999999999983,-2,-1.5,-0.899999999999977,0.699999999999932],\"options\":{\"type\":\"bar\",\"height\":20,\"width\":60},\"width\":60,\"height\":20},\"evals\":[],\"jsHooks\":[]}<\/script> <\/td>\n  <\/tr>\n<\/tbody>\n<\/table>"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="finding-the-rank-position-at-each-split-point" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> Finding the Rank Position at Each Split Point</h2>
+<p>It can often be tricky to work out the rank at each split by eye, so let’s create a simple function to display the rank at each split for us:</p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="visualising-split-times.html#cb169-1" aria-hidden="true" tabindex="-1"></a>get_split_rank <span class="ot">=</span> <span class="cf">function</span>(df, split_cols){</span>
+<span id="cb169-2"><a href="visualising-split-times.html#cb169-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>( split_cols, dense_rank ))</span>
+<span id="cb169-3"><a href="visualising-split-times.html#cb169-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb169-4"><a href="visualising-split-times.html#cb169-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb169-5"><a href="visualising-split-times.html#cb169-5" aria-hidden="true" tabindex="-1"></a><span class="fu">get_split_rank</span>(splits_wide, split_cols) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div>
+<pre><code>##   entryId 3615 3601 3621 3617 3593
+## 1   21530    6    5    6    7    6
+## 2   21531    8    7    8    8    9
+## 3   21532    3    2    2    2    2
+## 4   21533    4    4    3    3    4
+## 5   21534    5    3    4    6    7</code></pre>
+</div>
+<div id="finding-split-section-durations" class="section level2" number="5.6">
+<h2><span class="header-section-number">5.6</span> Finding Split Section Durations</h2>
+<p>Inspection of the split times data show the split times to be a strictly increasing function over the ordered in-stage split locations. That is, the times represent the time in stage up to that split point, rather than the fractional time taken to get from one split timing point to another.</p>
+<p>In many cases, it will be convenient to know how much time a driver took to get from one split point to the next, not least because this allows us to identify sections of the stage where a driver may have particularly gained or lost time, or to identify where a driver may be making or losing time consistently across different parts of the stage.</p>
+<p>In abstract terms, then, what we want to calculate is the time taken for a driver <span class="math inline">\(i\)</span> on stage <span class="math inline">\(S\)</span> to go between two split points, <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span>, where <span class="math inline">\(m=0\)</span> is the start, <span class="math inline">\(m={_S}s_{max}+1\)</span> is the stage end, and <span class="math inline">\({_S}s_max\)</span> is the number of split points on stage <span class="math inline">\(S\)</span>:</p>
+<p><span class="math display">\[
+{_{S,m,n}}t_{i} = {_{S,n}}t_{i} - {_{S,m}}t_{i}: 0{\le}m&lt;n{\le}{_S}s_{max}
+\]</span>
+For a specific, known stage, we might write the simpler:</p>
+<p><span class="math display">\[
+S={stagenum};
+{_{m,n}}t_{i} = {_{n}}t_{i} - {_{m}}t_{i}: 0{\le}m&lt;n{\le}s_{max}
+\]</span></p>
+<p>For a driver, <em>i</em>, we note that the accumulated stage time on stage <span class="math inline">\(S\)</span> as given by the split times is:</p>
+<p><span class="math display">\[
+S={stagenum};t_{i}=\sum_{s=0}^{s{_{max}}}{_{s,s+1}}t_{i}
+\]</span>
+To get the duration between two split points, we can create two temporary dataframes, one representing the orignal split times without the first split <span class="math inline">\({_{{s+1},s_{max}}}t\)</span>, one representing the split times without the last split, <span class="math inline">\({_{s,s_{max}-1}}t\)</span>. Subtracting one dataframe from the other this finds the difference across all cconsective columns:</p>
+<p><span class="math display">\[
+{_{{s+1},s_{max}}}t - {_{s,s_{max}-1}}t
+\]</span></p>
+<p>Let’s see how that works in practice:</p>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="visualising-split-times.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://stackoverflow.com/a/50411529/454773</span></span>
+<span id="cb171-2"><a href="visualising-split-times.html#cb171-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb171-3"><a href="visualising-split-times.html#cb171-3" aria-hidden="true" tabindex="-1"></a>get_split_duration <span class="ot">=</span> <span class="cf">function</span>(df, split_cols, <span class="at">retId=</span><span class="cn">TRUE</span>) {</span>
+<span id="cb171-4"><a href="visualising-split-times.html#cb171-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb171-5"><a href="visualising-split-times.html#cb171-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># [-1] drops the first column, [-ncol()] drops the last</span></span>
+<span id="cb171-6"><a href="visualising-split-times.html#cb171-6" aria-hidden="true" tabindex="-1"></a>  df_ <span class="ot">=</span> df[,split_cols][<span class="sc">-</span><span class="dv">1</span>] <span class="sc">-</span> df[,split_cols][<span class="sc">-</span><span class="fu">ncol</span>(df[,split_cols])]</span>
+<span id="cb171-7"><a href="visualising-split-times.html#cb171-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb171-8"><a href="visualising-split-times.html#cb171-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The split time to the first split is simply the first split time</span></span>
+<span id="cb171-9"><a href="visualising-split-times.html#cb171-9" aria-hidden="true" tabindex="-1"></a>  df_[split_cols[<span class="dv">1</span>]] <span class="ot">=</span> df[split_cols[<span class="dv">1</span>]]</span>
+<span id="cb171-10"><a href="visualising-split-times.html#cb171-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb171-11"><a href="visualising-split-times.html#cb171-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (retId) {</span>
+<span id="cb171-12"><a href="visualising-split-times.html#cb171-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add in the entryId column</span></span>
+<span id="cb171-13"><a href="visualising-split-times.html#cb171-13" aria-hidden="true" tabindex="-1"></a>    df_<span class="sc">$</span>entryId <span class="ot">=</span> df<span class="sc">$</span>entryId</span>
+<span id="cb171-14"><a href="visualising-split-times.html#cb171-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb171-15"><a href="visualising-split-times.html#cb171-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Return the dataframe in a sensible column order</span></span>
+<span id="cb171-16"><a href="visualising-split-times.html#cb171-16" aria-hidden="true" tabindex="-1"></a>    df_ <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>, split_cols))</span>
+<span id="cb171-17"><a href="visualising-split-times.html#cb171-17" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb171-18"><a href="visualising-split-times.html#cb171-18" aria-hidden="true" tabindex="-1"></a>    df_</span>
+<span id="cb171-19"><a href="visualising-split-times.html#cb171-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb171-20"><a href="visualising-split-times.html#cb171-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb171-21"><a href="visualising-split-times.html#cb171-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb171-22"><a href="visualising-split-times.html#cb171-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb171-23"><a href="visualising-split-times.html#cb171-23" aria-hidden="true" tabindex="-1"></a>split_durations_wide <span class="ot">=</span> <span class="fu">get_split_duration</span>(splits_wide, split_cols)</span>
+<span id="cb171-24"><a href="visualising-split-times.html#cb171-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb171-25"><a href="visualising-split-times.html#cb171-25" aria-hidden="true" tabindex="-1"></a>split_durations_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div>
+<pre><code>##   entryId  3615  3601  3621  3617  3593
+## 1   21530 161.7 110.6 199.0 219.1  98.8
+## 2   21531 162.3 111.4 198.6 219.8 100.3
+## 3   21532 159.1 109.5 197.2 216.9 100.0
+## 4   21533 159.6 111.0 197.7 218.3 100.3
+## 5   21534 161.4 108.9 199.5 219.7 100.4</code></pre>
+<div id="finding-split-section-ranks" class="section level3" number="5.6.1">
+<h3><span class="header-section-number">5.6.1</span> Finding Split Section Ranks</h3>
+<p>To find the rank in terms of which driver completed each stage <em>section</em> in the quickest time, we can simply pass the <code>split_durations_wide</code> dataframe rather than the <code>split_durations</code> dataframe to the <code>get_split_rank()</code> function:</p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="visualising-split-times.html#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_split_rank</span>(split_durations_wide, split_cols) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div>
+<pre><code>##   entryId 3615 3601 3621 3617 3593
+## 1   21530    6    4    6    6    3
+## 2   21531    8    7    5    8    7
+## 3   21532    3    2    3    1    4
+## 4   21533    4    5    4    5    7
+## 5   21534    5    1    8    7    8</code></pre>
+</div>
+</div>
+<div id="adding-overall-stage-time-to-the-split-times" class="section level2" number="5.7">
+<h2><span class="header-section-number">5.7</span> Adding Overall Stage Time to the Split Times</h2>
+<p>It is important to note that the split times data <em>does not</em> contain all the timing data for the stage, just the times relating to split points along the stage route. For a complete summary of stage timing data, we also need to add in the overall stage time from the stage results table:</p>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="visualising-split-times.html#cb175-1" aria-hidden="true" tabindex="-1"></a>stage_times <span class="ot">=</span> <span class="fu">get_stage_times</span>(eventId, stageId)</span>
+<span id="cb175-2"><a href="visualising-split-times.html#cb175-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb175-3"><a href="visualising-split-times.html#cb175-3" aria-hidden="true" tabindex="-1"></a>stage_times <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   stageTimeId stageId entryId elapsedDurationMs  elapsedDuration    status
+## 1       96580    1750   21536            834500 00:13:54.5000000 Completed
+## 2       96474    1750   21532            835500 00:13:55.5000000 Completed
+##    source position diffFirstMs diffFirst diffPrevMs diffPrev
+## 1 Default        1           0  00:00:00          0 00:00:00
+## 2 Default        2        1000  00:00:01       1000 00:00:01</code></pre>
+<p><em>Recall that if required we can also retrieve stage time for multiple stages using the <code>get_multi_stage_times(stagelist)</code> function. The <code>get_stage_list(stages)</code> function will return a list of all stage IDs.</em></p>
+<p>If we merge each dirver’s stage times as an extra, final column to the wide split times dataframe, we can calculate the split section durations over the whole stage, including the time taken to get from the final split to the stage end:</p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="visualising-split-times.html#cb177-1" aria-hidden="true" tabindex="-1"></a>widen_splits_stage_times <span class="ot">=</span> <span class="cf">function</span>(splits_wide, stage_times){</span>
+<span id="cb177-2"><a href="visualising-split-times.html#cb177-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb177-3"><a href="visualising-split-times.html#cb177-3" aria-hidden="true" tabindex="-1"></a>  results_cols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;elapsedDurationMs&#39;</span>, <span class="st">&#39;entryId&#39;</span>,  <span class="st">&#39;diffFirstMs&#39;</span>, <span class="st">&#39;position&#39;</span>)</span>
+<span id="cb177-4"><a href="visualising-split-times.html#cb177-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb177-5"><a href="visualising-split-times.html#cb177-5" aria-hidden="true" tabindex="-1"></a>  splits_wide <span class="ot">=</span> splits_wide <span class="sc">%&gt;%</span></span>
+<span id="cb177-6"><a href="visualising-split-times.html#cb177-6" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">merge</span>(stage_times[,results_cols],</span>
+<span id="cb177-7"><a href="visualising-split-times.html#cb177-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by =</span> <span class="st">&#39;entryId&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb177-8"><a href="visualising-split-times.html#cb177-8" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">mutate</span>(<span class="at">elapsedDurationMs =</span> elapsedDurationMs<span class="sc">/</span><span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb177-9"><a href="visualising-split-times.html#cb177-9" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">rename</span>(<span class="at">elapsedDurationS =</span> elapsedDurationMs)</span>
+<span id="cb177-10"><a href="visualising-split-times.html#cb177-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb177-11"><a href="visualising-split-times.html#cb177-11" aria-hidden="true" tabindex="-1"></a>  splits_wide</span>
+<span id="cb177-12"><a href="visualising-split-times.html#cb177-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb177-13"><a href="visualising-split-times.html#cb177-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb177-14"><a href="visualising-split-times.html#cb177-14" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="ot">=</span> <span class="fu">widen_splits_stage_times</span>(splits_wide, stage_times)</span>
+<span id="cb177-15"><a href="visualising-split-times.html#cb177-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb177-16"><a href="visualising-split-times.html#cb177-16" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##   entryId  3615  3601  3621  3617  3593 elapsedDurationS diffFirstMs position
+## 1   21530 161.7 272.3 471.3 690.4 789.2            842.0        7500        6
+## 2   21531 162.3 273.7 472.3 692.1 792.4            845.8       11300        9</code></pre>
+<p>To make further processing easier, we add the overall stage time to the list of split time column names. The “final split” is now the completed stage time:</p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="visualising-split-times.html#cb179-1" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">=</span>  <span class="fu">get_split_cols</span>(splits)</span>
+<span id="cb179-2"><a href="visualising-split-times.html#cb179-2" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">=</span> <span class="fu">c</span>(split_cols, <span class="st">&#39;elapsedDurationS&#39;</span>)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="finding-pace-across-stages.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": {}
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/split-times.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/split-times.Rmd",
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section",
+"scroll_highlight": true
+},
+"toc_depth": 3,
+"toolbar": {
+"position": "fixed"
+},
+"search": true,
+"info": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

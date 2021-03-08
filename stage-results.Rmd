@@ -8,11 +8,17 @@ In this chapter, we'll introduce some basic chart and chartable techniques for d
 
 ## Load Base Data
 
-To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:
+To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in.
+
+To begin with, load in our WRC API helper functions:
 
 ```{r message=F, warning=F}
 source('code/wrc-api.R')
+```
 
+Now let's grab some data:
+
+```{r}
 s = get_active_season()
 eventId = get_eventId_from_name(s, 'arctic')
 
@@ -42,7 +48,7 @@ colnames(stage_times)
 
 ## Previewing Stage Results Data
 
-Just using the stage restuls data, how might we display it?
+Just using the stage results data, how might we display it?
 
 Let's start with a view of the top 10. We can use the `knitr::kable()` function to provide a styled version of the table that slightly improves its appearance:
 
@@ -52,13 +58,21 @@ library(knitr)
 kable( head(stage_times, 10))
 ```
 
+An alternative rich table formatter is the [`formattable`](https://github.com/renkun-ken/formattable) ([example usage](https://www.displayr.com/formattable/)) *R* package which builds on `kable()` and provides even more comprehensive support,, including cell colour highlighting, for rendering tables in a stylised way. In interactive HTML environments, the tables are rendered as an HTML widget, which allows for even more customisation, such as the inclusion of interactive HTML sparklines.
+
+```{r}
+library(formattable)
+
+formattable( head(stage_times, 10) )
+```
+
 The data itself looks quite cryptic, so we need to convert it to something a little bit more human readable. To enrich the display, we might want to add in information relating to a stage, rather than just refer to it by stage ID, or to describe each entry in rather more detail than just by the entry ID.
 
-The styling of the table also means that not all the columns may be displayed, so reducing the number of columns would presumably help address that, in part at least.
+The way the table is actually presented may also mean that not all the columns may be displayed, so reducing the number of columns would presumably help address that, in part at least.
 
 ### Adding Entry Metadata
 
-n the first instance, it would probably make sense to pull in some human readable  data about each entry:
+In the first instance, it would probably make sense to pull in some human readable  data about each entry:
 
 ```{r}
 cars = get_car_data(entries)
@@ -66,7 +80,7 @@ cars = get_car_data(entries)
 cars %>% head(2)
 ```
 
-We can the merge this data into out original table, and filter out some of the less useful columns. We'll also limit ourselve to just the top 10 results:
+We can the merge this data into out original table, and filter out some of the less useful columns. We'll also limit ourselves to just the top 10 results:
 
 ```{r}
 top10_display_cols_base = c('position', 'identifier', 'code',
@@ -87,7 +101,7 @@ top10_stage_times = stage_times %>%
                       head(10) %>%
                       # Merge in the entries data
                       merge(cars, by='entryId')  %>%
-                      # Convert millseconds to seconds
+                      # Convert milliseconds to seconds
                       mutate(TimeInS = elapsedDurationMs/1000,
                              gap = diffFirstMs/1000,
                              diff = diffPrevMs/1000)  %>%
@@ -96,19 +110,19 @@ top10_stage_times = stage_times %>%
                       # The merge may upset the row order
                       # so reset the order again
                       arrange(position) %>%
-                      # Improve column names by remaming them
+                      # Improve column names by renaming them
                       rename(Pos=position,
                              Car = identifier,
                              Code = code,
                              `Time (s)` = TimeInS,
                              Gap = gap, Diff = diff)
 
-kable( top10_stage_times )
+formattable( top10_stage_times )
 ```
 
-## Adding Stage Metadata
+## Adding Stage Metadata to Table Captions
 
-To improve the table further, we may want to add a caption to the tabledescribing the stage to which the results actually refer.
+To improve the table further, we may want to add a caption to the table describing the stage to which the results actually refer.
 
 The caption might include the stage code and the stage name, for example, and perhaps the stage distance. It might also be handy to retrieve the stage number so that if we are displaying several tables, we can check we present the stages in the correct running order:
 
@@ -135,19 +149,322 @@ caption = paste0('Stage ', stage_info_$code,
 caption
 ```
 
-Let's add a caption to our `kable()` table, noting that by default the `boodown` script used to create the rendered version of the original Rmd file automatically adds a table number to the caption:
+We can add a caption to the table via the *caption* parameter:
 
 ```{r}
-kable( top10_stage_times, caption = caption)
+formattable( top10_stage_times, caption = caption)
 ```
 
-## Rebasing the Stage Results
+## Colour Highlighting Stage Results
 
-That sort of table is typical of many a motorsport timing results table. But can we do more with the data, or reveal any new insights from it?
+The `formattable::formattable()` function is capable of highlighting cell values in a variety of customisable ways.
 
-The table is design is actually very powerful. For any driver, we can see how far off the stage winning time they were (the `Gap`) and by summing appropriate  `Diff` values you can quickly determine the time difference between any two drivers.
+For example, we can emphasise differences that exceed a specific amount: 
 
-However, if we are interested in a particular driver, we can "rebase" the table to show the time differences between that driver and the other drivers explictly.
+```{r}
+large_diff = 2
 
+formattable(top10_stage_times,
+            list(Diff = formatter("span",
+                          style = x ~ style(font.weight =
+                                              ifelse(x>=large_diff,
+                                                     "bold", 'normal'))))) 
+```
 
+Alternatively, we can add a coloured bar that depicts the increasing gap time down the leaderboard:
 
+```{r}
+#https://www.displayr.com/formattable/
+unit.scale = function(x) (x - min(x)) / (max(x) - min(x))
+
+formattable(top10_stage_times,
+            list(Gap = color_bar("#FA614B66", fun = unit.scale)))
+
+```
+
+There seems to be an edge effect there for the zero gap value? Let's see if we can tidy that up a bit:
+
+```{r}
+new_color_bar <- function(color = "lightgreen", ...){
+  formatter("span",
+            style = function(x) style(
+              display = "inline-block",
+              direction = "rtl", 
+              `unicode-bidi` = "plaintext",
+              "border-radius" = "4px",
+              "background-color" = color,
+              width = percent(proportion(abs(as.numeric(x)), ...))
+            ))
+}
+
+formattable(top10_stage_times,
+            list(Gap =  new_color_bar("#FA614B66")))
+```
+
+The edge effect is gone, but the default `color_bar()` function doesn't seem to render the values very well where the bars is narrow, at least when the table is rendered to HTML using `bookdown`.
+
+If we provide am alternative color bar function that makes use of a CSS linear gradient to create the bar rather than a setting the width of text cell and colouring its background we can decouple the color bar and the size of the text area:
+
+```{r}
+bg = function(start, end, color, ...) {
+  paste("linear-gradient(90deg,transparent ",percent(start),",",
+        color, percent(start), ",", color, percent(end),
+        ", transparent", percent(end),")")
+} 
+
+color_bar2 =  function (color = "lightgray", fun = "proportion", ...) 
+{
+    fun <- match.fun(fun)
+    formatter("span", style = function(x) style(display = "inline-block",
+                `unicode-bidi` = "plaintext", 
+                "background" = bg(1-fun(as.numeric(x), ...), 1, color), "width"="100%" ))
+}
+
+formattable(top10_stage_times,
+            list(Gap = color_bar2("#FA614B66") ))
+```
+
+### Heatmap Style Column Cell Backgrounds
+
+As well as in cell bar charts, we can also use more of a heatmap style approach and colour the background down a column according to value.
+
+```{r}
+formattable(top10_stage_times,
+            list(Gap = color_bar2("#FA614B66"),
+                 Diff = color_tile("#DeF7E9", "#71CA97")))
+```
+
+## An Aside — Calculating DIFF and GAP times
+
+As has previously been mentioned, the *GAP* to leader and  +/- *DIFF* times to any car placed directly ahead of a particular car, are typical across many forms of motorsport timing screen. In rally terms, these metrics might apply either in  overall rally  terms *or* in stage terms; in circuit racing, the measures might apply relative to overall race position *or* track position.
+
+The *GAP* (time to leader) is calculated as the difference between a time associated with the current leader and a similarly measured time associated with every other driver.
+
+The GAP between driver in first position,, $i=1$, and the driver in the $j$'th position is given in various abuses of the notation as:
+
+$$GAP_{j}=t_{j,GAP}=t_{j,1,DIFF}=t_j-t_1$$
+
+Alternatively, we can calculate the gap as the sum of differences between consecutively placed drivers, $j\neq1$, and the leader. The interval or DIFF between drivers in positions $i$ and $j$, where $i$ is ahead of $j$ (that is, $i<j$) and the driver in first position has $i=1$ is given as:
+
+$$DIFF_{j,i}=t_{j,i,DIFF}=t_{j,i}=t_j-t_i: i<j, t_0=t_1$$
+
+The GAP between a driver in position $j=P$ and the leader $i=1$ is then:
+
+$$GAP_j=t_{j,GAP}=DIFF_{2,1}+DIFF_{3,2}+..+DIFF_{P,P-1}$$
+
+We can write this more succinctly as:
+
+$$GAP_{j}=t_{j,GAP}=0+\sum_{p=1}^{j}DIFF_{p,p-1}=\sum_{p=1}^{j}\left ( t_p-t_{p-1} \right ): j\ge1, t_0=t_1$$
+
+We can implement these calculations directly as follows:
+
+```{r}
+top10_stage_times %>% 
+  mutate(DIFF = c(0, diff(`Time (s)`)),
+         GAP = cumsum(DIFF)) %>%
+  select(c('Car', 'Gap', 'GAP', 'Diff', 'DIFF')) %>%
+  formattable(caption = caption)
+```
+
+## Rebasing Stage Results
+
+Simple as they are, the *GAP* and *DIFF* times are very powerful: for any driver, we can see how far off the stage winning time they were (the `Gap`) and by summing appropriate  `Diff` values you can quickly determine the time difference between any two drivers.
+
+However, if we are interested in a particular driver, we can "rebase" the table to show the time differences between that driver and the other drivers explicitly.
+
+To rebase times, $t_i$ for a set of drivers, $i$, relative to a particular driver, $j$, we set:
+
+$$
+t_{i}^{j} = t_i - t_j
+$$
+For a stage $S$, we might extend the notation to write:
+
+$$
+{_S}t_{i}^{j} = {_S}t_{i} - {_S}t_{j}
+$$
+
+using the simpler form with the $S$ prefix where the stage is known.
+
+In passing, we note that we can calculate the overall rally time (without penalties) for driver $i$, up to and including stage $N$ as: 
+
+$$
+{_N}T_{i}=\sum_{S=1}^{N}{_S}t_{i}
+$$
+
+The overall time at the end of the rally is then given as:
+
+$$
+T_{i}=\sum_{S=1}^{S{_{max}}}{_S}t_{i} + {penalties}_i
+$$
+
+Let's see how the rebasing works.
+
+First, get a driver code:
+
+```{r}
+ogier = get_person_id(cars, 'ogier', ret='identifier')
+ogier
+```
+
+Now we can start to build up a rebase function that takes a data frame, an *entryId* and a set of columns we want to rebase.
+
+To being with, we note that we can rebase a single column simply by finding the value associated with a particular driver in that column and subtracting that value from each row in the column.
+
+For example, we can get Ogier's stage time:
+
+```{r}
+ogier_time = top10_stage_times[top10_stage_times[['Car']]==ogier,
+                               "Time (s)"]
+ogier_time
+```
+
+And we can then subtract that time from every other car's time:
+
+```{r}
+top10_stage_times$`Time (s)` - ogier_time
+```
+
+To rebase more than one column, we can specify a list of columns we want to rebase and then process the response as a list before subtracting from each the corresponding columns in each row of the dataframe:
+
+```{r}
+#https://stackoverflow.com/a/32267785/454773
+rebase_cols = c('Time (s)', 'Gap')
+
+df = top10_stage_times
+
+df[,rebase_cols] - c(df[df$Car==ogier, rebase_cols])
+```
+
+Let's put that into a function, generalised to allow is to specify which column we want to use as a rebasing identifier column, and optioning allow the return of either just the rebased columns (and identifier) or the complete dataframe, including rebased columns:
+
+```{r}
+rebase = function(df, id, rebase_cols,
+                  id_col='entryId', base=FALSE,  base_id=FALSE) {
+  
+  df_ =  df
+  
+  # The rebase values are the ones
+  # we want to subtract from each row
+  rebase_vals = c(df[df[[id_col]]==id, rebase_cols])
+  
+  # Do the rebasing
+  df_[,rebase_cols] =  df[,rebase_cols] - rebase_vals
+    
+  df_[[id_col]] = df[[id_col]]
+  
+  # Return just the rebased and identifier columns or the
+  # whole dataframe
+  cols = rebase_cols
+  if (base_id)
+    cols = c(id_col, cols)
+  if (base)
+    df_ %>% select(cols)
+  else
+    df_
+}
+```
+
+We can now rebase the stage times across one or more columns relative to a specified driver:
+
+```{r}
+rebase_cols = c('Time (s)', 'Gap')
+
+rov = get_person_id(cars, 'rov', ret='identifier')
+
+rov_rebased_gap = rebase(top10_stage_times, rov, rebase_cols,
+                           id_col='Car')
+rov_rebased_gap
+```
+
+The rebased time dataframe makes it easier to see how a specified driver compares with every other driver. But can we make the differences jump out in a more striking fashion?
+
+## Colour Highlighting Rebased Values
+In the rebased tables, we are likely to be presented with a range of positive and negative values within a rebased column.
+
+We can highlight the positive and negative values using colour. For example:
+
+```{r}
+formattable(rov_rebased_gap,
+            list(Gap = formatter("span",
+                          style = x ~ style(color = ifelse(x<0,
+                                              "red", 
+                                              ifelse(x>0, 'green', 'grey')),
+                                            # Example additional style
+                                            font.weight = ifelse(abs(x)>=2,
+                                                            'bold',
+                                                            'normal') ))))
+```
+
+Although the `formattable()` function does not directly support divergent colour indicators, we can create a custom formatter that does provide such a view over the data.
+
+For example, we can create a mapping that will display coloured backgrounds that diverge around the zero value to give distinct hues for positive and negative values.
+
+The easiest way to render such a mapping is to map the rage of value onto the unit range, and map the 0 value in the original range to the 0.5 value in the normalised unit range.
+
+The following function will create a normalised range across a set of positive *and* negative values, mapping the origin (0) to the normalised 0.5 value:
+
+```{r}
+xnormalize = function(x){
+  # Normalise to the full range of values about 0
+  # O will map to 0.5 in the normalised range
+  x = c(x, -max(abs(x)), max(abs(x)))
+  normalize(x)[1:(length(x)-2)]
+}
+```
+
+Let's see how it works:
+
+```{r}
+xnormalize(c(-1, 0, 2))
+```
+
+We can now define a custom mapping to render red and green palettised backgrounds depending on whether the value is negative or positive. To maintain contrast in the displayed text values, we can render white or black text depending on the likely intensity of the background colour:
+
+```{r}
+#https://stackoverflow.com/a/49887341/454773
+color_tile2 <- function (...) {
+  formatter("span", style = function(x) {
+    style(display = "block",
+          'text-align' = 'center',
+          padding = "0 4px", 
+          `border-radius` = "4px",
+          `font.weight` = ifelse(abs(x)> 0.3*max(x), "bold", "normal"),
+          color = ifelse(abs(x)> 0.3*max(x),'white',
+                         ifelse(x==0,'lightgrey','black')),
+          `background-color` = csscolor(matrix(as.integer(colorRamp(...)(xnormalize(as.numeric(x)))), 
+                byrow=TRUE, 
+                dimnames=list(c("red","green","blue"), NULL),
+                nrow=3)))
+  })}
+
+formattable(rov_rebased_gap, align='c',
+            list(Gap = color_tile2(c("red",'white', "forestgreen"))))
+```
+
+*For further possible discussions about divergent palette definitions, see [here](https://stackoverflow.com/questions/37482977/what-is-a-good-palette-for-divergent-colors-in-r-or-can-viridis-and-magma-b).*
+
+```{r}
+# Recall the CSS style from previously
+#bg = function(start, end, color, ...) {
+#  paste("linear-gradient(90deg,transparent ",percent(start),",",
+#        color, percent(start), ",", color, percent(end),
+#        ", transparent", percent(end),")")
+#} 
+
+pm_color_bar2 <- function(color1 = "lightgreen", color2 = "pink", ...){
+  formatter("span",
+            style = function(x) style(
+              display = "inline-block",
+              color = ifelse(x> 0,'green',ifelse(x<0,'red','lightgrey')),
+              "text-align" = ifelse(x > 0, 'left', ifelse(x<0, 'right', 'center')),
+              "width"='100%',
+              "background" = bg(ifelse(x >= 0, 0.5,xnormalize(x)),
+                                ifelse(x >= 0,xnormalize(x),0.5),
+                                ifelse(x >= 0, color1, color2))
+            ))
+}
+
+formattable(rov_rebased_gap, align='c',
+            list(Gap = pm_color_bar2()
+              ))
+```

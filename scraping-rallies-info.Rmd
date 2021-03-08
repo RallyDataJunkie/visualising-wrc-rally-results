@@ -1,0 +1,16 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/split-times-")
+```
+
+# Scraping( *rallies.info* Rally Results
+
+The [*rallies.info()](https://www.rallies.info/) website provides a rally results service for a variety of club organised rally events in the UK.
+
+The results are published via a simple HTML web page as well as via a PDF download.
+
+In this chapter, we will review how we can "screenscrape" the results from a *rallies.info* web page into an *R* dataframe which we might then visualise using many of the same techniques we can use for visualisig WRC rally results data.
+
+## Data Availability
+
+TO DO  - what data is available

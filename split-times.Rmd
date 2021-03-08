@@ -1,0 +1,333 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/split-times-")
+```
+# Visualising Split Times
+
+In this chapter we'll explore some of the ways in which we might visualise the split times on a stage. We can do these either either on a time basis, or we can explore the time differences in terms of *pace* differences by normalising the split times over split distances.
+
+We'll also see how we can make split time comparisons as gaps relative to a specified driver, rather than the stage winner as well as calculating times to complete each split (that is, the difference between consecutive split times for a particular driver).
+
+From the split section times, we can also calculate various derived measures, such as the ultimate possible stage time, based on the sum of fastest times to complete each split section.
+
+Having access to split times also sets up the potential for rating the performance of a driver on each split against various stage and stage route metrics, such as road order or route metrics such as the "wiggliness" of the split section, although these will not be covered here.
+
+## Load Base Data
+
+To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:
+
+```{r message=F, warning=F}
+source('code/wrc-api.R')
+
+s = get_active_season()
+eventId = get_eventId_from_name(s, 'arctic')
+
+itinerary = get_itinerary(eventId)
+sections = get_sections(itinerary)
+stages = get_stages(sections)
+stages_lookup = get_stages_lookup(stages)
+
+# For driver details
+entries = get_rally_entries(eventId)
+cars = get_car_data(entries)
+```
+
+As a working example, let's define an example stage by its code:
+
+```{r}
+stage_code = 'SS3'
+```
+
+Get a sample stage ID:
+
+```{r}
+stageId = stages_lookup[[stage_code]]
+```
+
+## Get Splits Data
+
+We can load the splits data if we know the event and stage ID:
+
+```{r}
+splits = get_splits(eventId, stageId)
+```
+
+The split times represented the accumulated time going the the stage at each split point. However, the split times *do not* include the overall stage time, so we need to be mindful that if we want to report on a stage the split times in and of themselves do not contain any information about the final section of the stage between the final split point and the stage finish line.
+
+The splits data actually comprises two dataframes. The first is the splits locations:
+
+```{r}
+get_split_locations = function(splits){
+  splits_locations = splits$splitPoints
+  splits_locations
+}
+
+splits_locations = get_split_locations(splits)
+
+splits_locations %>% head(2)
+```
+
+To produce a wide data frame of split times by driver, we need to be able to reference the split codes ordered by the distance into the stage of each split point:
+
+```{r}
+get_split_cols = function(splits){
+  split_cols =  as.character(arrange(splits$splitPoints,
+                                     distance)$splitPointId)
+  split_cols
+}
+
+split_cols = get_split_cols(splits)
+split_cols
+```
+
+For reference, we can also get the full stage distance from the `stages` dataframe:
+
+```{r}
+stages[stages['code']==stage_code, 'distance']
+```
+
+The second dataframe returned from the splits API call contains the splits times, accessed via the `get_driver_splits()` function defined previously and imported from the *wrc-api.R* file. The data is returned in a long format, with each row describing a single split time for a particular driver on the single stage the split times were retrieved for.
+
+```{r}
+driver_splits = get_driver_splits(splits)
+driver_splits %>% head(2)
+```
+### Wide Driver Split Times
+
+We then cast the the driver split points into a wide format using the split point codes, ordered by split distance into the stage, as the widened column names:
+
+```{r}
+get_splits_wide = function(splits){
+    driver_splits = get_driver_splits(splits)
+    
+    split_cols =  get_split_cols(splits)
+    splits_cols = c('entryId', 'splitPointId', 'elapsedDurationS')
+    
+    splits_wide = driver_splits %>% 
+                      group_by(entryId) %>%
+                      select(all_of(splits_cols)) %>%
+                      tidyr::spread(key = splitPointId,
+                                    value = elapsedDurationS) %>%
+                      select(all_of(c('entryId', split_cols))) %>%
+                      # If we don't cast, it's a
+                      # non-rankable rowwise df
+                      as.data.frame()
+    
+    splits_wide
+}
+```
+
+Rather than retrieve the split times into a long format, with one row per driver split, we can now retrieve the data into a wide form with one row per driver and a column for each split on the stage:
+
+```{r}
+splits_wide = get_splits_wide(splits)
+
+splits_wide %>% head(2)
+```
+## Rebasing Split Times
+
+The split times describe the split times recorded for each driver, but in many situations we may be interested in knowing the difference in split times for a specific driver relative to every other driver.
+
+More formally, for drivers $j$ on stage $S$ and split $s$, we find the rebased stage times relative to driver $j$ as:
+
+$$
+{_{S,s}}t_{i}^{j} = {_{S,s}}t_{i} - {_{S,s}}t_{j}
+$$
+although we may want to negate that value depending on the sense of whether we want to focus on times from the selected driver's perspective, or from the perspective of the field of drivers they are being rebased against. 
+.
+To calculate the rebased times, we note that the wide dataframe format gives rows containing the split times for each driver, which is to say ${_{S,*}}t_i$.
+
+To calculate the rebased times, we can simply subtract the row corresponding to the driver we want to rebase relative to, from the other driver rows:
+
+```{r}
+#https://stackoverflow.com/a/32267785/454773
+rebase = function(df, id, rebase_cols,
+                  id_col='entryId', base=FALSE,  base_id=FALSE) {
+  
+  df_ =  df
+  
+  # The rebase values are the ones
+  # we want to subtract from each row
+  rebase_vals = c(df[df[[id_col]]==id, rebase_cols])
+  
+  # Do the rebasing
+  df_[,rebase_cols] =  df[,rebase_cols] - rebase_vals
+    
+  df_[[id_col]] = df[[id_col]]
+  
+  # Return just the rebased and identifier columns or the
+  # whole dataframe
+  cols = rebase_cols
+  if (base_id)
+    cols = c(id_col, cols)
+  if (base)
+    df_ %>% select(cols)
+  else
+    df_
+}
+```
+
+Let's try it with an example driver:
+
+```{r}
+ogierEntryId = get_person_id(cars, 'ogier', ret='entryId')
+
+ogier_rebased = rebase(splits_wide, ogierEntryId, split_cols)
+
+ogier_rebased %>% head(10)
+```
+
+## Visualising Rebased Split Times Using Sparklines
+
+If we cast the data back to a tidy long form data, we can easily generate a graphical summary from the long form data:
+
+```{r}
+library(tidyr)
+
+ogier_rebased_long <- ogier_rebased %>%
+                        gather(key ="Split",
+                               value ="TimeInS",
+                               split_cols)
+
+ogier_rebased_long %>% head(10)
+```
+
+For example, we can use the `sparkline::spk_chr()` function to generate an HTML sparkline widget that we can embed in a `formattable::formattable()` generated table:
+ 
+```{r}
+library(formattable)
+library(sparkline)
+
+ogier_sparkline <- ogier_rebased_long %>%
+                      group_by(entryId) %>%
+                      summarize(spk_ = spk_chr(TimeInS, type ="bar"))
+
+# We need to create an htmlwidget form of the table
+out = as.htmlwidget(formattable(head(ogier_sparkline, 5)))
+
+# The table also has a requirement on the sparkline package
+out$dependencies = c(out$dependencies,
+                     htmlwidgets:::widget_dependencies("sparkline",
+                                                       "sparkline"))
+out
+```
+
+## Finding the Rank Position at Each Split Point
+
+It can often be tricky to work out the rank at each split by eye, so let's create a simple function to display the rank at each split for us:
+
+```{r}
+get_split_rank = function(df, split_cols){
+  df %>% mutate(across( split_cols, dense_rank ))
+}
+
+get_split_rank(splits_wide, split_cols) %>% head(5)
+```
+
+## Finding Split Section Durations
+
+Inspection of the split times data show the split times to be a strictly increasing function over the ordered in-stage split locations. That is, the times represent the time in stage up to that split point, rather than the fractional time taken to get from one split timing point to another.
+
+In many cases, it will be convenient to know how much time a driver took to get from one split point to the next, not least because this allows us to identify sections of the stage where a driver may have particularly gained or lost time, or to identify where a driver may be making or losing time consistently across different parts of the stage.
+
+In abstract terms, then, what we want to calculate is the time taken for a driver $i$ on stage $S$ to go between two split points, $m$ and $n$, where $m=0$ is the start, $m={_S}s_{max}+1$ is the stage end, and ${_S}s_max$ is the number of split points on stage $S$:
+
+$$
+{_{S,m,n}}t_{i} = {_{S,n}}t_{i} - {_{S,m}}t_{i}: 0{\le}m<n{\le}{_S}s_{max}
+$$
+For a specific, known stage, we might write the simpler:
+
+$$
+S={stagenum};
+{_{m,n}}t_{i} = {_{n}}t_{i} - {_{m}}t_{i}: 0{\le}m<n{\le}s_{max}
+$$
+
+For a driver, *i*, we note that the accumulated stage time on stage $S$ as given by the split times is:
+
+$$
+S={stagenum};t_{i}=\sum_{s=0}^{s{_{max}}}{_{s,s+1}}t_{i}
+$$
+To get the duration between two split points, we can create two temporary dataframes, one representing the orignal split times without the first split ${_{{s+1},s_{max}}}t$, one representing the split times without the last split, ${_{s,s_{max}-1}}t$. Subtracting one dataframe from the other this finds the difference across all cconsective columns: 
+
+$$
+{_{{s+1},s_{max}}}t - {_{s,s_{max}-1}}t
+$$
+
+Let's see how that works in practice:
+
+```{r}
+#https://stackoverflow.com/a/50411529/454773
+
+get_split_duration = function(df, split_cols, retId=TRUE) {
+  
+  # [-1] drops the first column, [-ncol()] drops the last
+  df_ = df[,split_cols][-1] - df[,split_cols][-ncol(df[,split_cols])]
+  
+  # The split time to the first split is simply the first split time
+  df_[split_cols[1]] = df[split_cols[1]]
+  
+  if (retId) {
+    # Add in the entryId column
+    df_$entryId = df$entryId
+  
+    # Return the dataframe in a sensible column order
+    df_ %>% select(c('entryId', split_cols))
+  } else {
+    df_
+  }
+  
+}
+
+split_durations_wide = get_split_duration(splits_wide, split_cols)
+
+split_durations_wide %>% head(5)
+```
+
+### Finding Split Section Ranks
+
+To find the rank in terms of which driver completed each stage *section* in the quickest time, we can simply pass the `split_durations_wide` dataframe rather than the `split_durations` dataframe to the `get_split_rank()` function:
+
+```{r}
+get_split_rank(split_durations_wide, split_cols) %>% head(5)
+```
+
+## Adding Overall Stage Time to the Split Times
+
+It is important to note that the split times data *does not* contain all the timing data for the stage, just the times relating to split points along the stage route. For a complete summary of stage timing data, we also need to add in the overall stage time from the stage results table:
+
+```{r}
+stage_times = get_stage_times(eventId, stageId)
+
+stage_times %>% head(2)
+```
+
+*Recall that if required we can also retrieve stage time for multiple stages using the `get_multi_stage_times(stagelist)` function. The `get_stage_list(stages)` function will return a list of all stage IDs.*
+
+If we merge each dirver's stage times as an extra, final column to the wide split times dataframe, we can calculate the split section durations over the whole stage, including the time taken to get from the final split to the stage end:
+
+```{r}
+widen_splits_stage_times = function(splits_wide, stage_times){
+  
+  results_cols = c('elapsedDurationMs', 'entryId',  'diffFirstMs', 'position')
+
+  splits_wide = splits_wide %>%
+                    merge(stage_times[,results_cols],
+                          by = 'entryId') %>%
+                    mutate(elapsedDurationMs = elapsedDurationMs/1000) %>%
+                    rename(elapsedDurationS = elapsedDurationMs)
+
+  splits_wide
+}
+
+splits_wide = widen_splits_stage_times(splits_wide, stage_times)
+
+splits_wide %>% head(2)
+```
+
+To make further processing easier, we add the overall stage time to the list of split time column names. The "final split" is now the completed stage time:
+
+```{r}
+split_cols =  get_split_cols(splits)
+split_cols = c(split_cols, 'elapsedDurationS')
+```
+

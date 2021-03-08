@@ -1,0 +1,91 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/multi-stage-results-")
+```
+# Visualising Results for Multiple Stages
+
+As well as visualising the results for a single stage, we might want to visualise the results over multiple stages. The basic overall results can be retrieved from a single call to the WRC results API, but to view the stage times and rankings across multiple stages requires retrieving detailed for each stage and then combining it into a single dataframe.
+
+## Load Base Data
+
+To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in.
+
+To begin with, load in our WRC API helper functions:
+
+```{r message=F, warning=F}
+source('code/wrc-api.R')
+```
+
+Now let's grab some data:
+
+```{r}
+s = get_active_season()
+eventId = get_eventId_from_name(s, 'arctic')
+
+entries = get_rally_entries(eventId)
+
+itinerary = get_itinerary(eventId)
+sections = get_sections(itinerary)
+stages = get_stages(sections)
+stages_lookup = get_stages_lookup(stages)
+```
+
+## Retrieving Stage Results for Multiple Stages
+
+We can retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:
+
+```{r}
+stage_list = get_stage_list(stages)
+
+multi_stage_times = get_multi_stage_times(stage_list)
+  
+multi_stage_times %>% tail(2)
+```
+We can then cast the data to a wide format:
+
+```{r}
+multi_stage_times_wide = get_multi_stage_times_wide(multi_stage_times, stage_list)
+
+multi_stage_times_wide %>% head(2)
+```
+To improve the look of the table, we might use stage codes and driver codes to label the columns and identify the rows.
+
+Get the stage codes:
+
+```{r}
+stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
+stages_lookup_code
+```
+
+```{r}
+# Create a stage code mapping function
+stage_code_map = function(stageId)
+  stages_lookup_code[[as.character(stageId)]]
+
+# Map stage ID column names to stage codes
+stage_codes = unlist(purrr::map(stage_list,
+                                function (x) stage_code_map(x)))
+
+colnames(multi_stage_times_wide) = c('entryId',stage_codes)
+
+multi_stage_times_wide %>% head(2)
+```
+Finally, let's replace the entry ID with the driver code and put the columns into a sensible order:
+
+```{r}
+cars = get_car_data(entries)
+
+multi_stage_times_wide = multi_stage_times_wide %>%
+                            merge(cars[,c('entryId','code')],
+                                  by='entryId')  %>%
+                            # Limit columns and set column order
+                            select(-'entryId') %>%
+                            # Move last column to first
+                            select('code', everything())
+
+multi_stage_times_wide %>% head(2)
+```
+
+
+
+

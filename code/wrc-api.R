@@ -44,10 +44,16 @@ get_stages = function(sections){
   stages
 }
 
+get_stage_list = function(stages){
+  stage_list = stages$stageId
+  stage_list
+}
+
 # https://stackoverflow.com/a/19265431/454773
-get_stages_lookup = function(stages){
-  stages_lookup = stages$stageId
-  names(stages_lookup) = stages$code
+get_stages_lookup = function(stages,
+                             fromCol='code',  toCol='stageId'){
+  stages_lookup = stages[[toCol]]
+  names(stages_lookup) = stages[[fromCol]]
   stages_lookup
 }
 
@@ -86,16 +92,24 @@ get_codrivers = function(entries){
   codrivers
 }
 
-get_person_id = function(drivers, sname, typ='fullName'){
+get_person_id = function(persons, sname,
+                         typ='fullName', ret='personId'){
+  
+  if (!(typ %in% colnames(persons)))
+      typ='driverfullname'
+  
+  if (!(ret %in% colnames(persons)))
+    ret='driverId'
+      
   # code, fullName
   if (typ=='code')
-    driverId = drivers[drivers[typ]==sname, 'personId']
+    personId = persons[persons[typ]==sname, ret]
   else
-    driverId = drivers[str_detect(drivers[[typ]],
+    personId = persons[str_detect(persons[[typ]],
                                   regex(sname,
                                         ignore_case = T)),
-                       'personId']
-  driverId
+                       ret]
+  personId
 }
 
 get_car_data = function(entries){
@@ -163,8 +177,8 @@ get_overall_result2 = function(stageId, eventId) {
   get_overall_result(eventId, stageId)
 }
 
-get_multi_overall = function(stagelist){
-  multi_overall = stagelist %>%
+get_multi_overall = function(stage_list){
+  multi_overall = stage_list %>%
     map(get_overall_result2, eventId=eventId) %>% 
     bind_rows()
   multi_overall
@@ -181,14 +195,14 @@ get_stage_times2 = function(stageId, eventId) {
   get_stage_times(eventId, stageId)
 }
 
-get_multi_stage_times = function(stagelist){
-  multi_stage_times = stagelist %>%
+get_multi_stage_times = function(stage_list){
+  multi_stage_times = stage_list %>%
     map(get_stage_times2, eventId=eventId) %>% 
     bind_rows()
   multi_stage_times
 }
 
-get_multi_stage_times_wide = function(multi_stage_times){
+get_multi_stage_times_wide = function(multi_stage_times, stage_list){
   stage_times_cols = c('entryId', 'stageId', 'elapsedDurationMs')
   
   multi_stage_times_wide = multi_stage_times %>% 
@@ -198,11 +212,11 @@ get_multi_stage_times_wide = function(multi_stage_times){
     group_by(entryId) %>%
     tidyr::spread(key = stageId,
                   value = elapsedDurationS) %>%
-    select(c('entryId', as.character(stagelist)))
+    select(c('entryId', as.character(stage_list)))
   multi_stage_times_wide
 }
 
-get_multi_stage_positions_wide = function(multi_stage_times){
+get_multi_stage_positions_wide = function(multi_stage_times, stage_list){
   stage_positions_cols = c('entryId', 'stageId', 'position')
   
   multi_stage_positions_wide = multi_stage_times %>% 
@@ -210,8 +224,34 @@ get_multi_stage_positions_wide = function(multi_stage_times){
     group_by(entryId) %>%
     tidyr::spread(key = stageId,
                   value = position) %>%
-    select(c('entryId', as.character(stagelist)))
+    select(c('entryId', as.character(stage_list)))
 }
+
+get_multi_stage_generic_wide = function(multi_stage_generic, stage_list,
+                                        wide_val, group_key='entryId',
+                                        spread_key='stageId'){
+  
+  stage_times_cols = c(group_key, spread_key, wide_val )
+  
+  if (wide_val=='elapsedDurationMs') {
+    multi_stage_times_wide = multi_stage_times %>% 
+      select(all_of(stage_times_cols)) %>%
+      mutate(elapsedDurationS = elapsedDurationMs / 1000) %>%
+      select(-elapsedDurationMs)
+    wide_val = 'elapsedDurationS'
+  }
+  
+  multi_stage_generic_wide = multi_stage_generic %>% 
+    select(all_of(stage_times_cols)) %>%
+    # group_by_at lets us pass in the grouping column by variable
+    group_by_at(group_key) %>%
+    tidyr::spread(key = spread_key,
+                  value = wide_val) %>%
+    select( c(group_key, as.character(stage_list)))
+  
+  multi_stage_generic_wide
+}
+
 
 get_splits = function(eventId, stageId){
   splits_url=paste0(results_api, '/rally-event/', eventId,
@@ -247,4 +287,30 @@ get_driver_splits_wide = function(driver_splits, splits){
     # non-rankable rowwise df
     as.data.frame()
   driver_splits_wide
+}
+
+
+rebase = function(df, id, rebase_cols,
+                  id_col='entryId', base=FALSE,  base_id=FALSE) {
+  
+  df_ =  df
+  
+  # The rebase values are the ones
+  # we want to subtract from each row
+  rebase_vals = c(df[df[[id_col]]==id, rebase_cols])
+  
+  # Do the rebasing
+  df_[,rebase_cols] =  df[,rebase_cols] - rebase_vals
+  
+  df_[[id_col]] = df[[id_col]]
+  
+  # Return just the rebased and identifier columns or the
+  # whole dataframe
+  cols = rebase_cols
+  if (base_id)
+    cols = c(id_col, cols)
+  if (base)
+    df_ %>% select(cols)
+  else
+    df_
 }
