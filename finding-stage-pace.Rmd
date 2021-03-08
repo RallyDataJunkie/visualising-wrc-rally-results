@@ -4,7 +4,11 @@ knitr::opts_chunk$set(fig.path = "images/finding-stage-pace-")
 ```
 # Finding Pace Across Stages
 
-As well as visualising stage results purely in terms of time and position differences, we can also use stage time data and stage distances as a basis for some simple stage pace calculations.
+Average speed on a rally is all very well, but it's not the most useful of metrics for making sense of what's actually going on in a rally. Far more useful is the notion of *pace* the reciprocal of a speed like measure, that tells you how many seconds it's taking each driver to cover one kilometer.
+
+Knowing the pace allows you to make more direct comparisons between drivers, as well as simplifying rule of thumb calculations, like what sort of pace advantage a driver needs to make up the 2s to the leader over the remaining 100 kilometers available in the final four stages...
+
+In this chapter, we look at some simple pace calculations, rebase pace values relative to a specified driver, and explore a couple of ways of visualising differential pace over the course of a rally in the form of *pace maps* and *off-the-pace* charts.
 
 ## Load Base Data
 
