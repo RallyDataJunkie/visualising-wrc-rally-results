@@ -30,7 +30,162 @@ stages = get_stages(sections)
 stages_lookup = get_stages_lookup(stages)
 ```
 
+
 ## Retrieving Stage Results for Multiple Stages
+
+To being with, lets get the overall results at the end of each stage:
+
+```{r}
+multi_overall_results = get_multi_overall(stage_list)
+
+multi_overall_results  %>% tail(2)
+```
+
+We can reduce the amount of data by casting the long raw result to a wide format:
+
+```{r}
+multi_overall_wide_pos = get_multi_stage_generic_wide(multi_overall_results, stage_list, 'position')
+
+multi_overall_wide_pos %>% head(2)
+```
+
+To get the stage times, first create a column corresponding to time in seconds, then widen using those values:
+
+```{r}
+multi_overall_results = multi_overall_results %>%
+                            mutate(totalTimeS = totalTimeMs/1000)
+
+multi_overall_wide_time = get_multi_stage_generic_wide(multi_overall_results, stage_list, 'totalTimeS')
+
+multi_overall_wide_time %>% head(2)
+```
+
+Another useful time is the time to first. As the overall rally leader may change at the end of each stage, it is convenient to grab the data directly from the original dataframe:
+
+```{r}
+multi_overall_results = multi_overall_results %>%
+                            mutate(diffFirstS = diffFirstMs/1000)
+
+multi_overall_wide_gap = get_multi_stage_generic_wide(multi_overall_results, stage_list, 'diffFirstS')
+
+multi_overall_wide_gap %>% head(2)
+```
+
+However, we could also calculate the gap to leader from the overall times, first by identifying the minimum accumulated time at each stage (that is, the minimum time, excluding null values, in each overall time column) and then by subtracting those values from each row in the overall times dataframe.
+
+If we try to subtract a list of values from an *R* dataframe, we need to tell *R* how we want that subtraction performed. Internally, the dataframe is represented as a long list of values made up from values in the first column, then the second, and so on. If we subtract a list of *N* values from the dataframe, the values are selected from the first *N* items in this long serialised version of the dataframe, then the next *N* values and so on.
+
+So to subtract a "dummy" row of values from the dataframe, we need another approach. The `purrr::map2df()` function allows us to apply a function, in this case the subtraction `-` function, with a set of specified values we want to subtract, from each row in the dataframe.
+
+So let's create a set of values representing the minimum overall time in each stage. The `matrixStats::colMins()` function will find the minimum values by row from a matrix, so cast the stage time columns from the wide dataframe to an appropriately sized matrix and then find the minimum in each column, ignoring null values:
+
+```{r}
+overall_m = as.matrix(multi_overall_wide_time[,as.character(stage_list)],
+                      ncols=length(stage_list))
+
+mins_overall = matrixStats::colMins(overall_m, na.rm=TRUE)
+
+mins_overall
+```
+
+We can now subtract this "dummy row" of values from each row in the dataframe to find the gap to leader for each row on each stage:
+
+```{r}
+purrr::map2_df(multi_overall_wide_time[,as.character(stage_list)], 
+              mins_overall, `-`) %>% head(2)
+```
+
+Comparison with the "diffToFirst" times should show them to be the same.
+
+## Mapping Stage and Driver Identifiers to Meaningful Labels
+
+To improve the look of the table, we might use stage codes and driver codes to label the columns and identify the rows.
+
+To start with, we can map the column names that correspond to stage codes via a lookup list of stage ID to stage code values:
+
+```{r}
+map_stage_codes = function(df, stage_list) {
+  # Get stage codes lookup id->code
+  stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
+  
+  #https://stackoverflow.com/a/34299333/454773
+  plyr::rename(df, replace = stages_lookup_code,
+               warn_missing = FALSE)
+}
+
+multi_overall_wide_time = map_stage_codes(multi_overall_wide_time,
+                                          stage_list)
+
+multi_overall_wide_time %>% head(2)
+```
+
+We can also create a function to replace the entry ID with the driver code.
+Note also the select statement at the end that puts the columns into a sensible order:
+
+```{r}
+cars = get_car_data(entries)
+
+map_driver_names = function(df, cars){
+  df %>%
+    merge(cars[,c('entryId','code')],
+          by='entryId')  %>%
+    # Limit columns and set column order
+    select(-'entryId') %>%
+    # Move last column to first
+    select('code', everything())
+}
+
+multi_overall_wide_time = map_driver_names(multi_overall_wide_time, cars)
+
+multi_overall_wide_time %>% head(2)
+```
+
+## Rebasing Overall Times
+
+We can rebase the overall times with respect to a particular driver in the normal way:
+
+```{r}
+example_driver = multi_overall_wide_time[2,]$code
+
+overall_wide_time_rebased = rebase(multi_overall_wide_time,
+                                   example_driver, stage_codes,
+                                   id_col='code')
+
+overall_wide_time_rebased %>% head(3)
+```
+
+### Find Changes in Rebased Gaps Across Stages
+
+The rebasing operation essentially allows us to select a row of times for one particular driver and then subtract that row from every other row to give us a direct comparison of the gap between a specified driver and every other driver.
+
+But we can also perform a consecutive column-wise differencing operation on the rebased times that allows to see how much time was gained or relative to a particular driver in going from one stage to the next (observant readers may note that this results in the rebased stage time for each stage...).
+
+TO subtract one column from the next, create two offset dataframes, one containing all but the first stage (first stage column) and one containing all but the last stage (final stage column). If we subtract one dataframe from the other, it gives us our column differences. Inserting the original first column back in its rightful place gives us the columnwise differences table:
+
+```{r}
+#https://stackoverflow.com/a/50411529/454773
+df = overall_wide_time_rebased
+
+# [-1] drops the first column, [-ncol()] drops the last
+ df_ = df[,stage_codes][-1] - df[,stage_codes][-ncol(df[,stage_codes])]
+  
+# The split time to the first split is simply the first split time
+df_[stage_codes[1]] = df[stage_codes[1]]
+# Return the dataframe in a sensible column order
+df_ %>% select(stage_codes) %>% head(3)
+```
+
+*(A similar technique could be used to recreate stage times from the overall times.)*
+
+## Visualising Multiple Stage Results
+
+The overall stage results provides information regarding the overall times and positions at the end of each stage and the rebased overall times provide us with gap information from a specified driver to every other driver.
+
+So how might we use exploratory data visualisation techniques to support a conversation with that data or highlight potential stories hidden within it?
+
+TO DO...
+
+## Retrieving Stage Times for Multiple Stages
 
 We can retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:
 
@@ -41,6 +196,7 @@ multi_stage_times = get_multi_stage_times(stage_list)
   
 multi_stage_times %>% tail(2)
 ```
+
 We can then cast the data to a wide format:
 
 ```{r}
@@ -48,43 +204,16 @@ multi_stage_times_wide = get_multi_stage_times_wide(multi_stage_times, stage_lis
 
 multi_stage_times_wide %>% head(2)
 ```
-To improve the look of the table, we might use stage codes and driver codes to label the columns and identify the rows.
 
-Get the stage codes:
-
-```{r}
-stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
-stages_lookup_code
-```
+And process:
 
 ```{r}
-# Create a stage code mapping function
-stage_code_map = function(stageId)
-  stages_lookup_code[[as.character(stageId)]]
-
-# Map stage ID column names to stage codes
-stage_codes = unlist(purrr::map(stage_list,
-                                function (x) stage_code_map(x)))
-
-colnames(multi_stage_times_wide) = c('entryId',stage_codes)
-
-multi_stage_times_wide %>% head(2)
+multi_stage_times_wide= map_stage_codes(multi_stage_times_wide,
+                                          stage_list)
 ```
-Finally, let's replace the entry ID with the driver code and put the columns into a sensible order:
 
-```{r}
-cars = get_car_data(entries)
 
-multi_stage_times_wide = multi_stage_times_wide %>%
-                            merge(cars[,c('entryId','code')],
-                                  by='entryId')  %>%
-                            # Limit columns and set column order
-                            select(-'entryId') %>%
-                            # Move last column to first
-                            select('code', everything())
 
-multi_stage_times_wide %>% head(2)
-```
 
 
 

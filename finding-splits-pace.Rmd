@@ -38,3 +38,6 @@ Get a sample stage ID:
 stageId = stages_lookup[['SS3']]
 ```
 
+## Calculating Splits Pace
+
+TO DO...

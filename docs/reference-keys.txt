@@ -34,6 +34,11 @@ colour-highlighting-rebased-values
 visualising-results-for-multiple-stages
 load-base-data-1
 retrieving-stage-results-for-multiple-stages
+mapping-stage-and-driver-identifiers-to-meaningful-labels
+rebasing-overall-times
+find-changes-in-rebased-gaps-across-stages
+visualising-multiple-stage-results
+retrieving-stage-times-for-multiple-stages
 finding-pace-across-stages
 load-base-data-2
 defining-pace
@@ -55,3 +60,4 @@ finding-split-section-ranks
 adding-overall-stage-time-to-the-split-times
 finding-pace-across-splits
 load-base-data-4
+calculating-splits-pace

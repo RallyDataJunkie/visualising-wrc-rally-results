@@ -203,6 +203,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="4.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#load-base-data-1"><i class="fa fa-check"></i><b>4.1</b> Load Base Data</a></li>
 <li class="chapter" data-level="4.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-results-for-multiple-stages"><i class="fa fa-check"></i><b>4.2</b> Retrieving Stage Results for Multiple Stages</a></li>
+<li class="chapter" data-level="4.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#mapping-stage-and-driver-identifiers-to-meaningful-labels"><i class="fa fa-check"></i><b>4.3</b> Mapping Stage and Driver Identifiers to Meaningful Labels</a></li>
+<li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#rebasing-overall-times"><i class="fa fa-check"></i><b>4.4</b> Rebasing Overall Times</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#find-changes-in-rebased-gaps-across-stages"><i class="fa fa-check"></i><b>4.4.1</b> Find Changes in Rebased Gaps Across Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-multiple-stage-results"><i class="fa fa-check"></i><b>4.5</b> Visualising Multiple Stage Results</a></li>
+<li class="chapter" data-level="4.6" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>4.6</b> Retrieving Stage Times for Multiple Stages</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>5</b> Finding Pace Across Stages</a>
 <ul>
@@ -236,6 +243,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7" data-path="finding-pace-across-splits.html"><a href="finding-pace-across-splits.html"><i class="fa fa-check"></i><b>7</b> Finding Pace Across Splits</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="finding-pace-across-splits.html"><a href="finding-pace-across-splits.html#load-base-data-4"><i class="fa fa-check"></i><b>7.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="7.2" data-path="finding-pace-across-splits.html"><a href="finding-pace-across-splits.html#calculating-splits-pace"><i class="fa fa-check"></i><b>7.2</b> Calculating Splits Pace</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://rallydatajunkie.com/"><em>RallyDataJunkie.com</em></a></li>
@@ -2865,7 +2873,7 @@ T_{i}=\sum_{S=1}^{S{_{max}}}{_S}t_{i} + {penalties}_i
 <span id="cb102-2"><a href="visualising-results-for-a-single-stage.html#cb102-2" aria-hidden="true" tabindex="-1"></a>ogier</span></code></pre></div>
 <pre><code>## [1] &quot;1&quot;</code></pre>
 <p>Now we can start to build up a rebase function that takes a data frame, an <em>entryId</em> and a set of columns we want to rebase.</p>
-<p>To being with, we note that we can rebase a single column simply by finding the value associated with a particular driver in that column and subtracting that value from each row in the column.</p>
+<p>To begin with, we note that we can rebase a single column simply by finding the value associated with a particular driver in that column and subtracting that value from each row in the column.</p>
 <p>For example, we can get Ogier’s stage time:</p>
 <div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="visualising-results-for-a-single-stage.html#cb104-1" aria-hidden="true" tabindex="-1"></a>ogier_time <span class="ot">=</span> top10_stage_times[top10_stage_times[[<span class="st">&#39;Car&#39;</span>]]<span class="sc">==</span>ogier,</span>
 <span id="cb104-2"><a href="visualising-results-for-a-single-stage.html#cb104-2" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&quot;Time (s)&quot;</span>]</span>
@@ -2874,13 +2882,16 @@ T_{i}=\sum_{S=1}^{S{_{max}}}{_S}t_{i} + {penalties}_i
 <p>And we can then subtract that time from every other car’s time:</p>
 <div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="visualising-results-for-a-single-stage.html#cb106-1" aria-hidden="true" tabindex="-1"></a>top10_stage_times<span class="sc">$</span><span class="st">`</span><span class="at">Time (s)</span><span class="st">`</span> <span class="sc">-</span> ogier_time</span></code></pre></div>
 <pre><code>##  [1] -7.5 -6.5 -2.9 -1.8 -0.1  0.0  1.2  2.3  3.8  4.9</code></pre>
-<p>To rebase more than one column, we can specify a list of columns we want to rebase and then process the response as a list before subtracting from each the corresponding columns in each row of the dataframe:</p>
+<p>To rebase more than one column, we can specify a list of columns we want to rebase and then process the response as a named list before subtracting the items in that named list from each of the correspondingly named columns in each row of the dataframe:</p>
 <div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="visualising-results-for-a-single-stage.html#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://stackoverflow.com/a/32267785/454773</span></span>
 <span id="cb108-2"><a href="visualising-results-for-a-single-stage.html#cb108-2" aria-hidden="true" tabindex="-1"></a>rebase_cols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;Time (s)&#39;</span>, <span class="st">&#39;Gap&#39;</span>)</span>
 <span id="cb108-3"><a href="visualising-results-for-a-single-stage.html#cb108-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb108-4"><a href="visualising-results-for-a-single-stage.html#cb108-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> top10_stage_times</span>
 <span id="cb108-5"><a href="visualising-results-for-a-single-stage.html#cb108-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb108-6"><a href="visualising-results-for-a-single-stage.html#cb108-6" aria-hidden="true" tabindex="-1"></a>df[,rebase_cols] <span class="sc">-</span> <span class="fu">c</span>(df[df<span class="sc">$</span>Car<span class="sc">==</span>ogier, rebase_cols])</span></code></pre></div>
+<span id="cb108-6"><a href="visualising-results-for-a-single-stage.html#cb108-6" aria-hidden="true" tabindex="-1"></a><span class="co"># From each row, select specific columns</span></span>
+<span id="cb108-7"><a href="visualising-results-for-a-single-stage.html#cb108-7" aria-hidden="true" tabindex="-1"></a><span class="co"># From those values subtract correspondingly named items</span></span>
+<span id="cb108-8"><a href="visualising-results-for-a-single-stage.html#cb108-8" aria-hidden="true" tabindex="-1"></a><span class="co"># representing the times in those columns for our specified driver</span></span>
+<span id="cb108-9"><a href="visualising-results-for-a-single-stage.html#cb108-9" aria-hidden="true" tabindex="-1"></a>df[,rebase_cols] <span class="sc">-</span> <span class="fu">c</span>(df[df<span class="sc">$</span>Car<span class="sc">==</span>ogier, rebase_cols])</span></code></pre></div>
 <pre><code>##    Time (s)  Gap
 ## 1      -7.5 -7.5
 ## 2      -6.5 -6.5

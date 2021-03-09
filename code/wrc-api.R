@@ -212,7 +212,11 @@ get_multi_stage_times_wide = function(multi_stage_times, stage_list){
     group_by(entryId) %>%
     tidyr::spread(key = stageId,
                   value = elapsedDurationS) %>%
-    select(c('entryId', as.character(stage_list)))
+    select(c('entryId', as.character(stage_list))) %>%
+    # If we don't cast, it's a
+    # non-rankable rowwise df
+    as.data.frame()
+  
   multi_stage_times_wide
 }
 
@@ -224,7 +228,10 @@ get_multi_stage_positions_wide = function(multi_stage_times, stage_list){
     group_by(entryId) %>%
     tidyr::spread(key = stageId,
                   value = position) %>%
-    select(c('entryId', as.character(stage_list)))
+    select(c('entryId', as.character(stage_list))) %>%
+    # If we don't cast, it's a
+    # non-rankable rowwise df
+    as.data.frame()
 }
 
 get_multi_stage_generic_wide = function(multi_stage_generic, stage_list,
@@ -247,7 +254,10 @@ get_multi_stage_generic_wide = function(multi_stage_generic, stage_list,
     group_by_at(group_key) %>%
     tidyr::spread(key = spread_key,
                   value = wide_val) %>%
-    select( c(group_key, as.character(stage_list)))
+    select( c(group_key, as.character(stage_list))) %>%
+    # If we don't cast, it's a
+    # non-rankable rowwise df
+    as.data.frame()
   
   multi_stage_generic_wide
 }

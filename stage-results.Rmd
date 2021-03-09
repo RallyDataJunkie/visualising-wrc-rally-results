@@ -308,7 +308,7 @@ ogier
 
 Now we can start to build up a rebase function that takes a data frame, an *entryId* and a set of columns we want to rebase.
 
-To being with, we note that we can rebase a single column simply by finding the value associated with a particular driver in that column and subtracting that value from each row in the column.
+To begin with, we note that we can rebase a single column simply by finding the value associated with a particular driver in that column and subtracting that value from each row in the column.
 
 For example, we can get Ogier's stage time:
 
@@ -324,7 +324,7 @@ And we can then subtract that time from every other car's time:
 top10_stage_times$`Time (s)` - ogier_time
 ```
 
-To rebase more than one column, we can specify a list of columns we want to rebase and then process the response as a list before subtracting from each the corresponding columns in each row of the dataframe:
+To rebase more than one column, we can specify a list of columns we want to rebase and then process the response as a named list before subtracting the items in that named list from each of the correspondingly named columns in each row of the dataframe:
 
 ```{r}
 #https://stackoverflow.com/a/32267785/454773
@@ -332,6 +332,9 @@ rebase_cols = c('Time (s)', 'Gap')
 
 df = top10_stage_times
 
+# From each row, select specific columns
+# From those values subtract correspondingly named items
+# representing the times in those columns for our specified driver
 df[,rebase_cols] - c(df[df$Car==ogier, rebase_cols])
 ```
 
