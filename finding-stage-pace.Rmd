@@ -235,7 +235,8 @@ g0 = ggplot(pace_long, aes(group=code_driver)) +
 g = g0 + geom_text(aes(x=(start_dist+cum_dist)/2,y=pace+0.03,
                     label=code_driver,group=code_driver),
                 position = position_dodge(15), size=1) +
-      ylim(-0.5,2) + theme_classic()
+                coord_cartesian(ylim=c(-0.5,2)) +
+                theme_classic()
 
 g
 ```
@@ -248,7 +249,8 @@ g0 + geom_text(aes(x=(start_dist+cum_dist)/2,
                     label=code_driver,group=code_driver,
                    color=pace>0),
                 position = position_dodge(15), size=1) +
-      ylim(-0.5,2) + theme_classic() + theme(legend.position="none")
+                coord_cartesian(ylim=c(-0.5,2)) +
+                theme_classic() + theme(legend.position="none")
 ```
 
 
@@ -285,7 +287,47 @@ g + geom_rect(data=pace_long[pace_long$code_driver=='EVA',],
     theme(legend.position="none")
 ```
 
-To highlight stages, we could add a "banner" to the chart:
+Could we perhaps also extend that a little to allow us to compare more drivers?
+
+```{r}
+pace_map_highlight = function(sub_df, m, n){
+    # If we don't grab the actual value
+    # the referenced value is used...
+    m_ = m
+    geom_rect(data=sub_df,
+              aes(xmin= start_dist + (m_-1) * (cum_dist - start_dist)/n,
+                  xmax= start_dist + m_ * (cum_dist - start_dist)/n,
+                  ymin = ifelse(pace>0,0,pace),
+                  ymax = ifelse(pace>0,pace,0),
+                  fill = pace>0, alpha=0.7))
+}
+
+pace_map_highlight_many = function(df, g, codes){
+  n = length(codes)
+  for (m in 1:n){
+    sub_df = df[df$code_driver==codes[m],]
+    g = g + pace_map_highlight(sub_df, m, n)
+  }
+  
+  g
+}
+```
+
+Let's try it with two drivers:
+
+```{r pace_map_dual, warning=FALSE}
+pace_map_highlight_many(pace_long, g, c('EVA', 'ROV' )) +
+  theme(legend.position="none")
+```
+
+With multiple drivers, it may get difficult to see where the stages are delimited, so we might add separators to delimit them:
+
+```{r pace_map_stage_delimited, warning=FALSE}
+g + geom_vline(data = stages, aes(xintercept = cum_dist),
+               color='lightgrey', linetype='dotted')
+```
+
+To highlight stages further, we could add a "banner" to the chart:
 
 ```{r banner_highlighted_stage_pace, warning=FALSE}
 g + geom_rect(data=pace_long[pace_long$code_driver==example_driver,],
@@ -367,6 +409,7 @@ g_otp = ggplot(off_the_pace_long, aes(x=cum_dist, y=totalDurationGapS,
                                       color=code_driver)) +
             geom_line() +
             # Retain the points outside the limits
+            # by using coord_cartesian()
             # We can also flip the coordinate axis
             coord_cartesian(ylim=c(100, -100)) + theme_classic()
 
@@ -383,6 +426,7 @@ g_otp + geom_text(data = off_the_pace_end,
                       label = code_driver, color = code_driver)) +
         theme(legend.position="none")
 ```
+
 However, there are various other packages that provide alternative ways of doing this, including `directlabels` and `ggrepel`.
 
 For example, using `directlabels`:

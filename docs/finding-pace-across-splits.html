@@ -264,20 +264,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="load-base-data-4" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Load Base Data</h2>
 <p>As ever, load in the helper functions:</p>
-<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="finding-pace-across-splits.html#cb207-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="finding-pace-across-splits.html#cb210-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
 <p>And get the base data:</p>
-<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="finding-pace-across-splits.html#cb208-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
-<span id="cb208-2"><a href="finding-pace-across-splits.html#cb208-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
-<span id="cb208-3"><a href="finding-pace-across-splits.html#cb208-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb208-4"><a href="finding-pace-across-splits.html#cb208-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
-<span id="cb208-5"><a href="finding-pace-across-splits.html#cb208-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
-<span id="cb208-6"><a href="finding-pace-across-splits.html#cb208-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
-<span id="cb208-7"><a href="finding-pace-across-splits.html#cb208-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
-<span id="cb208-8"><a href="finding-pace-across-splits.html#cb208-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb208-9"><a href="finding-pace-across-splits.html#cb208-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
-<span id="cb208-10"><a href="finding-pace-across-splits.html#cb208-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="finding-pace-across-splits.html#cb211-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb211-2"><a href="finding-pace-across-splits.html#cb211-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb211-3"><a href="finding-pace-across-splits.html#cb211-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb211-4"><a href="finding-pace-across-splits.html#cb211-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb211-5"><a href="finding-pace-across-splits.html#cb211-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb211-6"><a href="finding-pace-across-splits.html#cb211-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb211-7"><a href="finding-pace-across-splits.html#cb211-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb211-8"><a href="finding-pace-across-splits.html#cb211-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb211-9"><a href="finding-pace-across-splits.html#cb211-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
+<span id="cb211-10"><a href="finding-pace-across-splits.html#cb211-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
 <p>Get a sample stage ID:</p>
-<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="finding-pace-across-splits.html#cb209-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="finding-pace-across-splits.html#cb212-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
 
 </div>
 </div>

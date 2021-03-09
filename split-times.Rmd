@@ -230,11 +230,12 @@ Inspection of the split times data show the split times to be a strictly increas
 
 In many cases, it will be convenient to know how much time a driver took to get from one split point to the next, not least because this allows us to identify sections of the stage where a driver may have particularly gained or lost time, or to identify where a driver may be making or losing time consistently across different parts of the stage.
 
-In abstract terms, then, what we want to calculate is the time taken for a driver $i$ on stage $S$ to go between two split points, $m$ and $n$, where $m=0$ is the start, $m={_S}s_{max}+1$ is the stage end, and ${_S}s_max$ is the number of split points on stage $S$:
+In abstract terms, then, what we want to calculate is the time taken for a driver $i$ on stage $S$ to go between two split points, $m$ and $n$, where $m=0$ is the start, $m={_S}s_{max}+1$ is the stage end, and ${_S}s_{max}$ is the number of split points on stage $S$:
 
 $$
 {_{S,m,n}}t_{i} = {_{S,n}}t_{i} - {_{S,m}}t_{i}: 0{\le}m<n{\le}{_S}s_{max}
 $$
+
 For a specific, known stage, we might write the simpler:
 
 $$
@@ -245,9 +246,10 @@ $$
 For a driver, *i*, we note that the accumulated stage time on stage $S$ as given by the split times is:
 
 $$
-S={stagenum};t_{i}=\sum_{s=0}^{s{_{max}}}{_{s,s+1}}t_{i}
+S={stagenum};t_{i}=\sum_{s=0}^{s{_{max}}}{_{s,s+1}}t_{i}:
 $$
-To get the duration between two split points, we can create two temporary dataframes, one representing the orignal split times without the first split ${_{{s+1},s_{max}}}t$, one representing the split times without the last split, ${_{s,s_{max}-1}}t$. Subtracting one dataframe from the other this finds the difference across all cconsective columns: 
+
+To get the duration between two split points, we can create two temporary dataframes, one representing the original split times without the first split ${_{{s+1},s_{max}}}t$, one representing the split times without the last split, ${_{s,s_{max}-1}}t$. Subtracting one dataframe from the other this finds the difference across all consecutive columns: 
 
 $$
 {_{{s+1},s_{max}}}t - {_{s,s_{max}-1}}t
@@ -303,7 +305,7 @@ stage_times %>% head(2)
 
 *Recall that if required we can also retrieve stage time for multiple stages using the `get_multi_stage_times(stagelist)` function. The `get_stage_list(stages)` function will return a list of all stage IDs.*
 
-If we merge each dirver's stage times as an extra, final column to the wide split times dataframe, we can calculate the split section durations over the whole stage, including the time taken to get from the final split to the stage end:
+If we merge each driver's stage times as an extra, final column to the wide split times dataframe, we can calculate the split section durations over the whole stage, including the time taken to get from the final split to the stage end:
 
 ```{r}
 widen_splits_stage_times = function(splits_wide, stage_times){
