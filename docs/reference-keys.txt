@@ -66,3 +66,5 @@ adding-overall-stage-time-to-the-split-times
 finding-pace-across-splits
 load-base-data-4
 calculating-splits-pace
+visualising-position-changes-over-a-rally
+visualising-position-gainslosses

@@ -262,6 +262,8 @@ multi_overall_wide_pos %>%
                   list(area(col = stage_codes) ~ highlight_first()))
 ```
 
+### Visualising Position Changes Over a Rally
+
 Another useful way of summarising the positions is to chart showing the evolution of position changes.
 
 The chart is cosntructed ost straightforwardly from tidy long format) data:
@@ -317,7 +319,7 @@ g_pos +
 
 In the above chart, you may notice a gap at first stage position 6 where Ogier was originally placed. A more robust way to prepare the data for this sort of charts is to filter the data by class, for example limiting the data to cars in the *WRC* group/class, and then reranking the position by group/class. A finished position chart can then position the drivers by class ranking and use lables to overplot actual overall rally positions on stages where the overall stage position differs from the class rank.
 
-### Visualising Position Changes
+### Visualising Position Gains/Losses
 
 To visualise position changes for a driver from one driver to the next, we can create a table of position differences. Let's abstract out the code we used to find differnces between columns in to a function:
 
@@ -432,7 +434,7 @@ Let's see how it looks:
 pos_gains %>%
   head(3) %>% 
   formattable(list( 
-    area(col = stage_codes) ~ updown())) %>%
+    area(col = stage_codes) ~ updown2())) %>%
   as.htmlwidget()
 ```
 
