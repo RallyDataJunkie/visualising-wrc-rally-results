@@ -294,7 +294,7 @@ overall_pos_long_top10 = overall_pos_long_top10 %>%
 overall_pos_long_top10$Stage[1]
 ```
 
-We can then create a bump chart style polot showing how each driver's positioned changed across stages:
+We can then create a bump chart style plot showing how each driver's positioned changed across stages:
 
 ```{r simple_pos_chart, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -456,6 +456,8 @@ Another way of visualising position changes is to create a simple summarising sp
 This requires us first to cast the data into a long format:
 
 ```{r}
+library(sparkline)
+
 pos_gain_long_top10 <- pos_gains %>%
                               head(10) %>%
                               gather(key ="Stage",
@@ -468,8 +470,6 @@ pos_gain_long_top10 %>% head(3)
 We can then generate sparklines showing position changes:
 
 ```{r}
-library(sparkline)
-
 pos_gain_sparkline_top10 <- pos_gain_long_top10 %>%
                                 group_by(code) %>%
                                 summarize(spk_ = spk_chr(PosChange,
@@ -528,7 +528,7 @@ get_pos_chart = function(df_long, code, embed=FALSE,
 get_pos_chart(overall_pos_long_top10, rovCode)
 ```
 
-If we generate one image per 
+If we generate an image for each driver, we can then create a column of images to showing the change in position over the rally for each one on a row by row basis: 
 
 ```{r}
 overall_wide_pos_top5 = multi_overall_wide_pos %>% head(5)
@@ -551,9 +551,53 @@ We can then add the charts to the wide timing results dataframe as an extra colu
 ```{r warning=FALSE}
 overall_wide_pos_top5$poschart = gt_pos_plots
 
-formattable(overall_wide_pos_top5) %>% kableExtra::kable_styling( stripe_color="white") %>% as.htmlwidget()
+formattable(overall_wide_pos_top5)
 # How do we suppress stripes in formattable tables?
 ```
+
+### Visualising Time to First
+
+A convenient way of visualising the gap to leader across stages is to create a sparkline using the `sparkline::spk_chr()` function. This function requires data in a tidy (long) format which is then grouped for each driver. 
+Let's remind ourselves of what the data looks like:
+
+```{r}
+multi_overall_wide_gap_top10 = multi_overall_wide_gap %>%
+                              map_stage_codes(stage_list) %>%
+                              map_driver_names(cars) %>%
+                      dplyr::arrange(!!as.symbol(stage_codes[length(stage_codes)])) %>%
+                      head(10)
+
+multi_overall_wide_gap_top10
+```
+
+We can create the required long form data from the wide gap table as follows, retrieving just the top 10 drivers based on the gap on the final stage, for convenience:
+
+```{r}
+overall_wide_gap_top10 <- multi_overall_wide_gap_top10 %>%
+                            gather(key ="Stage",
+                          value ="Gap", stage_codes)
+
+overall_wide_gap_top10 %>% head(3)
+```
+
+With the data in the appropriate form, we can create the sparkline, using a bar chart format:
+
+```{r}
+overall_wide_gap_long_top10 <- overall_wide_gap_top10 %>%
+                                group_by(code) %>%
+                                summarize(spk_ = spk_chr(-Gap,
+                                                         type ="bar"))
+
+# We need to create an htmlwidget form of the table
+out = as.htmlwidget(formattable(overall_wide_gap_long_top10))
+
+# The table also has a requirement on the sparkline package
+out$dependencies = c(out$dependencies,
+                     htmlwidgets:::widget_dependencies("sparkline",
+                                                       "sparkline"))
+out
+```
+
 ## Retrieving Stage Times for Multiple Stages
 
 This far, we have focused on exploring the overall results data. If required, we can also retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:

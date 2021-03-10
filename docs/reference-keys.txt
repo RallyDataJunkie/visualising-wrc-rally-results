@@ -1,3 +1,5 @@
+tab:unnamed-chunk-51
+tab:unnamed-chunk-57
 introduction
 accessing-data-from-the-wrc-live-timing-api
 current-season-rallies
@@ -43,6 +45,7 @@ visualising-first-position
 visualising-position-changes-over-a-rally
 visualising-position-gainslosses
 per-driver-position-charts
+visualising-time-to-first
 retrieving-stage-times-for-multiple-stages
 finding-pace-across-stages
 load-base-data-2
