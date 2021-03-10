@@ -14,6 +14,7 @@ To begin with, load in our WRC API helper functions:
 
 ```{r message=F, warning=F}
 source('code/wrc-api.R')
+library(tidyr)
 ```
 
 Now let's grab some data:
@@ -100,7 +101,7 @@ $$
 \textrm{GAP}_{i} = {_S}t_i - \textrm{min}({_S}T)
 $$
 
-If we try to subtract a list of values (for example, $\forall s \in [1 \le S \le N]: \textrm{min}({_S}T)$) from an *R* dataframe, we need to tell *R* how we want that subtraction performed. Internally, the dataframe is represented as a long list of values made up from values in the first column, then the second, and so on. If we subtract a list of *N* values from the dataframe, the values are selected from the first *N* items in this long serialised version of the dataframe, then the next *N* values and so on.
+If we try to subtract a list of values (for example, $\forall S \in [1 \le S \le N]: \textrm{min}({_S}T)$) from an *R* dataframe, we need to tell *R* how we want that subtraction performed. Internally, the dataframe is represented as a long list of values made up from values in the first column, then the second, and so on. If we subtract a list of *N* values from the dataframe, the values are selected from the first *N* items in this long serialised version of the dataframe, then the next *N* values and so on.
 
 So to subtract a "dummy" row of values from the dataframe, we need another approach. The `purrr::map2df()` function allows us to apply a function, in this case the subtraction `-` function, with a set of specified values we want to subtract, from each row in the dataframe.
 
@@ -170,7 +171,7 @@ multi_overall_wide_time %>% head(2)
 
 ### Rebasing Overall Times
 
-We can rebase the overall times with respect to a particular driver in the normal way:
+We can rebase the overall times with respect to a particular driver in the normal way, calculating the difference between each row and the row corresponding to a specified driver:
 
 ```{r}
 example_driver = multi_overall_wide_time[2,]$code
@@ -224,6 +225,7 @@ multi_overall_wide_pos = multi_overall_wide_pos %>%
 
 multi_overall_wide_pos %>% head(2)
 ```
+
 We can also reorder the table by the final stage position, as described by the last stage code in the `stage_codes` list. However, because we want to sort on a column name as provided by a variable, we need to use the `!!` operator to force the evaluation of the single variable value to the column name symbol (`as.symbol()`):
 
 ```{r}
@@ -266,14 +268,18 @@ multi_overall_wide_pos %>%
 
 Another useful way of summarising the positions is to chart showing the evolution of position changes.
 
-The chart is constructed most straightforwardly from tidy long format) data:
+The chart is constructed most straightforwardly from tidy (long format) data:
 
 ```{r}
 overall_pos_long_top10 <- multi_overall_wide_pos %>%
                               head(10) %>%
-                              gather(key ="Stage",
-                                     value ="Pos",
-                                     stage_codes)
+                              #gather(key ="Stage",
+                              #       value ="Pos",
+                              #       stage_codes)
+                              # pivot longer replaces gather
+                              pivot_longer(c(stage_codes),
+                                           names_to ="Stage",
+                                           values_to ="Pos")
 
 overall_pos_long_top10 %>% head(3)
 ```
@@ -287,6 +293,8 @@ overall_pos_long_top10 = overall_pos_long_top10 %>%
 
 overall_pos_long_top10$Stage[1]
 ```
+
+We can then create a bump chart style polot showing how each driver's positioned changed across stages:
 
 ```{r simple_pos_chart, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -310,9 +318,12 @@ library(directlabels)
 
 g_pos +
     geom_dl(aes(label = paste0(' ',code)), # Add space before label
-            # cex is text label size
-            method = list('last.bumpup', cex = 0.5)) +
+            # Add label at end of line
+            method = list('last.bumpup',
+                          # cex is text label size
+                          cex = 0.5)) +
     geom_dl(aes(label = paste0(code, ' ')), # Add space before label
+            # Add label at start of line
             method = list('first.points', cex = 0.5)) +
     theme_void()
 ```
@@ -392,7 +403,9 @@ updown = function(...){
                                          # i.e. gained position
                                          "arrow-up",
                                          ifelse (x < 0,
+                                                 # Lost position
                                                  "arrow-down" ,
+                                                 # No position change
                                                  "resize-horizontal"))))
 }
 ```
@@ -476,6 +489,71 @@ out
 
 One issue with the sparkline bars is that the scales may differ. For example, across different drivers, a position change of +1 for one driver may have the same height as a position change of +2 for another driver.
 
+### Per Driver Position Charts
+
+As well as generating summary chapters over a set of drivers, we can also generate charts on a per driver basis, cf. sparkline charts.
+
+For example, we can create a simple chart that captures a single driver's position over several stages, optionally using the `gt::ggplot_image()` function to create an HTML embeddable image tag with the chart encoded as a data URI:
+
+```{r single-driver-pos, warning=FALSE}
+rovCode = get_person_id(cars, 'rov', ret='code')
+
+get_pos_chart = function(df_long, code, embed=FALSE,
+                         height=30, aspect_ratio=1, size=5) {
+  # Get the data for the specified driver
+  subdf = df_long[df_long['code']==code,]
+  
+  ymax = max(10.6, max(subdf$Pos)+0.1)
+  
+  g = ggplot(subdf,
+             aes(x=as.integer(Stage), y=Pos, group=code)) +
+      geom_step(direction='mid', color='blue', size=size) +
+      geom_hline(yintercept=0.8, linetype='dotted',
+                 size=size, color='black') +
+      geom_hline(yintercept=3.35, linetype='dotted', 
+                 size=size, color='black') +
+      geom_hline(yintercept=10.5, color='darkgrey',
+                 size=size) +
+      #scale_y_continuous(trans = "reverse") +
+      scale_y_reverse( lim=c(ymax, 0.8)) +
+      theme_void() + scale_x_continuous(expand=c(0,0)) #+
+      #theme(aspect.ratio=0.1)
+  
+  if (embed)
+    gt::ggplot_image(g, height = height, aspect_ratio=aspect_ratio)
+  else
+    g
+}
+
+get_pos_chart(overall_pos_long_top10, rovCode)
+```
+
+If we generate one image per 
+
+```{r}
+overall_wide_pos_top5 = multi_overall_wide_pos %>% head(5)
+
+top5codes = overall_wide_pos_top5$code
+
+gt_pos_plots = list()
+# Iterate through each driver in the top 5
+for (c in 1:length(top5codes)){
+    # Add each plot to the plot list
+    # The split is generated for the top 5
+    gt_pos_plots[[length(gt_pos_plots) + 1]] <-
+        get_pos_chart(overall_pos_long_top10, top5codes[c],
+                      embed=T, aspect_ratio=3, size=5)
+  }
+```
+
+We can then add the charts to the wide timing results dataframe as an extra column:
+
+```{r warning=FALSE}
+overall_wide_pos_top5$poschart = gt_pos_plots
+
+formattable(overall_wide_pos_top5) %>% kableExtra::kable_styling( stripe_color="white") %>% as.htmlwidget()
+# How do we suppress stripes in formattable tables?
+```
 ## Retrieving Stage Times for Multiple Stages
 
 This far, we have focused on exploring the overall results data. If required, we can also retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:

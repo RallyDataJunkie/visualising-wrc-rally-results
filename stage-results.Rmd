@@ -242,11 +242,15 @@ The *GAP* (time to leader) is calculated as the difference between a time associ
 
 The $\textrm{GAP}$ between driver in first position, $i=1$, and the driver in the $j$'th position is given in various abuses of the notation as:
 
-$$\textrm{GAP}{j}=t_{j,\textrm{GAP}}=t_{j,1,DIFF}=t_j-t_1$$
+$$\textrm{GAP}{_j}=t_{j,\textrm{GAP}}=t_{j,1,DIFF}=t_j-t_1$$
 
 Alternatively, we can calculate the gap as the sum of differences between consecutively placed drivers, $j\neq1$, and the leader. The interval or DIFF between drivers in positions $i$ and $j$, where $i$ is ahead of $j$ (that is, $i<j$) and the driver in first position has $i=1$ is given as:
 
 $$\textrm{DIFF}_{j,i}=t_{j,i,\textrm{DIFF}}=t_{j,i}=t_j-t_i: i<j, t_0=t_1$$
+
+Strictly, $\textrm{GAP}_j=\textrm{DIFF}_{j,1}$.
+
+To specify a particular stage, we might use ${_S}\textrm{GAP}{_j}$ and ${_S}\textrm{DIFF}{_j}$.
 
 The $\textrm{GAP}$ between a driver in position $j=P$ and the leader $i=1$ is then:
 
@@ -254,7 +258,7 @@ $$\textrm{GAP}_j=t_{j,\textrm{GAP}}=\textrm{DIFF}_{2,1}+\textrm{DIFF}_{3,2}+..+\
 
 We can write this more succinctly as:
 
-$$\textrm{GAP}{j}=t_{j,\textrm{GAP}}=0+\sum_{m=1}^{j}\textrm{DIFF}_{m,m-1}=\sum_{m=1}^{j}\left ( t_m-t_{m-1} \right ): j\ge1, t_0=t_1$$
+$$\textrm{GAP}{_j}=t_{j,\textrm{GAP}}=0+\sum_{m=1}^{j}\textrm{DIFF}_{m,m-1}=\sum_{m=1}^{j}\left ( t_m-t_{m-1} \right ): j\ge1, t_0=t_1$$
 
 We can implement these calculations directly as follows:
 
@@ -284,6 +288,8 @@ $$
 $$
 
 using the simpler form with the $S$ prefix where the stage is known.
+
+We might also abuse the $textrm{GAP}$ notation to specify a rebased time $_S\textrm{GAP}_{i,j}={_S}t_{i}^{j}$ noting ${_S}\textrm{GAP}_i={_S}\textrm{GAP}_{i,1}={_S}\textrm{DIFF}_{i,1}$.
 
 In passing, we note that we can calculate the overall rally time (without penalties) for driver $i$, up to and including stage $N$ as: 
 
