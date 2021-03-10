@@ -759,13 +759,15 @@ get_pos_chart(multi_stage_long_pos, rovCode)
 ```
 
 ```{r}
+top10_codes = multi_stage_wide_pos$code
+
 gt_stage_pos_plots = list()
+
 # Iterate through each driver in the top 5
-for (c in 1:length(top5codes)){
+for (c in 1:length(top10_codes)){
     # Add each plot to the plot list
-    # The split is generated for the top 5
     gt_stage_pos_plots[[length(gt_stage_pos_plots) + 1]] <-
-        get_pos_chart(multi_stage_long_pos, top5codes[c],
+        get_pos_chart(multi_stage_long_pos, top10_codes[c],
                       embed=T, aspect_ratio=3, size=5)
 }
 
