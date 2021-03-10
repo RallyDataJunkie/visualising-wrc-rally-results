@@ -62,7 +62,7 @@ multi_overall_wide_pos %>% head(2)
 
 We can also create a wide format report of the overall times, where each column gives the overall, accumulated rally time up to and including each stage, ${_S}T$; each cell then represents the accumulated time for a particular driver, ${_S}T_i$.
 
-The times themeselves appear in units of milliseconds, so first create a column corresponding to time in seconds, then widen using those values:
+The times themselves appear in units of milliseconds, so first create a column corresponding to time in seconds, then widen using those values:
 
 ```{r}
 multi_overall_results = multi_overall_results %>%
@@ -244,10 +244,10 @@ highlight_first =  function (...)
             style = function(x) ifelse(x==1,
                                        style(display = "block", 
                                              padding = "0 4px",
-                                             `color` = "white",
+                                             `color` = "black",
                                              `column-width`='4em',
                                              `border-radius` = "4px",
-                                             `background-color` = 'mediumorchid'),
+                                             `background-color` = 'lightgrey'),
                                       style()))
 }
 ```
@@ -266,7 +266,7 @@ multi_overall_wide_pos %>%
 
 Another useful way of summarising the positions is to chart showing the evolution of position changes.
 
-The chart is cosntructed ost straightforwardly from tidy long format) data:
+The chart is constructed most straightforwardly from tidy long format) data:
 
 ```{r}
 overall_pos_long_top10 <- multi_overall_wide_pos %>%
@@ -317,11 +317,11 @@ g_pos +
     theme_void()
 ```
 
-In the above chart, you may notice a gap at first stage position 6 where Ogier was originally placed. A more robust way to prepare the data for this sort of charts is to filter the data by class, for example limiting the data to cars in the *WRC* group/class, and then reranking the position by group/class. A finished position chart can then position the drivers by class ranking and use lables to overplot actual overall rally positions on stages where the overall stage position differs from the class rank.
+In the above chart, you may notice a gap at first stage position 6 where Ogier was originally placed. A more robust way to prepare the data for this sort of charts is to filter the data by class, for example limiting the data to cars in the *WRC* group/class, and then reranking the position by group/class. A finished position chart can then position the drivers by class ranking and use labels to overplot actual overall rally positions on stages where the overall stage position differs from the class rank.
 
 ### Visualising Position Gains/Losses
 
-To visualise position changes for a driver from one driver to the next, we can create a table of position differences. Let's abstract out the code we used to find differnces between columns in to a function:
+To visualise position changes for a driver from one driver to the next, we can create a table of position differences. Let's abstract out the code we used to find differences between columns in to a function:
 
 ```{r}
 coldiffs = function(df, cols, dropfirst=FALSE, firstcol=NULL){
@@ -359,8 +359,8 @@ coldiffs(multi_overall_wide_pos, stage_codes, firstcol=999) %>% head(2)
 We can now fund the position changes from stage to stage as well as tidying up the identifiers:
 
 ```{r}
-pos_diffs = coldiffs(multi_overall_wide_pos, stage_codes,
-                     firstcol=0)
+pos_diffs = multi_overall_wide_pos %>% coldiffs(stage_codes,
+                                                firstcol=0)
 pos_diffs$code = multi_overall_wide_pos$code
 
 # Reorder the columns by moving last column to first
@@ -369,7 +369,7 @@ pos_diffs = pos_diffs %>% select('code', everything())
 pos_diffs %>% head(3)
 ```
 
-Nte that we need to be careful with the sense of how we read this table: a *negative* position change means the driver has *improved* their position. It might be more meaningful to have position gain/loss, rather than strict position difference columns, where a positive value denotes an improved position:
+Note that we need to be careful with the sense of how we read this table: a *negative* position change means the driver has *improved* their position. It might be more meaningful to have position gain/loss, rather than strict position difference columns, where a positive value denotes an improved position:
 
 ```{r}
 pos_gains = pos_diffs
@@ -474,9 +474,9 @@ out
 
 *Note that to render the sparkline, we need to cast the formatted table to an *htmlwidget* and also ensure that the required *sparkline* Javascript package is loaded into the widget.*
 
-One issue with the sparkline bars is that the scales may differ. For example, across different drivers, a position change of +1 for one driver may have the same height as a position chane of +2 for another driver.
+One issue with the sparkline bars is that the scales may differ. For example, across different drivers, a position change of +1 for one driver may have the same height as a position change of +2 for another driver.
 
-## Retrieving Stage Time for Multiple Stages
+## Retrieving Stage Times for Multiple Stages
 
 This far, we have focused on exploring the overall results data. If required, we can also retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:
 
@@ -486,19 +486,27 @@ multi_stage_times = get_multi_stage_times(stage_list)
 multi_stage_times %>% tail(2)
 ```
 
-We can then cast the data to a wide format:
+We can then cast the data to a wide format and relabel the resulting dataframe. For example, we can get a wide format dataframe containing individual stage times back:
 
 ```{r}
-multi_stage_times_wide = get_multi_stage_times_wide(multi_stage_times, stage_list)
+multi_stage_times_wide = multi_stage_times %>%
+                            get_multi_stage_times_wide(stage_list) %>%
+                            map_stage_codes(stage_list)  %>%
+                            map_driver_names(cars)
 
 multi_stage_times_wide %>% head(2)
 ```
 
-And process:
+Or we can get the stage rankings for each stage:
 
 ```{r}
-multi_stage_times_wide= map_stage_codes(multi_stage_times_wide,
-                                          stage_list)
+multi_stage_wide_pos = multi_stage_times %>%
+                            get_multi_stage_generic_wide(stage_list,
+                                                         'position') %>%
+                            map_stage_codes(stage_list)  %>%
+                            map_driver_names(cars)
+
+multi_stage_wide_pos %>% head(2)
 ```
 
 

@@ -42,8 +42,9 @@ rebasing-overall-times
 finding-changes-in-rebased-gaps-across-stages
 visualising-multiple-stage-results
 visualising-first-position
-visualising-position-changes
-retrieving-stage-time-for-multiple-stages
+visualising-position-changes-over-a-rally
+visualising-position-gainslosses
+retrieving-stage-times-for-multiple-stages
 finding-pace-across-stages
 load-base-data-2
 defining-pace
@@ -66,5 +67,3 @@ adding-overall-stage-time-to-the-split-times
 finding-pace-across-splits
 load-base-data-4
 calculating-splits-pace
-visualising-position-changes-over-a-rally
-visualising-position-gainslosses

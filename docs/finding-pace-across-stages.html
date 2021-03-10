@@ -214,9 +214,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-multiple-stage-results"><i class="fa fa-check"></i><b>4.3</b> Visualising Multiple Stage Results</a>
 <ul>
 <li class="chapter" data-level="4.3.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-first-position"><i class="fa fa-check"></i><b>4.3.1</b> Visualising First Position</a></li>
-<li class="chapter" data-level="4.3.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-changes"><i class="fa fa-check"></i><b>4.3.2</b> Visualising Position Changes</a></li>
+<li class="chapter" data-level="4.3.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-changes-over-a-rally"><i class="fa fa-check"></i><b>4.3.2</b> Visualising Position Changes Over a Rally</a></li>
+<li class="chapter" data-level="4.3.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-gainslosses"><i class="fa fa-check"></i><b>4.3.3</b> Visualising Position Gains/Losses</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-time-for-multiple-stages"><i class="fa fa-check"></i><b>4.4</b> Retrieving Stage Time for Multiple Stages</a></li>
+<li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>4.4</b> Retrieving Stage Times for Multiple Stages</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>5</b> Finding Pace Across Stages</a>
 <ul>
@@ -281,20 +282,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">5.1</span> Load Base Data</h2>
 <p>To get the stage data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages, and from that access the stage ID for the stage or stages we are interested in.</p>
 <p>Load in the helper functions:</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="finding-pace-across-stages.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="finding-pace-across-stages.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
 <p>And get the base data:</p>
-<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="finding-pace-across-stages.html#cb177-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
-<span id="cb177-2"><a href="finding-pace-across-stages.html#cb177-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
-<span id="cb177-3"><a href="finding-pace-across-stages.html#cb177-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb177-4"><a href="finding-pace-across-stages.html#cb177-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
-<span id="cb177-5"><a href="finding-pace-across-stages.html#cb177-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
-<span id="cb177-6"><a href="finding-pace-across-stages.html#cb177-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
-<span id="cb177-7"><a href="finding-pace-across-stages.html#cb177-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
-<span id="cb177-8"><a href="finding-pace-across-stages.html#cb177-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb177-9"><a href="finding-pace-across-stages.html#cb177-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
-<span id="cb177-10"><a href="finding-pace-across-stages.html#cb177-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="finding-pace-across-stages.html#cb175-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb175-2"><a href="finding-pace-across-stages.html#cb175-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb175-3"><a href="finding-pace-across-stages.html#cb175-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb175-4"><a href="finding-pace-across-stages.html#cb175-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb175-5"><a href="finding-pace-across-stages.html#cb175-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb175-6"><a href="finding-pace-across-stages.html#cb175-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb175-7"><a href="finding-pace-across-stages.html#cb175-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb175-8"><a href="finding-pace-across-stages.html#cb175-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb175-9"><a href="finding-pace-across-stages.html#cb175-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
+<span id="cb175-10"><a href="finding-pace-across-stages.html#cb175-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
 <p>Get a sample stage ID:</p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="finding-pace-across-stages.html#cb178-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="finding-pace-across-stages.html#cb176-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
 </div>
 <div id="defining-pace" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Defining Pace</h2>
@@ -311,7 +312,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">5.3</span> Calculating Stage Pace</h2>
 <p>We can calculate stage pace from stage times and stage distances.</p>
 <p>We can find stages distances directly from the <code>stages</code> dataframe:</p>
-<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="finding-pace-across-stages.html#cb179-1" aria-hidden="true" tabindex="-1"></a>stages <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>,<span class="st">&#39;distance&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="finding-pace-across-stages.html#cb177-1" aria-hidden="true" tabindex="-1"></a>stages <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>,<span class="st">&#39;distance&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code distance
 ## 1  SS1    31.05
 ## 2  SS2    31.05
@@ -319,38 +320,38 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="calculating-pace-for-a-single-stage" class="section level3" number="5.3.1">
 <h3><span class="header-section-number">5.3.1</span> Calculating Pace for a Single Stage</h3>
 <p>Let’s start by looking a single stage using a recipe we have used before:</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="finding-pace-across-stages.html#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example stage code</span></span>
-<span id="cb181-2"><a href="finding-pace-across-stages.html#cb181-2" aria-hidden="true" tabindex="-1"></a>stage_code <span class="ot">=</span> <span class="st">&#39;SS3&#39;</span></span>
-<span id="cb181-3"><a href="finding-pace-across-stages.html#cb181-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-4"><a href="finding-pace-across-stages.html#cb181-4" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[stage_code]]</span>
-<span id="cb181-5"><a href="finding-pace-across-stages.html#cb181-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-6"><a href="finding-pace-across-stages.html#cb181-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the stage distance</span></span>
-<span id="cb181-7"><a href="finding-pace-across-stages.html#cb181-7" aria-hidden="true" tabindex="-1"></a>stage_distance <span class="ot">=</span> stages[stages[<span class="st">&#39;code&#39;</span>]<span class="sc">==</span>stage_code, <span class="st">&#39;distance&#39;</span>]</span>
-<span id="cb181-8"><a href="finding-pace-across-stages.html#cb181-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-9"><a href="finding-pace-across-stages.html#cb181-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get driver metadata</span></span>
-<span id="cb181-10"><a href="finding-pace-across-stages.html#cb181-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span>
-<span id="cb181-11"><a href="finding-pace-across-stages.html#cb181-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-12"><a href="finding-pace-across-stages.html#cb181-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create stage times with merged in driver metadata</span></span>
-<span id="cb181-13"><a href="finding-pace-across-stages.html#cb181-13" aria-hidden="true" tabindex="-1"></a>stage_times <span class="ot">=</span> <span class="fu">get_stage_times</span>(eventId, stageId) <span class="sc">%&gt;%</span></span>
-<span id="cb181-14"><a href="finding-pace-across-stages.html#cb181-14" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span></span>
-<span id="cb181-15"><a href="finding-pace-across-stages.html#cb181-15" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb181-16"><a href="finding-pace-across-stages.html#cb181-16" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Merge in the entries data</span></span>
-<span id="cb181-17"><a href="finding-pace-across-stages.html#cb181-17" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">merge</span>(cars, <span class="at">by=</span><span class="st">&#39;entryId&#39;</span>)  <span class="sc">%&gt;%</span></span>
-<span id="cb181-18"><a href="finding-pace-across-stages.html#cb181-18" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Convert milliseconds to seconds</span></span>
-<span id="cb181-19"><a href="finding-pace-across-stages.html#cb181-19" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">mutate</span>(<span class="at">TimeInS =</span> elapsedDurationMs<span class="sc">/</span><span class="dv">1000</span>)  <span class="sc">%&gt;%</span></span>
-<span id="cb181-20"><a href="finding-pace-across-stages.html#cb181-20" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Limit columns and set column order</span></span>
-<span id="cb181-21"><a href="finding-pace-across-stages.html#cb181-21" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;position&#39;</span>, <span class="st">&#39;identifier&#39;</span>,</span>
-<span id="cb181-22"><a href="finding-pace-across-stages.html#cb181-22" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&#39;code&#39;</span>, <span class="st">&#39;TimeInS&#39;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb181-23"><a href="finding-pace-across-stages.html#cb181-23" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># The merge may upset the row order</span></span>
-<span id="cb181-24"><a href="finding-pace-across-stages.html#cb181-24" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># so reset the order again</span></span>
-<span id="cb181-25"><a href="finding-pace-across-stages.html#cb181-25" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span></span>
-<span id="cb181-26"><a href="finding-pace-across-stages.html#cb181-26" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Improve column names by renaming them</span></span>
-<span id="cb181-27"><a href="finding-pace-across-stages.html#cb181-27" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">rename</span>(<span class="at">Pos=</span>position,</span>
-<span id="cb181-28"><a href="finding-pace-across-stages.html#cb181-28" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Car =</span> identifier,</span>
-<span id="cb181-29"><a href="finding-pace-across-stages.html#cb181-29" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Code =</span> code,</span>
-<span id="cb181-30"><a href="finding-pace-across-stages.html#cb181-30" aria-hidden="true" tabindex="-1"></a>                             <span class="st">`</span><span class="at">Time (s)</span><span class="st">`</span> <span class="ot">=</span> TimeInS)</span>
-<span id="cb181-31"><a href="finding-pace-across-stages.html#cb181-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-32"><a href="finding-pace-across-stages.html#cb181-32" aria-hidden="true" tabindex="-1"></a><span class="fu">formattable</span>(stage_times )</span></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="finding-pace-across-stages.html#cb179-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example stage code</span></span>
+<span id="cb179-2"><a href="finding-pace-across-stages.html#cb179-2" aria-hidden="true" tabindex="-1"></a>stage_code <span class="ot">=</span> <span class="st">&#39;SS3&#39;</span></span>
+<span id="cb179-3"><a href="finding-pace-across-stages.html#cb179-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb179-4"><a href="finding-pace-across-stages.html#cb179-4" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[stage_code]]</span>
+<span id="cb179-5"><a href="finding-pace-across-stages.html#cb179-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb179-6"><a href="finding-pace-across-stages.html#cb179-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the stage distance</span></span>
+<span id="cb179-7"><a href="finding-pace-across-stages.html#cb179-7" aria-hidden="true" tabindex="-1"></a>stage_distance <span class="ot">=</span> stages[stages[<span class="st">&#39;code&#39;</span>]<span class="sc">==</span>stage_code, <span class="st">&#39;distance&#39;</span>]</span>
+<span id="cb179-8"><a href="finding-pace-across-stages.html#cb179-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb179-9"><a href="finding-pace-across-stages.html#cb179-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get driver metadata</span></span>
+<span id="cb179-10"><a href="finding-pace-across-stages.html#cb179-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span>
+<span id="cb179-11"><a href="finding-pace-across-stages.html#cb179-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb179-12"><a href="finding-pace-across-stages.html#cb179-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create stage times with merged in driver metadata</span></span>
+<span id="cb179-13"><a href="finding-pace-across-stages.html#cb179-13" aria-hidden="true" tabindex="-1"></a>stage_times <span class="ot">=</span> <span class="fu">get_stage_times</span>(eventId, stageId) <span class="sc">%&gt;%</span></span>
+<span id="cb179-14"><a href="finding-pace-across-stages.html#cb179-14" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span></span>
+<span id="cb179-15"><a href="finding-pace-across-stages.html#cb179-15" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb179-16"><a href="finding-pace-across-stages.html#cb179-16" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Merge in the entries data</span></span>
+<span id="cb179-17"><a href="finding-pace-across-stages.html#cb179-17" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">merge</span>(cars, <span class="at">by=</span><span class="st">&#39;entryId&#39;</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb179-18"><a href="finding-pace-across-stages.html#cb179-18" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Convert milliseconds to seconds</span></span>
+<span id="cb179-19"><a href="finding-pace-across-stages.html#cb179-19" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">mutate</span>(<span class="at">TimeInS =</span> elapsedDurationMs<span class="sc">/</span><span class="dv">1000</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb179-20"><a href="finding-pace-across-stages.html#cb179-20" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Limit columns and set column order</span></span>
+<span id="cb179-21"><a href="finding-pace-across-stages.html#cb179-21" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;position&#39;</span>, <span class="st">&#39;identifier&#39;</span>,</span>
+<span id="cb179-22"><a href="finding-pace-across-stages.html#cb179-22" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&#39;code&#39;</span>, <span class="st">&#39;TimeInS&#39;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb179-23"><a href="finding-pace-across-stages.html#cb179-23" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># The merge may upset the row order</span></span>
+<span id="cb179-24"><a href="finding-pace-across-stages.html#cb179-24" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># so reset the order again</span></span>
+<span id="cb179-25"><a href="finding-pace-across-stages.html#cb179-25" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span></span>
+<span id="cb179-26"><a href="finding-pace-across-stages.html#cb179-26" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># Improve column names by renaming them</span></span>
+<span id="cb179-27"><a href="finding-pace-across-stages.html#cb179-27" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">rename</span>(<span class="at">Pos=</span>position,</span>
+<span id="cb179-28"><a href="finding-pace-across-stages.html#cb179-28" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Car =</span> identifier,</span>
+<span id="cb179-29"><a href="finding-pace-across-stages.html#cb179-29" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Code =</span> code,</span>
+<span id="cb179-30"><a href="finding-pace-across-stages.html#cb179-30" aria-hidden="true" tabindex="-1"></a>                             <span class="st">`</span><span class="at">Time (s)</span><span class="st">`</span> <span class="ot">=</span> TimeInS)</span>
+<span id="cb179-31"><a href="finding-pace-across-stages.html#cb179-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb179-32"><a href="finding-pace-across-stages.html#cb179-32" aria-hidden="true" tabindex="-1"></a><span class="fu">formattable</span>(stage_times )</span></code></pre></div>
 <table class="table table-condensed">
 <thead>
 <tr>
@@ -512,9 +513,9 @@ SUN
 </tbody>
 </table>
 <p>We can now calculate pace as the stage time divided by the stage distance:</p>
-<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="finding-pace-across-stages.html#cb182-1" aria-hidden="true" tabindex="-1"></a>stage_times<span class="sc">$</span>pace <span class="ot">=</span> stage_times<span class="sc">$</span><span class="st">&#39;Time (s)&#39;</span> <span class="sc">/</span> stage_distance</span>
-<span id="cb182-2"><a href="finding-pace-across-stages.html#cb182-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb182-3"><a href="finding-pace-across-stages.html#cb182-3" aria-hidden="true" tabindex="-1"></a>stage_times</span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="finding-pace-across-stages.html#cb180-1" aria-hidden="true" tabindex="-1"></a>stage_times<span class="sc">$</span>pace <span class="ot">=</span> stage_times<span class="sc">$</span><span class="st">&#39;Time (s)&#39;</span> <span class="sc">/</span> stage_distance</span>
+<span id="cb180-2"><a href="finding-pace-across-stages.html#cb180-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb180-3"><a href="finding-pace-across-stages.html#cb180-3" aria-hidden="true" tabindex="-1"></a>stage_times</span></code></pre></div>
 <pre><code>##    Pos Car Code Time (s)     pace
 ## 1    1   8  TÄN    834.5 34.15882
 ## 2    2  11  NEU    835.5 34.19975
@@ -530,11 +531,11 @@ SUN
 <div id="calculating-pace-for-multiple-stages" class="section level3" number="5.3.2">
 <h3><span class="header-section-number">5.3.2</span> Calculating Pace for Multiple Stages</h3>
 <p>First, let’s get the data for all the stages:</p>
-<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="finding-pace-across-stages.html#cb184-1" aria-hidden="true" tabindex="-1"></a>stage_list <span class="ot">=</span> <span class="fu">get_stage_list</span>(stages)</span>
-<span id="cb184-2"><a href="finding-pace-across-stages.html#cb184-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-3"><a href="finding-pace-across-stages.html#cb184-3" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="ot">=</span> <span class="fu">get_multi_stage_times</span>(stage_list)</span>
-<span id="cb184-4"><a href="finding-pace-across-stages.html#cb184-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-5"><a href="finding-pace-across-stages.html#cb184-5" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="finding-pace-across-stages.html#cb182-1" aria-hidden="true" tabindex="-1"></a>stage_list <span class="ot">=</span> <span class="fu">get_stage_list</span>(stages)</span>
+<span id="cb182-2"><a href="finding-pace-across-stages.html#cb182-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-3"><a href="finding-pace-across-stages.html#cb182-3" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="ot">=</span> <span class="fu">get_multi_stage_times</span>(stage_list)</span>
+<span id="cb182-4"><a href="finding-pace-across-stages.html#cb182-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb182-5"><a href="finding-pace-across-stages.html#cb182-5" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##     stageTimeId stageId entryId elapsedDurationMs  elapsedDuration    status
 ## 539       96810    1749   21571           1301693 00:21:41.6930000 Completed
 ## 540       96793    1749   21541                NA             &lt;NA&gt;       DNS
@@ -543,46 +544,46 @@ SUN
 ## 540 Default       NA          NA             &lt;NA&gt;         NA             &lt;NA&gt;</code></pre>
 <p>We can generate the pace by adding the stage distance as an extra column and performing the pace calculation.</p>
 <p>We’ll also take the opportunity to merge in driver metadata and limit cars to WRC group entries:</p>
-<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="finding-pace-across-stages.html#cb186-1" aria-hidden="true" tabindex="-1"></a>multi_stage_pace <span class="ot">=</span> multi_stage_times <span class="sc">%&gt;%</span></span>
-<span id="cb186-2"><a href="finding-pace-across-stages.html#cb186-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span> ,<span class="st">&#39;distance&#39;</span>,</span>
-<span id="cb186-3"><a href="finding-pace-across-stages.html#cb186-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">&#39;number&#39;</span>, <span class="st">&#39;code&#39;</span>)],</span>
-<span id="cb186-4"><a href="finding-pace-across-stages.html#cb186-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;stageId&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb186-5"><a href="finding-pace-across-stages.html#cb186-5" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">mutate</span>(<span class="at">elapsedDurationS =</span> elapsedDurationMs <span class="sc">/</span> <span class="dv">1000</span>,</span>
-<span id="cb186-6"><a href="finding-pace-across-stages.html#cb186-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pace =</span> elapsedDurationS <span class="sc">/</span> distance) <span class="sc">%&gt;%</span></span>
-<span id="cb186-7"><a href="finding-pace-across-stages.html#cb186-7" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">merge</span>(cars[,<span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>,<span class="st">&#39;drivername&#39;</span>,</span>
-<span id="cb186-8"><a href="finding-pace-across-stages.html#cb186-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&#39;code&#39;</span>, <span class="st">&#39;groupname&#39;</span>)],</span>
-<span id="cb186-9"><a href="finding-pace-across-stages.html#cb186-9" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">by=</span><span class="st">&#39;entryId&#39;</span>,</span>
-<span id="cb186-10"><a href="finding-pace-across-stages.html#cb186-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">suffixes=</span><span class="fu">c</span>(<span class="st">&#39;&#39;</span>,<span class="st">&#39;_driver&#39;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb186-11"><a href="finding-pace-across-stages.html#cb186-11" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">filter</span>(groupname<span class="sc">==</span><span class="st">&#39;WRC&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb186-12"><a href="finding-pace-across-stages.html#cb186-12" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;number&#39;</span>, <span class="st">&#39;code_driver&#39;</span>,</span>
-<span id="cb186-13"><a href="finding-pace-across-stages.html#cb186-13" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&#39;elapsedDurationS&#39;</span>, <span class="st">&#39;pace&#39;</span>, <span class="st">&#39;code&#39;</span>))  <span class="sc">%&gt;%</span></span>
-<span id="cb186-14"><a href="finding-pace-across-stages.html#cb186-14" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">arrange</span>(number, elapsedDurationS)</span>
-<span id="cb186-15"><a href="finding-pace-across-stages.html#cb186-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb186-16"><a href="finding-pace-across-stages.html#cb186-16" aria-hidden="true" tabindex="-1"></a>multi_stage_pace <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="finding-pace-across-stages.html#cb184-1" aria-hidden="true" tabindex="-1"></a>multi_stage_pace <span class="ot">=</span> multi_stage_times <span class="sc">%&gt;%</span></span>
+<span id="cb184-2"><a href="finding-pace-across-stages.html#cb184-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span> ,<span class="st">&#39;distance&#39;</span>,</span>
+<span id="cb184-3"><a href="finding-pace-across-stages.html#cb184-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">&#39;number&#39;</span>, <span class="st">&#39;code&#39;</span>)],</span>
+<span id="cb184-4"><a href="finding-pace-across-stages.html#cb184-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;stageId&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb184-5"><a href="finding-pace-across-stages.html#cb184-5" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">mutate</span>(<span class="at">elapsedDurationS =</span> elapsedDurationMs <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb184-6"><a href="finding-pace-across-stages.html#cb184-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">pace =</span> elapsedDurationS <span class="sc">/</span> distance) <span class="sc">%&gt;%</span></span>
+<span id="cb184-7"><a href="finding-pace-across-stages.html#cb184-7" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">merge</span>(cars[,<span class="fu">c</span>(<span class="st">&#39;entryId&#39;</span>,<span class="st">&#39;drivername&#39;</span>,</span>
+<span id="cb184-8"><a href="finding-pace-across-stages.html#cb184-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&#39;code&#39;</span>, <span class="st">&#39;groupname&#39;</span>)],</span>
+<span id="cb184-9"><a href="finding-pace-across-stages.html#cb184-9" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">by=</span><span class="st">&#39;entryId&#39;</span>,</span>
+<span id="cb184-10"><a href="finding-pace-across-stages.html#cb184-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">suffixes=</span><span class="fu">c</span>(<span class="st">&#39;&#39;</span>,<span class="st">&#39;_driver&#39;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb184-11"><a href="finding-pace-across-stages.html#cb184-11" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">filter</span>(groupname<span class="sc">==</span><span class="st">&#39;WRC&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb184-12"><a href="finding-pace-across-stages.html#cb184-12" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;number&#39;</span>, <span class="st">&#39;code_driver&#39;</span>,</span>
+<span id="cb184-13"><a href="finding-pace-across-stages.html#cb184-13" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&#39;elapsedDurationS&#39;</span>, <span class="st">&#39;pace&#39;</span>, <span class="st">&#39;code&#39;</span>))  <span class="sc">%&gt;%</span></span>
+<span id="cb184-14"><a href="finding-pace-across-stages.html#cb184-14" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">arrange</span>(number, elapsedDurationS)</span>
+<span id="cb184-15"><a href="finding-pace-across-stages.html#cb184-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb184-16"><a href="finding-pace-across-stages.html#cb184-16" aria-hidden="true" tabindex="-1"></a>multi_stage_pace <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   stageId number code_driver elapsedDurationS     pace code
 ## 1    1747      1         TÄN            957.8 30.84702  SS1
 ## 2    1747      1         BRE            961.4 30.96296  SS1
 ## 3    1747      1         ROV            968.4 31.18841  SS1</code></pre>
 <p>Create a mapping from stage ID to stage codes and cast the ordered list of stage Ids to an ordered list of stage codes:</p>
-<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="finding-pace-across-stages.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a stage code mapping function</span></span>
-<span id="cb188-2"><a href="finding-pace-across-stages.html#cb188-2" aria-hidden="true" tabindex="-1"></a>stages_lookup_code <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages, <span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;code&#39;</span>)</span>
-<span id="cb188-3"><a href="finding-pace-across-stages.html#cb188-3" aria-hidden="true" tabindex="-1"></a>stage_code_map <span class="ot">=</span> <span class="cf">function</span>(stageId)</span>
-<span id="cb188-4"><a href="finding-pace-across-stages.html#cb188-4" aria-hidden="true" tabindex="-1"></a>  stages_lookup_code[[<span class="fu">as.character</span>(stageId)]]</span>
-<span id="cb188-5"><a href="finding-pace-across-stages.html#cb188-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb188-6"><a href="finding-pace-across-stages.html#cb188-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Map stage ID column names to stage codes</span></span>
-<span id="cb188-7"><a href="finding-pace-across-stages.html#cb188-7" aria-hidden="true" tabindex="-1"></a>stage_codes <span class="ot">=</span> <span class="fu">unlist</span>(purrr<span class="sc">::</span><span class="fu">map</span>(stage_list,</span>
-<span id="cb188-8"><a href="finding-pace-across-stages.html#cb188-8" aria-hidden="true" tabindex="-1"></a>                                <span class="cf">function</span> (x) <span class="fu">stage_code_map</span>(x)))</span>
-<span id="cb188-9"><a href="finding-pace-across-stages.html#cb188-9" aria-hidden="true" tabindex="-1"></a>stage_codes</span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="finding-pace-across-stages.html#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a stage code mapping function</span></span>
+<span id="cb186-2"><a href="finding-pace-across-stages.html#cb186-2" aria-hidden="true" tabindex="-1"></a>stages_lookup_code <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages, <span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;code&#39;</span>)</span>
+<span id="cb186-3"><a href="finding-pace-across-stages.html#cb186-3" aria-hidden="true" tabindex="-1"></a>stage_code_map <span class="ot">=</span> <span class="cf">function</span>(stageId)</span>
+<span id="cb186-4"><a href="finding-pace-across-stages.html#cb186-4" aria-hidden="true" tabindex="-1"></a>  stages_lookup_code[[<span class="fu">as.character</span>(stageId)]]</span>
+<span id="cb186-5"><a href="finding-pace-across-stages.html#cb186-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb186-6"><a href="finding-pace-across-stages.html#cb186-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Map stage ID column names to stage codes</span></span>
+<span id="cb186-7"><a href="finding-pace-across-stages.html#cb186-7" aria-hidden="true" tabindex="-1"></a>stage_codes <span class="ot">=</span> <span class="fu">unlist</span>(purrr<span class="sc">::</span><span class="fu">map</span>(stage_list,</span>
+<span id="cb186-8"><a href="finding-pace-across-stages.html#cb186-8" aria-hidden="true" tabindex="-1"></a>                                <span class="cf">function</span> (x) <span class="fu">stage_code_map</span>(x)))</span>
+<span id="cb186-9"><a href="finding-pace-across-stages.html#cb186-9" aria-hidden="true" tabindex="-1"></a>stage_codes</span></code></pre></div>
 <pre><code>##  [1] &quot;SS1&quot;  &quot;SS2&quot;  &quot;SS3&quot;  &quot;SS4&quot;  &quot;SS5&quot;  &quot;SS6&quot;  &quot;SS7&quot;  &quot;SS8&quot;  &quot;SS9&quot;  &quot;SS10&quot;</code></pre>
 <p>Use the generic widener function to widen the pace dataframe to give the pace for each driver on each stage:</p>
-<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="finding-pace-across-stages.html#cb190-1" aria-hidden="true" tabindex="-1"></a>pace_wide <span class="ot">=</span> <span class="fu">get_multi_stage_generic_wide</span>(multi_stage_pace,</span>
-<span id="cb190-2"><a href="finding-pace-across-stages.html#cb190-2" aria-hidden="true" tabindex="-1"></a>                                         stage_codes, <span class="st">&#39;pace&#39;</span>,</span>
-<span id="cb190-3"><a href="finding-pace-across-stages.html#cb190-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="co"># Unique group keys required</span></span>
-<span id="cb190-4"><a href="finding-pace-across-stages.html#cb190-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="co"># Driver code not guaranteed unique</span></span>
-<span id="cb190-5"><a href="finding-pace-across-stages.html#cb190-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">group_key=</span><span class="fu">c</span>(<span class="st">&#39;code_driver&#39;</span>),</span>
-<span id="cb190-6"><a href="finding-pace-across-stages.html#cb190-6" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">spread_key=</span><span class="st">&#39;code&#39;</span>)</span>
-<span id="cb190-7"><a href="finding-pace-across-stages.html#cb190-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb190-8"><a href="finding-pace-across-stages.html#cb190-8" aria-hidden="true" tabindex="-1"></a>pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="finding-pace-across-stages.html#cb188-1" aria-hidden="true" tabindex="-1"></a>pace_wide <span class="ot">=</span> <span class="fu">get_multi_stage_generic_wide</span>(multi_stage_pace,</span>
+<span id="cb188-2"><a href="finding-pace-across-stages.html#cb188-2" aria-hidden="true" tabindex="-1"></a>                                         stage_codes, <span class="st">&#39;pace&#39;</span>,</span>
+<span id="cb188-3"><a href="finding-pace-across-stages.html#cb188-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="co"># Unique group keys required</span></span>
+<span id="cb188-4"><a href="finding-pace-across-stages.html#cb188-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="co"># Driver code not guaranteed unique</span></span>
+<span id="cb188-5"><a href="finding-pace-across-stages.html#cb188-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">group_key=</span><span class="fu">c</span>(<span class="st">&#39;code_driver&#39;</span>),</span>
+<span id="cb188-6"><a href="finding-pace-across-stages.html#cb188-6" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">spread_key=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb188-7"><a href="finding-pace-across-stages.html#cb188-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb188-8"><a href="finding-pace-across-stages.html#cb188-8" aria-hidden="true" tabindex="-1"></a>pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code_driver      SS1      SS2      SS3      SS4      SS5      SS6      SS7
 ## 1         BER 32.66345 32.84380 58.71879 57.58915 48.77529 58.83340 57.69965
 ## 2         BRE 30.96296 31.09501 34.46173 27.69965 27.33382 34.84241 28.04119
@@ -596,12 +597,12 @@ SUN
 <div id="rebasing-stage-pace" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> Rebasing Stage Pace</h2>
 <p>We can rebase the stage pace according to a specific driver:</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="finding-pace-across-stages.html#cb192-1" aria-hidden="true" tabindex="-1"></a>example_driver <span class="ot">=</span> pace_wide[<span class="dv">2</span>,]<span class="sc">$</span>code_driver</span>
-<span id="cb192-2"><a href="finding-pace-across-stages.html#cb192-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-3"><a href="finding-pace-across-stages.html#cb192-3" aria-hidden="true" tabindex="-1"></a>pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(pace_wide, example_driver, stage_codes,</span>
-<span id="cb192-4"><a href="finding-pace-across-stages.html#cb192-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id_col=</span><span class="st">&#39;code_driver&#39;</span>)</span>
-<span id="cb192-5"><a href="finding-pace-across-stages.html#cb192-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-6"><a href="finding-pace-across-stages.html#cb192-6" aria-hidden="true" tabindex="-1"></a>pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="finding-pace-across-stages.html#cb190-1" aria-hidden="true" tabindex="-1"></a>example_driver <span class="ot">=</span> pace_wide[<span class="dv">2</span>,]<span class="sc">$</span>code_driver</span>
+<span id="cb190-2"><a href="finding-pace-across-stages.html#cb190-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb190-3"><a href="finding-pace-across-stages.html#cb190-3" aria-hidden="true" tabindex="-1"></a>pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(pace_wide, example_driver, stage_codes,</span>
+<span id="cb190-4"><a href="finding-pace-across-stages.html#cb190-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id_col=</span><span class="st">&#39;code_driver&#39;</span>)</span>
+<span id="cb190-5"><a href="finding-pace-across-stages.html#cb190-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb190-6"><a href="finding-pace-across-stages.html#cb190-6" aria-hidden="true" tabindex="-1"></a>pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code_driver       SS1        SS2        SS3        SS4        SS5         SS6
 ## 1         BER 1.7004831 1.74879227 24.2570610 29.8895028 21.4414740 23.99099468
 ## 2         BRE 0.0000000 0.00000000  0.0000000  0.0000000  0.0000000  0.00000000
@@ -620,130 +621,130 @@ SUN
 <p>To compare pace, it is useful to look at rebased pace times relative to a particular driver and also indicate the length of stage with which particular pace levels are associated.</p>
 <p>We can do this with a chart that presents distance into stage along the horizontal x-axis and relative pace on the y axis, using a line to indicate the pace for each driver relative to a specified driver.</p>
 <p>One of the easiest way of plotting charts is to plot from a tidy dataframe, so let’s cast the rebased wide pace dataframe back to a long form and also add in the distance into stage at the start and end of each stage:</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="finding-pace-across-stages.html#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb194-2"><a href="finding-pace-across-stages.html#cb194-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb194-3"><a href="finding-pace-across-stages.html#cb194-3" aria-hidden="true" tabindex="-1"></a>stage_range <span class="ot">=</span> <span class="fu">c</span>(<span class="at">start=</span>stage_codes[<span class="dv">1</span>],</span>
-<span id="cb194-4"><a href="finding-pace-across-stages.html#cb194-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">end=</span>stage_codes[<span class="fu">length</span>(stage_codes)])</span>
-<span id="cb194-5"><a href="finding-pace-across-stages.html#cb194-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb194-6"><a href="finding-pace-across-stages.html#cb194-6" aria-hidden="true" tabindex="-1"></a>stages<span class="sc">$</span>cum_dist <span class="ot">=</span> <span class="fu">cumsum</span>(stages<span class="sc">$</span>distance)</span>
-<span id="cb194-7"><a href="finding-pace-across-stages.html#cb194-7" aria-hidden="true" tabindex="-1"></a>stages<span class="sc">$</span>start_dist <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, stages<span class="sc">$</span>cum_dist[<span class="sc">-</span><span class="fu">length</span>(stages<span class="sc">$</span>cum_dist)])</span>
-<span id="cb194-8"><a href="finding-pace-across-stages.html#cb194-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb194-9"><a href="finding-pace-across-stages.html#cb194-9" aria-hidden="true" tabindex="-1"></a>pace_long <span class="ot">=</span> pace_wide_rebased <span class="sc">%&gt;%</span> </span>
-<span id="cb194-10"><a href="finding-pace-across-stages.html#cb194-10" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(code, pace,</span>
-<span id="cb194-11"><a href="finding-pace-across-stages.html#cb194-11" aria-hidden="true" tabindex="-1"></a>                       stage_range[<span class="st">&#39;start&#39;</span>]<span class="sc">:</span>stage_range[<span class="st">&#39;end&#39;</span>]) <span class="sc">%&gt;%</span></span>
-<span id="cb194-12"><a href="finding-pace-across-stages.html#cb194-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>, <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
-<span id="cb194-13"><a href="finding-pace-across-stages.html#cb194-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;code&#39;</span>)</span>
-<span id="cb194-14"><a href="finding-pace-across-stages.html#cb194-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb194-15"><a href="finding-pace-across-stages.html#cb194-15" aria-hidden="true" tabindex="-1"></a>pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="finding-pace-across-stages.html#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb192-2"><a href="finding-pace-across-stages.html#cb192-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-3"><a href="finding-pace-across-stages.html#cb192-3" aria-hidden="true" tabindex="-1"></a>stage_range <span class="ot">=</span> <span class="fu">c</span>(<span class="at">start=</span>stage_codes[<span class="dv">1</span>],</span>
+<span id="cb192-4"><a href="finding-pace-across-stages.html#cb192-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">end=</span>stage_codes[<span class="fu">length</span>(stage_codes)])</span>
+<span id="cb192-5"><a href="finding-pace-across-stages.html#cb192-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-6"><a href="finding-pace-across-stages.html#cb192-6" aria-hidden="true" tabindex="-1"></a>stages<span class="sc">$</span>cum_dist <span class="ot">=</span> <span class="fu">cumsum</span>(stages<span class="sc">$</span>distance)</span>
+<span id="cb192-7"><a href="finding-pace-across-stages.html#cb192-7" aria-hidden="true" tabindex="-1"></a>stages<span class="sc">$</span>start_dist <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, stages<span class="sc">$</span>cum_dist[<span class="sc">-</span><span class="fu">length</span>(stages<span class="sc">$</span>cum_dist)])</span>
+<span id="cb192-8"><a href="finding-pace-across-stages.html#cb192-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-9"><a href="finding-pace-across-stages.html#cb192-9" aria-hidden="true" tabindex="-1"></a>pace_long <span class="ot">=</span> pace_wide_rebased <span class="sc">%&gt;%</span> </span>
+<span id="cb192-10"><a href="finding-pace-across-stages.html#cb192-10" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(code, pace,</span>
+<span id="cb192-11"><a href="finding-pace-across-stages.html#cb192-11" aria-hidden="true" tabindex="-1"></a>                       stage_range[<span class="st">&#39;start&#39;</span>]<span class="sc">:</span>stage_range[<span class="st">&#39;end&#39;</span>]) <span class="sc">%&gt;%</span></span>
+<span id="cb192-12"><a href="finding-pace-across-stages.html#cb192-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>, <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
+<span id="cb192-13"><a href="finding-pace-across-stages.html#cb192-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb192-14"><a href="finding-pace-across-stages.html#cb192-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb192-15"><a href="finding-pace-across-stages.html#cb192-15" aria-hidden="true" tabindex="-1"></a>pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code code_driver      pace start_dist cum_dist
 ## 1  SS1         BER 1.7004831          0    31.05
 ## 2  SS1         BRE 0.0000000          0    31.05
 ## 3  SS1         EVA 0.4219002          0    31.05</code></pre>
 <p>We can now construct a chart using line segments to represent the pace for each driver on each stage:</p>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="finding-pace-across-stages.html#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb196-2"><a href="finding-pace-across-stages.html#cb196-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb196-3"><a href="finding-pace-across-stages.html#cb196-3" aria-hidden="true" tabindex="-1"></a>g0 <span class="ot">=</span> <span class="fu">ggplot</span>(pace_long, <span class="fu">aes</span>(<span class="at">group=</span>code_driver)) <span class="sc">+</span></span>
-<span id="cb196-4"><a href="finding-pace-across-stages.html#cb196-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>,</span>
-<span id="cb196-5"><a href="finding-pace-across-stages.html#cb196-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>) <span class="sc">+</span></span>
-<span id="cb196-6"><a href="finding-pace-across-stages.html#cb196-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
-<span id="cb196-7"><a href="finding-pace-across-stages.html#cb196-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span>pace, <span class="at">yend=</span>pace),</span>
-<span id="cb196-8"><a href="finding-pace-across-stages.html#cb196-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">&#39;lightgrey&#39;</span>)</span>
-<span id="cb196-9"><a href="finding-pace-across-stages.html#cb196-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb196-10"><a href="finding-pace-across-stages.html#cb196-10" aria-hidden="true" tabindex="-1"></a>g <span class="ot">=</span> g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>(start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,<span class="at">y=</span>pace<span class="fl">+0.03</span>,</span>
-<span id="cb196-11"><a href="finding-pace-across-stages.html#cb196-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label=</span>code_driver,<span class="at">group=</span>code_driver),</span>
-<span id="cb196-12"><a href="finding-pace-across-stages.html#cb196-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="dv">15</span>), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb196-13"><a href="finding-pace-across-stages.html#cb196-13" aria-hidden="true" tabindex="-1"></a>                <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>)) <span class="sc">+</span></span>
-<span id="cb196-14"><a href="finding-pace-across-stages.html#cb196-14" aria-hidden="true" tabindex="-1"></a>                <span class="fu">theme_classic</span>()</span>
-<span id="cb196-15"><a href="finding-pace-across-stages.html#cb196-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb196-16"><a href="finding-pace-across-stages.html#cb196-16" aria-hidden="true" tabindex="-1"></a>g</span></code></pre></div>
-<p><img src="images/finding-stage-pace-basic_stage_pace-1.png" width="672" /></p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="finding-pace-across-stages.html#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb194-2"><a href="finding-pace-across-stages.html#cb194-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-3"><a href="finding-pace-across-stages.html#cb194-3" aria-hidden="true" tabindex="-1"></a>g0 <span class="ot">=</span> <span class="fu">ggplot</span>(pace_long, <span class="fu">aes</span>(<span class="at">group=</span>code_driver)) <span class="sc">+</span></span>
+<span id="cb194-4"><a href="finding-pace-across-stages.html#cb194-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>,</span>
+<span id="cb194-5"><a href="finding-pace-across-stages.html#cb194-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>) <span class="sc">+</span></span>
+<span id="cb194-6"><a href="finding-pace-across-stages.html#cb194-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb194-7"><a href="finding-pace-across-stages.html#cb194-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span>pace, <span class="at">yend=</span>pace),</span>
+<span id="cb194-8"><a href="finding-pace-across-stages.html#cb194-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">&#39;lightgrey&#39;</span>)</span>
+<span id="cb194-9"><a href="finding-pace-across-stages.html#cb194-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-10"><a href="finding-pace-across-stages.html#cb194-10" aria-hidden="true" tabindex="-1"></a>g <span class="ot">=</span> g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>(start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,<span class="at">y=</span>pace<span class="fl">+0.03</span>,</span>
+<span id="cb194-11"><a href="finding-pace-across-stages.html#cb194-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label=</span>code_driver,<span class="at">group=</span>code_driver),</span>
+<span id="cb194-12"><a href="finding-pace-across-stages.html#cb194-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="dv">15</span>), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb194-13"><a href="finding-pace-across-stages.html#cb194-13" aria-hidden="true" tabindex="-1"></a>                <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb194-14"><a href="finding-pace-across-stages.html#cb194-14" aria-hidden="true" tabindex="-1"></a>                <span class="fu">theme_classic</span>()</span>
+<span id="cb194-15"><a href="finding-pace-across-stages.html#cb194-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-16"><a href="finding-pace-across-stages.html#cb194-16" aria-hidden="true" tabindex="-1"></a>g</span></code></pre></div>
+<p><img src="images/stage-results-basic_stage_pace-1.png" width="672" /></p>
 <p>We could highlight positive and negative differences in the label colourings:</p>
-<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="finding-pace-across-stages.html#cb197-1" aria-hidden="true" tabindex="-1"></a>g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>(start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb197-2"><a href="finding-pace-across-stages.html#cb197-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y=</span><span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace<span class="fl">+0.03</span>,pace<span class="fl">-0.03</span>),</span>
-<span id="cb197-3"><a href="finding-pace-across-stages.html#cb197-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label=</span>code_driver,<span class="at">group=</span>code_driver,</span>
-<span id="cb197-4"><a href="finding-pace-across-stages.html#cb197-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color=</span>pace<span class="sc">&gt;</span><span class="dv">0</span>),</span>
-<span id="cb197-5"><a href="finding-pace-across-stages.html#cb197-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="dv">15</span>), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb197-6"><a href="finding-pace-across-stages.html#cb197-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>)) <span class="sc">+</span></span>
-<span id="cb197-7"><a href="finding-pace-across-stages.html#cb197-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-posneg_highlighted_stage_pace-1.png" width="672" /></p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="finding-pace-across-stages.html#cb195-1" aria-hidden="true" tabindex="-1"></a>g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>(start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb195-2"><a href="finding-pace-across-stages.html#cb195-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y=</span><span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace<span class="fl">+0.03</span>,pace<span class="fl">-0.03</span>),</span>
+<span id="cb195-3"><a href="finding-pace-across-stages.html#cb195-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label=</span>code_driver,<span class="at">group=</span>code_driver,</span>
+<span id="cb195-4"><a href="finding-pace-across-stages.html#cb195-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color=</span>pace<span class="sc">&gt;</span><span class="dv">0</span>),</span>
+<span id="cb195-5"><a href="finding-pace-across-stages.html#cb195-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="dv">15</span>), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb195-6"><a href="finding-pace-across-stages.html#cb195-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb195-7"><a href="finding-pace-across-stages.html#cb195-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-posneg_highlighted_stage_pace-1.png" width="672" /></p>
 <p>We can also highlight values for a particular driver:</p>
-<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="finding-pace-across-stages.html#cb198-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_segment</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,],</span>
-<span id="cb198-2"><a href="finding-pace-across-stages.html#cb198-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
-<span id="cb198-3"><a href="finding-pace-across-stages.html#cb198-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span>pace, <span class="at">yend=</span>pace, <span class="at">color =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>)) <span class="sc">+</span></span>
-<span id="cb198-4"><a href="finding-pace-across-stages.html#cb198-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-driver_highlighted_stage_pace-1.png" width="672" /></p>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="finding-pace-across-stages.html#cb196-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_segment</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,],</span>
+<span id="cb196-2"><a href="finding-pace-across-stages.html#cb196-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb196-3"><a href="finding-pace-across-stages.html#cb196-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span>pace, <span class="at">yend=</span>pace, <span class="at">color =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb196-4"><a href="finding-pace-across-stages.html#cb196-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-driver_highlighted_stage_pace-1.png" width="672" /></p>
 <p>Or abuse the <code>gghiglight</code> package to modify the aesthetics of unselected items:</p>
-<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="finding-pace-across-stages.html#cb199-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,</span>
-<span id="cb199-2"><a href="finding-pace-across-stages.html#cb199-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>))</span></code></pre></div>
-<p><img src="images/finding-stage-pace-driver_highlighted_stage_pace2-1.png" width="672" />
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="finding-pace-across-stages.html#cb197-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,</span>
+<span id="cb197-2"><a href="finding-pace-across-stages.html#cb197-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>))</span></code></pre></div>
+<p><img src="images/stage-results-driver_highlighted_stage_pace2-1.png" width="672" />
 Alternatively, abuse <code>gghighlight()</code> again with a negative form of selection to highlight items:</p>
-<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="finding-pace-across-stages.html#cb200-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">!=</span><span class="st">&#39;EVA&#39;</span>,<span class="at">label_key=</span>code_driver,</span>
-<span id="cb200-2"><a href="finding-pace-across-stages.html#cb200-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">color=</span><span class="st">&#39;blue&#39;</span>))</span></code></pre></div>
-<p><img src="images/finding-stage-pace-driver_highlighted_stage_pace3-1.png" width="672" /></p>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="finding-pace-across-stages.html#cb198-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">!=</span><span class="st">&#39;EVA&#39;</span>,<span class="at">label_key=</span>code_driver,</span>
+<span id="cb198-2"><a href="finding-pace-across-stages.html#cb198-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">color=</span><span class="st">&#39;blue&#39;</span>))</span></code></pre></div>
+<p><img src="images/stage-results-driver_highlighted_stage_pace3-1.png" width="672" /></p>
 <p>We could even add a transparency layer bar to highlight the pace difference compared to a particular driver:</p>
-<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="finding-pace-across-stages.html#cb201-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_rect</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,],</span>
-<span id="cb201-2"><a href="finding-pace-across-stages.html#cb201-2" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span>start_dist, <span class="at">xmax=</span>cum_dist,</span>
-<span id="cb201-3"><a href="finding-pace-across-stages.html#cb201-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ymin =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">0</span>,pace),</span>
-<span id="cb201-4"><a href="finding-pace-across-stages.html#cb201-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ymax =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace,<span class="dv">0</span>),</span>
-<span id="cb201-5"><a href="finding-pace-across-stages.html#cb201-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">alpha=</span><span class="fl">0.7</span>)) <span class="sc">+</span></span>
-<span id="cb201-6"><a href="finding-pace-across-stages.html#cb201-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-block_highlighted_stage_pace-1.png" width="672" /></p>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="finding-pace-across-stages.html#cb199-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_rect</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,],</span>
+<span id="cb199-2"><a href="finding-pace-across-stages.html#cb199-2" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span>start_dist, <span class="at">xmax=</span>cum_dist,</span>
+<span id="cb199-3"><a href="finding-pace-across-stages.html#cb199-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ymin =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">0</span>,pace),</span>
+<span id="cb199-4"><a href="finding-pace-across-stages.html#cb199-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ymax =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace,<span class="dv">0</span>),</span>
+<span id="cb199-5"><a href="finding-pace-across-stages.html#cb199-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">alpha=</span><span class="fl">0.7</span>)) <span class="sc">+</span></span>
+<span id="cb199-6"><a href="finding-pace-across-stages.html#cb199-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-block_highlighted_stage_pace-1.png" width="672" /></p>
 <p>Could we perhaps also extend that a little to allow us to compare more drivers?</p>
-<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="finding-pace-across-stages.html#cb202-1" aria-hidden="true" tabindex="-1"></a>pace_map_highlight <span class="ot">=</span> <span class="cf">function</span>(sub_df, m, n){</span>
-<span id="cb202-2"><a href="finding-pace-across-stages.html#cb202-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If we don&#39;t grab the actual value</span></span>
-<span id="cb202-3"><a href="finding-pace-across-stages.html#cb202-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the referenced value is used...</span></span>
-<span id="cb202-4"><a href="finding-pace-across-stages.html#cb202-4" aria-hidden="true" tabindex="-1"></a>    m_ <span class="ot">=</span> m</span>
-<span id="cb202-5"><a href="finding-pace-across-stages.html#cb202-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_rect</span>(<span class="at">data=</span>sub_df,</span>
-<span id="cb202-6"><a href="finding-pace-across-stages.html#cb202-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span> start_dist <span class="sc">+</span> (m_<span class="dv">-1</span>) <span class="sc">*</span> (cum_dist <span class="sc">-</span> start_dist)<span class="sc">/</span>n,</span>
-<span id="cb202-7"><a href="finding-pace-across-stages.html#cb202-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xmax=</span> start_dist <span class="sc">+</span> m_ <span class="sc">*</span> (cum_dist <span class="sc">-</span> start_dist)<span class="sc">/</span>n,</span>
-<span id="cb202-8"><a href="finding-pace-across-stages.html#cb202-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">0</span>,pace),</span>
-<span id="cb202-9"><a href="finding-pace-across-stages.html#cb202-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace,<span class="dv">0</span>),</span>
-<span id="cb202-10"><a href="finding-pace-across-stages.html#cb202-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">fill =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">alpha=</span><span class="fl">0.7</span>))</span>
-<span id="cb202-11"><a href="finding-pace-across-stages.html#cb202-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb202-12"><a href="finding-pace-across-stages.html#cb202-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb202-13"><a href="finding-pace-across-stages.html#cb202-13" aria-hidden="true" tabindex="-1"></a>pace_map_highlight_many <span class="ot">=</span> <span class="cf">function</span>(df, g, codes){</span>
-<span id="cb202-14"><a href="finding-pace-across-stages.html#cb202-14" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(codes)</span>
-<span id="cb202-15"><a href="finding-pace-across-stages.html#cb202-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (m <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
-<span id="cb202-16"><a href="finding-pace-across-stages.html#cb202-16" aria-hidden="true" tabindex="-1"></a>    sub_df <span class="ot">=</span> df[df<span class="sc">$</span>code_driver<span class="sc">==</span>codes[m],]</span>
-<span id="cb202-17"><a href="finding-pace-across-stages.html#cb202-17" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">=</span> g <span class="sc">+</span> <span class="fu">pace_map_highlight</span>(sub_df, m, n)</span>
-<span id="cb202-18"><a href="finding-pace-across-stages.html#cb202-18" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb202-19"><a href="finding-pace-across-stages.html#cb202-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb202-20"><a href="finding-pace-across-stages.html#cb202-20" aria-hidden="true" tabindex="-1"></a>  g</span>
-<span id="cb202-21"><a href="finding-pace-across-stages.html#cb202-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="finding-pace-across-stages.html#cb200-1" aria-hidden="true" tabindex="-1"></a>pace_map_highlight <span class="ot">=</span> <span class="cf">function</span>(sub_df, m, n){</span>
+<span id="cb200-2"><a href="finding-pace-across-stages.html#cb200-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If we don&#39;t grab the actual value</span></span>
+<span id="cb200-3"><a href="finding-pace-across-stages.html#cb200-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the referenced value is used...</span></span>
+<span id="cb200-4"><a href="finding-pace-across-stages.html#cb200-4" aria-hidden="true" tabindex="-1"></a>    m_ <span class="ot">=</span> m</span>
+<span id="cb200-5"><a href="finding-pace-across-stages.html#cb200-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_rect</span>(<span class="at">data=</span>sub_df,</span>
+<span id="cb200-6"><a href="finding-pace-across-stages.html#cb200-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span> start_dist <span class="sc">+</span> (m_<span class="dv">-1</span>) <span class="sc">*</span> (cum_dist <span class="sc">-</span> start_dist)<span class="sc">/</span>n,</span>
+<span id="cb200-7"><a href="finding-pace-across-stages.html#cb200-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xmax=</span> start_dist <span class="sc">+</span> m_ <span class="sc">*</span> (cum_dist <span class="sc">-</span> start_dist)<span class="sc">/</span>n,</span>
+<span id="cb200-8"><a href="finding-pace-across-stages.html#cb200-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">0</span>,pace),</span>
+<span id="cb200-9"><a href="finding-pace-across-stages.html#cb200-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace,<span class="dv">0</span>),</span>
+<span id="cb200-10"><a href="finding-pace-across-stages.html#cb200-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">fill =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">alpha=</span><span class="fl">0.7</span>))</span>
+<span id="cb200-11"><a href="finding-pace-across-stages.html#cb200-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb200-12"><a href="finding-pace-across-stages.html#cb200-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb200-13"><a href="finding-pace-across-stages.html#cb200-13" aria-hidden="true" tabindex="-1"></a>pace_map_highlight_many <span class="ot">=</span> <span class="cf">function</span>(df, g, codes){</span>
+<span id="cb200-14"><a href="finding-pace-across-stages.html#cb200-14" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(codes)</span>
+<span id="cb200-15"><a href="finding-pace-across-stages.html#cb200-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (m <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb200-16"><a href="finding-pace-across-stages.html#cb200-16" aria-hidden="true" tabindex="-1"></a>    sub_df <span class="ot">=</span> df[df<span class="sc">$</span>code_driver<span class="sc">==</span>codes[m],]</span>
+<span id="cb200-17"><a href="finding-pace-across-stages.html#cb200-17" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">=</span> g <span class="sc">+</span> <span class="fu">pace_map_highlight</span>(sub_df, m, n)</span>
+<span id="cb200-18"><a href="finding-pace-across-stages.html#cb200-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb200-19"><a href="finding-pace-across-stages.html#cb200-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb200-20"><a href="finding-pace-across-stages.html#cb200-20" aria-hidden="true" tabindex="-1"></a>  g</span>
+<span id="cb200-21"><a href="finding-pace-across-stages.html#cb200-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Let’s try it with two drivers:</p>
-<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="finding-pace-across-stages.html#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pace_map_highlight_many</span>(pace_long, g, <span class="fu">c</span>(<span class="st">&#39;EVA&#39;</span>, <span class="st">&#39;ROV&#39;</span> )) <span class="sc">+</span></span>
-<span id="cb203-2"><a href="finding-pace-across-stages.html#cb203-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-pace_map_dual-1.png" width="672" /></p>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="finding-pace-across-stages.html#cb201-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pace_map_highlight_many</span>(pace_long, g, <span class="fu">c</span>(<span class="st">&#39;EVA&#39;</span>, <span class="st">&#39;ROV&#39;</span> )) <span class="sc">+</span></span>
+<span id="cb201-2"><a href="finding-pace-across-stages.html#cb201-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-pace_map_dual-1.png" width="672" /></p>
 <p>With multiple drivers, it may get difficult to see where the stages are delimited, so we might add separators to delimit them:</p>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="finding-pace-across-stages.html#cb204-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_vline</span>(<span class="at">data =</span> stages, <span class="fu">aes</span>(<span class="at">xintercept =</span> cum_dist),</span>
-<span id="cb204-2"><a href="finding-pace-across-stages.html#cb204-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">color=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-pace_map_stage_delimited-1.png" width="672" /></p>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="finding-pace-across-stages.html#cb202-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_vline</span>(<span class="at">data =</span> stages, <span class="fu">aes</span>(<span class="at">xintercept =</span> cum_dist),</span>
+<span id="cb202-2"><a href="finding-pace-across-stages.html#cb202-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">color=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-pace_map_stage_delimited-1.png" width="672" /></p>
 <p>To highlight stages further, we could add a “banner” to the chart:</p>
-<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="finding-pace-across-stages.html#cb205-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_rect</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
-<span id="cb205-2"><a href="finding-pace-across-stages.html#cb205-2" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span><span class="dv">0</span>, <span class="at">xmax=</span><span class="fu">max</span>(cum_dist),</span>
-<span id="cb205-3"><a href="finding-pace-across-stages.html#cb205-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> <span class="fl">1.8</span>,  <span class="at">ymax =</span> <span class="fl">2.0</span>,</span>
-<span id="cb205-4"><a href="finding-pace-across-stages.html#cb205-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">alpha=</span><span class="dv">0</span>), <span class="at">fill =</span> <span class="st">&#39;black&#39;</span>) <span class="sc">+</span></span>
-<span id="cb205-5"><a href="finding-pace-across-stages.html#cb205-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
-<span id="cb205-6"><a href="finding-pace-across-stages.html#cb205-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x=</span>(cum_dist <span class="sc">+</span> start_dist)<span class="sc">/</span><span class="dv">2</span>, <span class="at">label=</span>code),</span>
-<span id="cb205-7"><a href="finding-pace-across-stages.html#cb205-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">y=</span><span class="fl">1.9</span>, <span class="at">color=</span><span class="st">&#39;yellow&#39;</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb205-8"><a href="finding-pace-across-stages.html#cb205-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
-<span id="cb205-9"><a href="finding-pace-across-stages.html#cb205-9" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">xend=</span>cum_dist,</span>
-<span id="cb205-10"><a href="finding-pace-across-stages.html#cb205-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y=</span><span class="fl">1.8</span>, <span class="at">yend=</span><span class="fl">2.0</span>), <span class="at">color=</span><span class="st">&#39;yellow&#39;</span>) <span class="sc">+</span></span>
-<span id="cb205-11"><a href="finding-pace-across-stages.html#cb205-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-banner_highlighted_stage_pace-1.png" width="672" /></p>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="finding-pace-across-stages.html#cb203-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_rect</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
+<span id="cb203-2"><a href="finding-pace-across-stages.html#cb203-2" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span><span class="dv">0</span>, <span class="at">xmax=</span><span class="fu">max</span>(cum_dist),</span>
+<span id="cb203-3"><a href="finding-pace-across-stages.html#cb203-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> <span class="fl">1.8</span>,  <span class="at">ymax =</span> <span class="fl">2.0</span>,</span>
+<span id="cb203-4"><a href="finding-pace-across-stages.html#cb203-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">alpha=</span><span class="dv">0</span>), <span class="at">fill =</span> <span class="st">&#39;black&#39;</span>) <span class="sc">+</span></span>
+<span id="cb203-5"><a href="finding-pace-across-stages.html#cb203-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
+<span id="cb203-6"><a href="finding-pace-across-stages.html#cb203-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x=</span>(cum_dist <span class="sc">+</span> start_dist)<span class="sc">/</span><span class="dv">2</span>, <span class="at">label=</span>code),</span>
+<span id="cb203-7"><a href="finding-pace-across-stages.html#cb203-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">y=</span><span class="fl">1.9</span>, <span class="at">color=</span><span class="st">&#39;yellow&#39;</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb203-8"><a href="finding-pace-across-stages.html#cb203-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data=</span>pace_long[pace_long<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
+<span id="cb203-9"><a href="finding-pace-across-stages.html#cb203-9" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb203-10"><a href="finding-pace-across-stages.html#cb203-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y=</span><span class="fl">1.8</span>, <span class="at">yend=</span><span class="fl">2.0</span>), <span class="at">color=</span><span class="st">&#39;yellow&#39;</span>) <span class="sc">+</span></span>
+<span id="cb203-11"><a href="finding-pace-across-stages.html#cb203-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-banner_highlighted_stage_pace-1.png" width="672" /></p>
 </div>
 <div id="off-the-pace-charts" class="section level2" number="5.6">
 <h2><span class="header-section-number">5.6</span> Off-the-Pace Charts</h2>
 <p>Another way or reviewing pace is to consider the gap to leader, or rebased gap to a particular driver across the stages, using distance into stage along the x-axis to locate the x-value and gap (measured in seconds) along the y-axis. A moment’s consideration suggests that the gradient (<span class="math inline">\(\textrm{change_in_gap}/\textrm{change_in_distance}\)</span>) is a measure of pace. The slope of the line thus indicates relative pace between the focal driver and the other drivers.</p>
 <p>As with the pace map, if we have the data in a long, tidy form, we can create charts from it quite straightforwardly. So let’s add in the accumulated distance into stage and accumulated stage time for each time:</p>
-<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="finding-pace-across-stages.html#cb206-1" aria-hidden="true" tabindex="-1"></a>off_the_pace <span class="ot">=</span> multi_stage_pace <span class="sc">%&gt;%</span></span>
-<span id="cb206-2"><a href="finding-pace-across-stages.html#cb206-2" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
-<span id="cb206-3"><a href="finding-pace-across-stages.html#cb206-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">by=</span><span class="st">&#39;stageId&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb206-4"><a href="finding-pace-across-stages.html#cb206-4" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">arrange</span>(number) <span class="sc">%&gt;%</span></span>
-<span id="cb206-5"><a href="finding-pace-across-stages.html#cb206-5" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">group_by</span>(code_driver) <span class="sc">%&gt;%</span></span>
-<span id="cb206-6"><a href="finding-pace-across-stages.html#cb206-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">mutate</span>(<span class="at">totalDurationS =</span> <span class="fu">cumsum</span>(elapsedDurationS))</span>
-<span id="cb206-7"><a href="finding-pace-across-stages.html#cb206-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb206-8"><a href="finding-pace-across-stages.html#cb206-8" aria-hidden="true" tabindex="-1"></a>off_the_pace <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="finding-pace-across-stages.html#cb204-1" aria-hidden="true" tabindex="-1"></a>off_the_pace <span class="ot">=</span> multi_stage_pace <span class="sc">%&gt;%</span></span>
+<span id="cb204-2"><a href="finding-pace-across-stages.html#cb204-2" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
+<span id="cb204-3"><a href="finding-pace-across-stages.html#cb204-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">by=</span><span class="st">&#39;stageId&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb204-4"><a href="finding-pace-across-stages.html#cb204-4" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">arrange</span>(number) <span class="sc">%&gt;%</span></span>
+<span id="cb204-5"><a href="finding-pace-across-stages.html#cb204-5" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">group_by</span>(code_driver) <span class="sc">%&gt;%</span></span>
+<span id="cb204-6"><a href="finding-pace-across-stages.html#cb204-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">mutate</span>(<span class="at">totalDurationS =</span> <span class="fu">cumsum</span>(elapsedDurationS))</span>
+<span id="cb204-7"><a href="finding-pace-across-stages.html#cb204-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb204-8"><a href="finding-pace-across-stages.html#cb204-8" aria-hidden="true" tabindex="-1"></a>off_the_pace <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 3 x 8
 ## # Groups:   code_driver [3]
 ##   stageId number code_driver elapsedDurationS  pace code  cum_dist
@@ -753,17 +754,17 @@ Alternatively, abuse <code>gghighlight()</code> again with a negative form of se
 ## 3    1747      1 ROV                     968.  31.2 SS1       31.0
 ## # … with 1 more variable: totalDurationS &lt;dbl&gt;</code></pre>
 <p>Now we can create a basic off-the pace chart:</p>
-<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="finding-pace-across-stages.html#cb208-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(off_the_pace, <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">y=</span>totalDurationS,</span>
-<span id="cb208-2"><a href="finding-pace-across-stages.html#cb208-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color=</span>code_driver)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code></pre></div>
-<p><img src="images/finding-stage-pace-off-the-pace-basic-1.png" width="672" /></p>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="finding-pace-across-stages.html#cb206-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(off_the_pace, <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">y=</span>totalDurationS,</span>
+<span id="cb206-2"><a href="finding-pace-across-stages.html#cb206-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color=</span>code_driver)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="images/stage-results-off-the-pace-basic-1.png" width="672" /></p>
 <p>As with the pace map, the chart is often most informative if we rebase it relative to a particular driver.</p>
 <p>Let’s create a wide dataframe to simplify the rebasing process:</p>
-<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="finding-pace-across-stages.html#cb209-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide <span class="ot">=</span> <span class="fu">get_multi_stage_generic_wide</span>(off_the_pace,</span>
-<span id="cb209-2"><a href="finding-pace-across-stages.html#cb209-2" aria-hidden="true" tabindex="-1"></a>                                         stage_codes, <span class="st">&#39;totalDurationS&#39;</span>,</span>
-<span id="cb209-3"><a href="finding-pace-across-stages.html#cb209-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">group_key=</span><span class="fu">c</span>(<span class="st">&#39;code_driver&#39;</span>),</span>
-<span id="cb209-4"><a href="finding-pace-across-stages.html#cb209-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">spread_key=</span><span class="st">&#39;code&#39;</span>)</span>
-<span id="cb209-5"><a href="finding-pace-across-stages.html#cb209-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb209-6"><a href="finding-pace-across-stages.html#cb209-6" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="finding-pace-across-stages.html#cb207-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide <span class="ot">=</span> <span class="fu">get_multi_stage_generic_wide</span>(off_the_pace,</span>
+<span id="cb207-2"><a href="finding-pace-across-stages.html#cb207-2" aria-hidden="true" tabindex="-1"></a>                                         stage_codes, <span class="st">&#39;totalDurationS&#39;</span>,</span>
+<span id="cb207-3"><a href="finding-pace-across-stages.html#cb207-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">group_key=</span><span class="fu">c</span>(<span class="st">&#39;code_driver&#39;</span>),</span>
+<span id="cb207-4"><a href="finding-pace-across-stages.html#cb207-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">spread_key=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb207-5"><a href="finding-pace-across-stages.html#cb207-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb207-6"><a href="finding-pace-across-stages.html#cb207-6" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code_driver    SS1    SS2    SS3    SS4    SS5    SS6    SS7    SS8     SS9
 ## 1         BER 1014.2 2034.0 3468.5 4615.1 5965.2 7402.5 8551.3 9915.3 10560.0
 ## 2         BRE  961.4 1926.9 2768.8 3320.3 4076.9 4928.1 5486.4 6265.5  6879.5
@@ -773,11 +774,11 @@ Alternatively, abuse <code>gghighlight()</code> again with a negative form of se
 ## 2  7482.231
 ## 3  7491.128</code></pre>
 <p>Now we can rebase:</p>
-<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="finding-pace-across-stages.html#cb211-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(off_the_pace_wide,</span>
-<span id="cb211-2"><a href="finding-pace-across-stages.html#cb211-2" aria-hidden="true" tabindex="-1"></a>                                   example_driver, stage_codes,</span>
-<span id="cb211-3"><a href="finding-pace-across-stages.html#cb211-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">id_col=</span><span class="st">&#39;code_driver&#39;</span>)</span>
-<span id="cb211-4"><a href="finding-pace-across-stages.html#cb211-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb211-5"><a href="finding-pace-across-stages.html#cb211-5" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="finding-pace-across-stages.html#cb209-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(off_the_pace_wide,</span>
+<span id="cb209-2"><a href="finding-pace-across-stages.html#cb209-2" aria-hidden="true" tabindex="-1"></a>                                   example_driver, stage_codes,</span>
+<span id="cb209-3"><a href="finding-pace-across-stages.html#cb209-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">id_col=</span><span class="st">&#39;code_driver&#39;</span>)</span>
+<span id="cb209-4"><a href="finding-pace-across-stages.html#cb209-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb209-5"><a href="finding-pace-across-stages.html#cb209-5" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code_driver  SS1   SS2   SS3    SS4    SS5    SS6    SS7    SS8    SS9
 ## 1         BER 52.8 107.1 699.7 1294.8 1888.3 2474.4 3064.9 3649.8 3680.5
 ## 2         BRE  0.0   0.0   0.0    0.0    0.0    0.0    0.0    0.0    0.0
@@ -787,59 +788,59 @@ Alternatively, abuse <code>gghighlight()</code> again with a negative form of se
 ## 2    0.000
 ## 3    8.897</code></pre>
 <p>And cast back to the long, tidy form:</p>
-<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="finding-pace-across-stages.html#cb213-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_long <span class="ot">=</span> off_the_pace_wide_rebased <span class="sc">%&gt;%</span> </span>
-<span id="cb213-2"><a href="finding-pace-across-stages.html#cb213-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">gather</span>(code, totalDurationGapS,</span>
-<span id="cb213-3"><a href="finding-pace-across-stages.html#cb213-3" aria-hidden="true" tabindex="-1"></a>                               stage_range[<span class="st">&#39;start&#39;</span>]<span class="sc">:</span>stage_range[<span class="st">&#39;end&#39;</span>]) <span class="sc">%&gt;%</span></span>
-<span id="cb213-4"><a href="finding-pace-across-stages.html#cb213-4" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
-<span id="cb213-5"><a href="finding-pace-across-stages.html#cb213-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">by=</span><span class="st">&#39;code&#39;</span>)</span>
-<span id="cb213-6"><a href="finding-pace-across-stages.html#cb213-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb213-7"><a href="finding-pace-across-stages.html#cb213-7" aria-hidden="true" tabindex="-1"></a>off_the_pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="finding-pace-across-stages.html#cb211-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_long <span class="ot">=</span> off_the_pace_wide_rebased <span class="sc">%&gt;%</span> </span>
+<span id="cb211-2"><a href="finding-pace-across-stages.html#cb211-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">gather</span>(code, totalDurationGapS,</span>
+<span id="cb211-3"><a href="finding-pace-across-stages.html#cb211-3" aria-hidden="true" tabindex="-1"></a>                               stage_range[<span class="st">&#39;start&#39;</span>]<span class="sc">:</span>stage_range[<span class="st">&#39;end&#39;</span>]) <span class="sc">%&gt;%</span></span>
+<span id="cb211-4"><a href="finding-pace-across-stages.html#cb211-4" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
+<span id="cb211-5"><a href="finding-pace-across-stages.html#cb211-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">by=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb211-6"><a href="finding-pace-across-stages.html#cb211-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb211-7"><a href="finding-pace-across-stages.html#cb211-7" aria-hidden="true" tabindex="-1"></a>off_the_pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code code_driver totalDurationGapS cum_dist
 ## 1  SS1         BER              52.8    31.05
 ## 2  SS1         BRE               0.0    31.05
 ## 3  SS1         EVA              13.1    31.05</code></pre>
 <p>And now we can plot the simple rebased off-the-pace chart:</p>
-<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="finding-pace-across-stages.html#cb215-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="ot">=</span> <span class="fu">ggplot</span>(off_the_pace_long, <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">y=</span>totalDurationGapS,</span>
-<span id="cb215-2"><a href="finding-pace-across-stages.html#cb215-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">color=</span>code_driver)) <span class="sc">+</span></span>
-<span id="cb215-3"><a href="finding-pace-across-stages.html#cb215-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb215-4"><a href="finding-pace-across-stages.html#cb215-4" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Retain the points outside the limits</span></span>
-<span id="cb215-5"><a href="finding-pace-across-stages.html#cb215-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># by using coord_cartesian()</span></span>
-<span id="cb215-6"><a href="finding-pace-across-stages.html#cb215-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We can also flip the coordinate axis</span></span>
-<span id="cb215-7"><a href="finding-pace-across-stages.html#cb215-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">100</span>)) <span class="sc">+</span> <span class="fu">theme_classic</span>()</span>
-<span id="cb215-8"><a href="finding-pace-across-stages.html#cb215-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb215-9"><a href="finding-pace-across-stages.html#cb215-9" aria-hidden="true" tabindex="-1"></a>g_otp</span></code></pre></div>
-<p><img src="images/finding-stage-pace-off-the-pace-rebased-1.png" width="672" /></p>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="finding-pace-across-stages.html#cb213-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="ot">=</span> <span class="fu">ggplot</span>(off_the_pace_long, <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">y=</span>totalDurationGapS,</span>
+<span id="cb213-2"><a href="finding-pace-across-stages.html#cb213-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">color=</span>code_driver)) <span class="sc">+</span></span>
+<span id="cb213-3"><a href="finding-pace-across-stages.html#cb213-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb213-4"><a href="finding-pace-across-stages.html#cb213-4" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Retain the points outside the limits</span></span>
+<span id="cb213-5"><a href="finding-pace-across-stages.html#cb213-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># by using coord_cartesian()</span></span>
+<span id="cb213-6"><a href="finding-pace-across-stages.html#cb213-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We can also flip the coordinate axis</span></span>
+<span id="cb213-7"><a href="finding-pace-across-stages.html#cb213-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">100</span>)) <span class="sc">+</span> <span class="fu">theme_classic</span>()</span>
+<span id="cb213-8"><a href="finding-pace-across-stages.html#cb213-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb213-9"><a href="finding-pace-across-stages.html#cb213-9" aria-hidden="true" tabindex="-1"></a>g_otp</span></code></pre></div>
+<p><img src="images/stage-results-off-the-pace-rebased-1.png" width="672" /></p>
 <p>Trivially, we might try to add labels at the end of each line:</p>
-<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="finding-pace-across-stages.html#cb216-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_end <span class="ot">=</span> off_the_pace_long <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cum_dist <span class="sc">==</span> <span class="fu">max</span>(cum_dist))</span>
-<span id="cb216-2"><a href="finding-pace-across-stages.html#cb216-2" aria-hidden="true" tabindex="-1"></a>                                                </span>
-<span id="cb216-3"><a href="finding-pace-across-stages.html#cb216-3" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> off_the_pace_end,</span>
-<span id="cb216-4"><a href="finding-pace-across-stages.html#cb216-4" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">x =</span> cum_dist<span class="sc">+</span> <span class="dv">10</span>, <span class="at">y =</span> totalDurationGapS,</span>
-<span id="cb216-5"><a href="finding-pace-across-stages.html#cb216-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">label =</span> code_driver, <span class="at">color =</span> code_driver)) <span class="sc">+</span></span>
-<span id="cb216-6"><a href="finding-pace-across-stages.html#cb216-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-off-the-pace-end1-1.png" width="672" /></p>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="finding-pace-across-stages.html#cb214-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_end <span class="ot">=</span> off_the_pace_long <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cum_dist <span class="sc">==</span> <span class="fu">max</span>(cum_dist))</span>
+<span id="cb214-2"><a href="finding-pace-across-stages.html#cb214-2" aria-hidden="true" tabindex="-1"></a>                                                </span>
+<span id="cb214-3"><a href="finding-pace-across-stages.html#cb214-3" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> off_the_pace_end,</span>
+<span id="cb214-4"><a href="finding-pace-across-stages.html#cb214-4" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">x =</span> cum_dist<span class="sc">+</span> <span class="dv">10</span>, <span class="at">y =</span> totalDurationGapS,</span>
+<span id="cb214-5"><a href="finding-pace-across-stages.html#cb214-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">label =</span> code_driver, <span class="at">color =</span> code_driver)) <span class="sc">+</span></span>
+<span id="cb214-6"><a href="finding-pace-across-stages.html#cb214-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-off-the-pace-end1-1.png" width="672" /></p>
 <p>However, there are various other packages that provide alternative ways of doing this, including <code>directlabels</code> and <code>ggrepel</code>.</p>
 <p>For example, using <code>directlabels</code>:</p>
-<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="finding-pace-across-stages.html#cb217-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(directlabels)</span>
-<span id="cb217-2"><a href="finding-pace-across-stages.html#cb217-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb217-3"><a href="finding-pace-across-stages.html#cb217-3" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span></span>
-<span id="cb217-4"><a href="finding-pace-across-stages.html#cb217-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dl</span>(<span class="fu">aes</span>(<span class="at">label =</span> code_driver, <span class="at">x=</span>cum_dist<span class="sc">+</span><span class="dv">2</span>),</span>
-<span id="cb217-5"><a href="finding-pace-across-stages.html#cb217-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># cex is text label size</span></span>
-<span id="cb217-6"><a href="finding-pace-across-stages.html#cb217-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="fu">list</span>(<span class="st">&#39;last.bumpup&#39;</span>, <span class="at">cex =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb217-7"><a href="finding-pace-across-stages.html#cb217-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-off-the-pace-labeled1-1.png" width="672" /></p>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="finding-pace-across-stages.html#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(directlabels)</span>
+<span id="cb215-2"><a href="finding-pace-across-stages.html#cb215-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb215-3"><a href="finding-pace-across-stages.html#cb215-3" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span></span>
+<span id="cb215-4"><a href="finding-pace-across-stages.html#cb215-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dl</span>(<span class="fu">aes</span>(<span class="at">label =</span> code_driver, <span class="at">x=</span>cum_dist<span class="sc">+</span><span class="dv">2</span>),</span>
+<span id="cb215-5"><a href="finding-pace-across-stages.html#cb215-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># cex is text label size</span></span>
+<span id="cb215-6"><a href="finding-pace-across-stages.html#cb215-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="fu">list</span>(<span class="st">&#39;last.bumpup&#39;</span>, <span class="at">cex =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb215-7"><a href="finding-pace-across-stages.html#cb215-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-off-the-pace-labeled1-1.png" width="672" /></p>
 <p>And using <code>ggrepel</code>, which also has the advantage of adding labels for drivers who curves are really of the pace, albeit not in an obviously natural order:</p>
-<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="finding-pace-across-stages.html#cb218-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span> ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data =</span> off_the_pace_end,</span>
-<span id="cb218-2"><a href="finding-pace-across-stages.html#cb218-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">aes</span>(<span class="at">label =</span> code_driver),</span>
-<span id="cb218-3"><a href="finding-pace-across-stages.html#cb218-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb218-4"><a href="finding-pace-across-stages.html#cb218-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
-<p><img src="images/finding-stage-pace-off-the-pace-labeled2-1.png" width="672" /></p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="finding-pace-across-stages.html#cb216-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span> ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data =</span> off_the_pace_end,</span>
+<span id="cb216-2"><a href="finding-pace-across-stages.html#cb216-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">aes</span>(<span class="at">label =</span> code_driver),</span>
+<span id="cb216-3"><a href="finding-pace-across-stages.html#cb216-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb216-4"><a href="finding-pace-across-stages.html#cb216-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/stage-results-off-the-pace-labeled2-1.png" width="672" /></p>
 <p>The <code>gghighlight</code> package is also useful in highlighting traces, as well as usefully automatically labeling highlighted lines:</p>
-<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="finding-pace-across-stages.html#cb219-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span></span>
-<span id="cb219-2"><a href="finding-pace-across-stages.html#cb219-2" aria-hidden="true" tabindex="-1"></a>    gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,</span>
-<span id="cb219-3"><a href="finding-pace-across-stages.html#cb219-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>)) <span class="sc">+</span></span>
-<span id="cb219-4"><a href="finding-pace-across-stages.html#cb219-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="finding-pace-across-stages.html#cb217-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span></span>
+<span id="cb217-2"><a href="finding-pace-across-stages.html#cb217-2" aria-hidden="true" tabindex="-1"></a>    gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,</span>
+<span id="cb217-3"><a href="finding-pace-across-stages.html#cb217-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb217-4"><a href="finding-pace-across-stages.html#cb217-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
 <pre><code>## label_key: code_driver</code></pre>
-<p><img src="images/finding-stage-pace-off-the-pace-highlight-1.png" width="672" /></p>
+<p><img src="images/stage-results-off-the-pace-highlight-1.png" width="672" /></p>
 
 </div>
 </div>
