@@ -36,8 +36,7 @@ stage_codes = stages$code
 # factor(stages$code, levels = stages$code)
 ```
 
-
-## Retrieving Stage Results for Multiple Stages
+## Retrieving Mutliple Stage Results
 
 To being with, lets get the overall results at the end of each stage:
 
@@ -47,7 +46,7 @@ multi_overall_results = get_multi_overall(stage_list)
 multi_overall_results  %>% tail(2)
 ```
 
-### Widening Overall Position
+### Reshaping Overall Position Data
 
 We can reduce the amount of data by casting the long raw result to a wide format, widening the data on a particular field of interest. For example, we can widen generate a wide dataframe describing overall positions, ${_S}o$ at the end of each stage, where a particular driver's position is given as ${_S}o_i$:
 
@@ -59,7 +58,7 @@ multi_overall_wide_pos = multi_overall_results %>%
 multi_overall_wide_pos %>% head(2)
 ```
 
-### Widening Overall Rally Time
+### Reshaping Overall Rally Time Data
 
 We can also create a wide format report of the overall times, where each column gives the overall, accumulated rally time up to and including each stage, ${_S}T$; each cell then represents the accumulated time for a particular driver, ${_S}T_i$.
 
@@ -80,7 +79,7 @@ We note that with stages presented in order, the rally time is strictly increasi
 
 We further note that we can derive stage times from the overall rally times by calculating the columnwise differences ${_S}t={_S}T-{_{S-1}}T: 1<S<N$ for an $N$ stage rally.
 
-### Widening Time to First
+### Reshaping Time to First Data
 
 Another useful time is the *time to first*, which is to say, the *gap*, ${_S}GAP_i$. Noting that the overall rally leader may change at the end of each stage, this measure is essentially a rebasing measure relative to a particular position rather than a particular driver:
 
@@ -206,7 +205,7 @@ df_ %>% select(stage_codes) %>% head(3)
 
 *(A similar technique could be used to recreate stage times from the overall times.)*
 
-## Visualising Multiple Stage Results
+## Visualising Overall Results
 
 The overall stage results provides information regarding the overall times and positions at the end of each stage; the rebased overall times provide us with gap information from a specified driver to every other driver.
 
@@ -626,7 +625,7 @@ overall_long_gap_rebased <- overall_wide_gap_rebased %>%
 spark_df(overall_long_gap_rebased)
 ```
 
-## Retrieving Stage Times for Multiple Stages
+## Retrieving Stage Times and Results
 
 This far, we have focused on exploring the overall results data. If required, we can also retrieve detailed results for multiple stages by requesting stage results for a specified list of stages:
 
@@ -683,7 +682,7 @@ multi_stage_wide_gap %>% head(2)
 
 ## Visualising Stage Times
 
-Two of the most useful chart types, at least in terms of glanceable displays, that we can generate from the detailed stage times over the course of the rally are at the individual level: sparklines showing the individual stage positions and the gap to stagee winner.
+Two of the most useful chart types, at least in terms of glanceable displays, that we can generate from the detailed stage times over the course of the rally are at the individual level: sparklines showing the individual stage positions and the gap to stage winner.
 
 So let's start off with those before looking at grouped and individual stage position charts.
 
