@@ -240,21 +240,21 @@ As has previously been mentioned, the *GAP* to leader and  +/- *DIFF* times to a
 
 The *GAP* (time to leader) is calculated as the difference between a time associated with the current leader and a similarly measured time associated with every other driver.
 
-The GAP between driver in first position,, $i=1$, and the driver in the $j$'th position is given in various abuses of the notation as:
+The $\textrm{GAP}$ between driver in first position, $i=1$, and the driver in the $j$'th position is given in various abuses of the notation as:
 
-$$GAP_{j}=t_{j,GAP}=t_{j,1,DIFF}=t_j-t_1$$
+$$\textrm{GAP}{j}=t_{j,\textrm{GAP}}=t_{j,1,DIFF}=t_j-t_1$$
 
 Alternatively, we can calculate the gap as the sum of differences between consecutively placed drivers, $j\neq1$, and the leader. The interval or DIFF between drivers in positions $i$ and $j$, where $i$ is ahead of $j$ (that is, $i<j$) and the driver in first position has $i=1$ is given as:
 
-$$DIFF_{j,i}=t_{j,i,DIFF}=t_{j,i}=t_j-t_i: i<j, t_0=t_1$$
+$$\textrm{DIFF}_{j,i}=t_{j,i,\textrm{DIFF}}=t_{j,i}=t_j-t_i: i<j, t_0=t_1$$
 
-The GAP between a driver in position $j=P$ and the leader $i=1$ is then:
+The $\textrm{GAP}$ between a driver in position $j=P$ and the leader $i=1$ is then:
 
-$$GAP_j=t_{j,GAP}=DIFF_{2,1}+DIFF_{3,2}+..+DIFF_{P,P-1}$$
+$$\textrm{GAP}_j=t_{j,\textrm{GAP}}=\textrm{DIFF}_{2,1}+\textrm{DIFF}_{3,2}+..+\textrm{DIFF}_{P,P-1}$$
 
 We can write this more succinctly as:
 
-$$GAP_{j}=t_{j,GAP}=0+\sum_{p=1}^{j}DIFF_{p,p-1}=\sum_{p=1}^{j}\left ( t_p-t_{p-1} \right ): j\ge1, t_0=t_1$$
+$$\textrm{GAP}{j}=t_{j,\textrm{GAP}}=0+\sum_{m=1}^{j}\textrm{DIFF}_{m,m-1}=\sum_{m=1}^{j}\left ( t_m-t_{m-1} \right ): j\ge1, t_0=t_1$$
 
 We can implement these calculations directly as follows:
 

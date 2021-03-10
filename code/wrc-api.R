@@ -305,6 +305,8 @@ rebase = function(df, id, rebase_cols,
   
   df_ =  df
   
+  rebase_cols = as.character(rebase_cols)
+  
   # The rebase values are the ones
   # we want to subtract from each row
   rebase_vals = c(df[df[[id_col]]==id, rebase_cols])

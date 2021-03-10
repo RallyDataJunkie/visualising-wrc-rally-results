@@ -181,13 +181,13 @@ ogier_rebased %>% head(10)
 
 If we cast the data back to a tidy long form data, we can easily generate a graphical summary from the long form data:
 
-```{r}
+```{r warning=FALSE}
 library(tidyr)
 
 ogier_rebased_long <- ogier_rebased %>%
                         gather(key ="Split",
                                value ="TimeInS",
-                               split_cols)
+                               all_of(split_cols))
 
 ogier_rebased_long %>% head(10)
 ```

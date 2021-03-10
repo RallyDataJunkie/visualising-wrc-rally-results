@@ -202,14 +202,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html"><i class="fa fa-check"></i><b>4</b> Visualising Results for Multiple Stages</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#load-base-data-1"><i class="fa fa-check"></i><b>4.1</b> Load Base Data</a></li>
-<li class="chapter" data-level="4.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-results-for-multiple-stages"><i class="fa fa-check"></i><b>4.2</b> Retrieving Stage Results for Multiple Stages</a></li>
-<li class="chapter" data-level="4.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#mapping-stage-and-driver-identifiers-to-meaningful-labels"><i class="fa fa-check"></i><b>4.3</b> Mapping Stage and Driver Identifiers to Meaningful Labels</a></li>
-<li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#rebasing-overall-times"><i class="fa fa-check"></i><b>4.4</b> Rebasing Overall Times</a>
+<li class="chapter" data-level="4.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-results-for-multiple-stages"><i class="fa fa-check"></i><b>4.2</b> Retrieving Stage Results for Multiple Stages</a>
 <ul>
-<li class="chapter" data-level="4.4.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#find-changes-in-rebased-gaps-across-stages"><i class="fa fa-check"></i><b>4.4.1</b> Find Changes in Rebased Gaps Across Stages</a></li>
+<li class="chapter" data-level="4.2.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#widening-overall-position"><i class="fa fa-check"></i><b>4.2.1</b> Widening Overall Position</a></li>
+<li class="chapter" data-level="4.2.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#widening-overall-rally-time"><i class="fa fa-check"></i><b>4.2.2</b> Widening Overall Rally Time</a></li>
+<li class="chapter" data-level="4.2.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#widening-time-to-first"><i class="fa fa-check"></i><b>4.2.3</b> Widening Time to First</a></li>
+<li class="chapter" data-level="4.2.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#mapping-stage-and-driver-identifiers-to-meaningful-labels"><i class="fa fa-check"></i><b>4.2.4</b> Mapping Stage and Driver Identifiers to Meaningful Labels</a></li>
+<li class="chapter" data-level="4.2.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#rebasing-overall-times"><i class="fa fa-check"></i><b>4.2.5</b> Rebasing Overall Times</a></li>
+<li class="chapter" data-level="4.2.6" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#finding-changes-in-rebased-gaps-across-stages"><i class="fa fa-check"></i><b>4.2.6</b> Finding Changes in Rebased Gaps Across Stages</a></li>
 </ul></li>
-<li class="chapter" data-level="4.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-multiple-stage-results"><i class="fa fa-check"></i><b>4.5</b> Visualising Multiple Stage Results</a></li>
-<li class="chapter" data-level="4.6" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>4.6</b> Retrieving Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="4.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-multiple-stage-results"><i class="fa fa-check"></i><b>4.3</b> Visualising Multiple Stage Results</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-first-position"><i class="fa fa-check"></i><b>4.3.1</b> Visualising First Position</a></li>
+<li class="chapter" data-level="4.3.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-changes"><i class="fa fa-check"></i><b>4.3.2</b> Visualising Position Changes</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-time-for-multiple-stages"><i class="fa fa-check"></i><b>4.4</b> Retrieving Stage Time for Multiple Stages</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>5</b> Finding Pace Across Stages</a>
 <ul>
@@ -2635,14 +2642,14 @@ SUN
 <h2><span class="header-section-number">3.6</span> An Aside — Calculating DIFF and GAP times</h2>
 <p>As has previously been mentioned, the <em>GAP</em> to leader and +/- <em>DIFF</em> times to any car placed directly ahead of a particular car, are typical across many forms of motorsport timing screen. In rally terms, these metrics might apply either in overall rally terms <em>or</em> in stage terms; in circuit racing, the measures might apply relative to overall race position <em>or</em> track position.</p>
 <p>The <em>GAP</em> (time to leader) is calculated as the difference between a time associated with the current leader and a similarly measured time associated with every other driver.</p>
-<p>The GAP between driver in first position,, <span class="math inline">\(i=1\)</span>, and the driver in the <span class="math inline">\(j\)</span>’th position is given in various abuses of the notation as:</p>
-<p><span class="math display">\[GAP_{j}=t_{j,GAP}=t_{j,1,DIFF}=t_j-t_1\]</span></p>
+<p>The <span class="math inline">\(\textrm{GAP}\)</span> between driver in first position, <span class="math inline">\(i=1\)</span>, and the driver in the <span class="math inline">\(j\)</span>’th position is given in various abuses of the notation as:</p>
+<p><span class="math display">\[\textrm{GAP}{j}=t_{j,\textrm{GAP}}=t_{j,1,DIFF}=t_j-t_1\]</span></p>
 <p>Alternatively, we can calculate the gap as the sum of differences between consecutively placed drivers, <span class="math inline">\(j\neq1\)</span>, and the leader. The interval or DIFF between drivers in positions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, where <span class="math inline">\(i\)</span> is ahead of <span class="math inline">\(j\)</span> (that is, <span class="math inline">\(i&lt;j\)</span>) and the driver in first position has <span class="math inline">\(i=1\)</span> is given as:</p>
-<p><span class="math display">\[DIFF_{j,i}=t_{j,i,DIFF}=t_{j,i}=t_j-t_i: i&lt;j, t_0=t_1\]</span></p>
-<p>The GAP between a driver in position <span class="math inline">\(j=P\)</span> and the leader <span class="math inline">\(i=1\)</span> is then:</p>
-<p><span class="math display">\[GAP_j=t_{j,GAP}=DIFF_{2,1}+DIFF_{3,2}+..+DIFF_{P,P-1}\]</span></p>
+<p><span class="math display">\[\textrm{DIFF}_{j,i}=t_{j,i,\textrm{DIFF}}=t_{j,i}=t_j-t_i: i&lt;j, t_0=t_1\]</span></p>
+<p>The <span class="math inline">\(\textrm{GAP}\)</span> between a driver in position <span class="math inline">\(j=P\)</span> and the leader <span class="math inline">\(i=1\)</span> is then:</p>
+<p><span class="math display">\[\textrm{GAP}_j=t_{j,\textrm{GAP}}=\textrm{DIFF}_{2,1}+\textrm{DIFF}_{3,2}+..+\textrm{DIFF}_{P,P-1}\]</span></p>
 <p>We can write this more succinctly as:</p>
-<p><span class="math display">\[GAP_{j}=t_{j,GAP}=0+\sum_{p=1}^{j}DIFF_{p,p-1}=\sum_{p=1}^{j}\left ( t_p-t_{p-1} \right ): j\ge1, t_0=t_1\]</span></p>
+<p><span class="math display">\[\textrm{GAP}{j}=t_{j,\textrm{GAP}}=0+\sum_{m=1}^{j}\textrm{DIFF}_{m,m-1}=\sum_{m=1}^{j}\left ( t_m-t_{m-1} \right ): j\ge1, t_0=t_1\]</span></p>
 <p>We can implement these calculations directly as follows:</p>
 <div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="visualising-results-for-a-single-stage.html#cb101-1" aria-hidden="true" tabindex="-1"></a>top10_stage_times <span class="sc">%&gt;%</span> </span>
 <span id="cb101-2"><a href="visualising-results-for-a-single-stage.html#cb101-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DIFF =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">diff</span>(<span class="st">`</span><span class="at">Time (s)</span><span class="st">`</span>)),</span>
