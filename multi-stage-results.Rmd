@@ -573,29 +573,57 @@ multi_overall_wide_gap_top10
 We can create the required long form data from the wide gap table as follows, retrieving just the top 10 drivers based on the gap on the final stage, for convenience:
 
 ```{r}
-overall_wide_gap_top10 <- multi_overall_wide_gap_top10 %>%
+overall_long_gap_top10 <- multi_overall_wide_gap_top10 %>%
                             gather(key ="Stage",
-                          value ="Gap", stage_codes)
+                            value ="Gap", stage_codes)
 
-overall_wide_gap_top10 %>% head(3)
+overall_long_gap_top10 %>% head(3)
 ```
 
 With the data in the appropriate form, we can create the sparkline, using a bar chart format:
 
 ```{r}
-overall_wide_gap_long_top10 <- overall_wide_gap_top10 %>%
+overall_long_gap_top10 <- overall_long_gap_top10 %>%
                                 group_by(code) %>%
                                 summarize(spk_ = spk_chr(-Gap,
                                                          type ="bar"))
 
-# We need to create an htmlwidget form of the table
-out = as.htmlwidget(formattable(overall_wide_gap_long_top10))
+spark_df = function(df){
+  # We need to create an htmlwidget form of the table
+  out = as.htmlwidget(formattable(df))
 
-# The table also has a requirement on the sparkline package
-out$dependencies = c(out$dependencies,
+  # The table also has a requirement on the sparkline package
+  out$dependencies = c(out$dependencies,
                      htmlwidgets:::widget_dependencies("sparkline",
                                                        "sparkline"))
-out
+  out
+}
+
+spark_df(overall_long_gap_top10)
+```
+
+### Visualising Rebased Gaps
+
+As well as using the sparkline bar chart to visualise the gap to leader, we can use a similar approach to visualise the gap to other drivers following a rebasing step.
+
+
+```{r}
+overall_wide_gap_rebased = rebase(multi_overall_wide_gap_top10,
+                                   example_driver, stage_codes,
+                                   id_col='code')
+overall_wide_gap_rebased
+```
+
+And now generate the sparklines:
+
+```{r}
+overall_long_gap_rebased <- overall_wide_gap_rebased %>%
+                            gather(key ="Stage",
+                            value ="Gap", stage_codes) %>%
+                            group_by(code) %>%
+                            summarize(spk_ = spk_chr(Gap, type ="bar"))
+
+spark_df(overall_long_gap_rebased)
 ```
 
 ## Retrieving Stage Times for Multiple Stages
@@ -608,30 +636,141 @@ multi_stage_times = get_multi_stage_times(stage_list)
 multi_stage_times %>% tail(2)
 ```
 
-We can then cast the data to a wide format and relabel the resulting dataframe. For example, we can get a wide format dataframe containing individual stage times back:
+We can then cast the data to a wide format and relabel the resulting dataframe.
+
+One recipe for doing this is pretty well proven now, so let's make it more convenient:
+
+```{r}
+clean_top10 = function(df) {
+  df %>%  map_stage_codes(stage_list)  %>%
+                            map_driver_names(cars) %>% dplyr::arrange(!!as.symbol(stage_codes[length(stage_codes)])) %>%
+                              head(10)
+}          
+```
+
+For example, we can get a wide format dataframe containing individual stage times cleaned and reduced to the top 10:
 
 ```{r}
 multi_stage_times_wide = multi_stage_times %>%
                             get_multi_stage_times_wide(stage_list) %>%
-                            map_stage_codes(stage_list)  %>%
-                            map_driver_names(cars)
+                            clean_top10()
 
-multi_stage_times_wide %>% head(2)
+multi_stage_times_wide
 ```
 
 Or we can get the stage rankings for each stage:
 
 ```{r}
 multi_stage_wide_pos = multi_stage_times %>%
-                            get_multi_stage_generic_wide(stage_list,
-                                                         'position') %>%
-                            map_stage_codes(stage_list)  %>%
-                            map_driver_names(cars)
+                              get_multi_stage_generic_wide(stage_list,
+                                                         'position')  %>%
+                            clean_top10()
 
 multi_stage_wide_pos %>% head(2)
 ```
 
+Or the gap to stage winner:
 
+```{r}
+multi_stage_wide_gap = multi_stage_times %>%
+                            mutate(diffFirstS = diffFirstMs/1000) %>%
+                            get_multi_stage_generic_wide(stage_list,
+                                                         'diffFirstS')  %>%
+                            clean_top10()
 
+multi_stage_wide_gap %>% head(2)
+```
 
+## Visualising Stage Times
 
+Two of the most useful chart types, at least in terms of glanceable displays, that we can generate from the detailed stage times over the course of the rally are at the individual level: sparklines showing the individual stage positions and the gap to stagee winner.
+
+So let's start off with those before looking at grouped and individual stage position charts.
+
+### Stage Position Sparklines
+
+Our pattern is now pretty well proven so we can routinise our sparkline production:
+
+```{r}
+generate_spark_bar = function(df, col, typ='Gap'){
+  df %>% gather(key ="Stage",
+                value =!!typ, stage_codes) %>%
+        group_by(code) %>%
+        summarize(spk_ = spk_chr(-!!as.symbol(typ), type ="bar"))
+}
+```
+
+Let's see how it works:
+
+```{r}
+multi_stage_long_pos = generate_spark_bar(multi_stage_wide_pos)
+spark_df(multi_stage_long_pos)
+```
+
+### Gap to Stage Winner Sparklines
+
+For the gap to stage winner, 
+
+```{r}
+multi_stage_long_gap = generate_spark_bar(multi_stage_wide_gap)
+
+spark_df(multi_stage_long_gap)
+```
+
+### Stage Position Charts
+
+Let's reuse the approach we used before for generating the position chart:
+
+```{r stage_position_chart, warning=FALSE}
+multi_stage_long_pos = multi_stage_wide_pos %>%
+                              pivot_longer(c(stage_codes),
+                                           names_to ="Stage",
+                                           values_to ="Pos") %>%
+                          mutate(Stage = factor(Stage,
+                                                levels = stage_codes))
+
+pos_range = 1:max(multi_stage_long_pos$Pos)
+
+ggplot(multi_stage_long_pos, aes(x=Stage, y=Pos)) +
+                  geom_line(aes(group = code)) +
+                  # Invert scale and relabel y-axis
+                  # https://stackoverflow.com/a/28392170/454773
+                  scale_y_continuous(trans = "reverse",
+                                     breaks = pos_range) +
+    geom_dl(aes(label = paste0(' ',code)), # Add space before label
+            # Add label at end of line
+            method = list('last.bumpup',
+                          # cex is text label size
+                          cex = 0.5)) +
+    geom_dl(aes(label = paste0(code, ' ')), # Add space before label
+            # Add label at start of line
+            method = list('first.points', cex = 0.5)) +
+    theme_void()
+
+```
+
+In this case we see the very obvious problem presented by drivers falling outside the typical position range. We really do need to organise this chart by group rank!
+
+### Individual Stage position Charts
+
+At the individual level, we can also reuse the approach we developed for charting overall stage positions at an individual level:
+
+```{r stage_pos_chart_excample, warning=FALSE}
+get_pos_chart(multi_stage_long_pos, rovCode)
+```
+
+```{r}
+gt_stage_pos_plots = list()
+# Iterate through each driver in the top 5
+for (c in 1:length(top5codes)){
+    # Add each plot to the plot list
+    # The split is generated for the top 5
+    gt_stage_pos_plots[[length(gt_stage_pos_plots) + 1]] <-
+        get_pos_chart(multi_stage_long_pos, top5codes[c],
+                      embed=T, aspect_ratio=3, size=5)
+}
+
+multi_stage_wide_pos$poschart = gt_stage_pos_plots
+
+formattable(multi_stage_wide_pos)
+```

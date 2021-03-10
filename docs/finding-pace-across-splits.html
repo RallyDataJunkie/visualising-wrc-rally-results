@@ -218,8 +218,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.3.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-gainslosses"><i class="fa fa-check"></i><b>4.3.3</b> Visualising Position Gains/Losses</a></li>
 <li class="chapter" data-level="4.3.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#per-driver-position-charts"><i class="fa fa-check"></i><b>4.3.4</b> Per Driver Position Charts</a></li>
 <li class="chapter" data-level="4.3.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-time-to-first"><i class="fa fa-check"></i><b>4.3.5</b> Visualising Time to First</a></li>
+<li class="chapter" data-level="4.3.6" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-rebased-gaps"><i class="fa fa-check"></i><b>4.3.6</b> Visualising Rebased Gaps</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>4.4</b> Retrieving Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="4.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-stage-times"><i class="fa fa-check"></i><b>4.5</b> Visualising Stage Times</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#stage-position-sparklines"><i class="fa fa-check"></i><b>4.5.1</b> Stage Position Sparklines</a></li>
+<li class="chapter" data-level="4.5.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#gap-to-stage-winner-sparklines"><i class="fa fa-check"></i><b>4.5.2</b> Gap to Stage Winner Sparklines</a></li>
+<li class="chapter" data-level="4.5.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#stage-position-charts"><i class="fa fa-check"></i><b>4.5.3</b> Stage Position Charts</a></li>
+<li class="chapter" data-level="4.5.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#individual-stage-position-charts"><i class="fa fa-check"></i><b>4.5.4</b> Individual Stage position Charts</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>5</b> Finding Pace Across Stages</a>
 <ul>
@@ -282,20 +290,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="load-base-data-4" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Load Base Data</h2>
 <p>As ever, load in the helper functions:</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="finding-pace-across-splits.html#cb264-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="finding-pace-across-splits.html#cb276-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span></code></pre></div>
 <p>And get the base data:</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="finding-pace-across-splits.html#cb265-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
-<span id="cb265-2"><a href="finding-pace-across-splits.html#cb265-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
-<span id="cb265-3"><a href="finding-pace-across-splits.html#cb265-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb265-4"><a href="finding-pace-across-splits.html#cb265-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
-<span id="cb265-5"><a href="finding-pace-across-splits.html#cb265-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
-<span id="cb265-6"><a href="finding-pace-across-splits.html#cb265-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
-<span id="cb265-7"><a href="finding-pace-across-splits.html#cb265-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
-<span id="cb265-8"><a href="finding-pace-across-splits.html#cb265-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb265-9"><a href="finding-pace-across-splits.html#cb265-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
-<span id="cb265-10"><a href="finding-pace-across-splits.html#cb265-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="finding-pace-across-splits.html#cb277-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb277-2"><a href="finding-pace-across-splits.html#cb277-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb277-3"><a href="finding-pace-across-splits.html#cb277-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb277-4"><a href="finding-pace-across-splits.html#cb277-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb277-5"><a href="finding-pace-across-splits.html#cb277-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb277-6"><a href="finding-pace-across-splits.html#cb277-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb277-7"><a href="finding-pace-across-splits.html#cb277-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb277-8"><a href="finding-pace-across-splits.html#cb277-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb277-9"><a href="finding-pace-across-splits.html#cb277-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
+<span id="cb277-10"><a href="finding-pace-across-splits.html#cb277-10" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
 <p>Get a sample stage ID:</p>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="finding-pace-across-splits.html#cb266-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="finding-pace-across-splits.html#cb278-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
 </div>
 <div id="calculating-splits-pace" class="section level2" number="7.2">
 <h2><span class="header-section-number">7.2</span> Calculating Splits Pace</h2>

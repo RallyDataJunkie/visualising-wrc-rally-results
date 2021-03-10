@@ -46,7 +46,13 @@ visualising-position-changes-over-a-rally
 visualising-position-gainslosses
 per-driver-position-charts
 visualising-time-to-first
+visualising-rebased-gaps
 retrieving-stage-times-for-multiple-stages
+visualising-stage-times
+stage-position-sparklines
+gap-to-stage-winner-sparklines
+stage-position-charts
+individual-stage-position-charts
 finding-pace-across-stages
 load-base-data-2
 defining-pace
