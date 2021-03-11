@@ -15,6 +15,7 @@ As ever, load in the helper functions:
 
 ```{r message=F, warning=F}
 source('code/wrc-api.R')
+source('code/wrc-wrangling.R')
 ```
 
 And get the base data:
@@ -28,16 +29,76 @@ sections = get_sections(itinerary)
 stages = get_stages(sections)
 stages_lookup = get_stages_lookup(stages)
 
+# Quick Lookups
+stage_list = get_stage_list(stages)
+stage_codes = stages$code
+
 # Driver details
+entries = get_rally_entries(eventId)
 cars = get_car_data(entries)
 ```
 
-Get a sample stage ID:
+Get a sample stage ID and associated splits:
 
 ```{r}
+# Get example stage ID
 stageId = stages_lookup[['SS3']]
+
+# Get splits for the stage
+splits = get_splits(eventId, stageId)
+splits_locations = get_split_locations(splits)
+
+# Get wide format data
+splits_wide = get_splits_wide(splits) %>%
+                relabel_times_df(stage_list, cars)
+```
+
+Get long form splits data for one or more stages:
+
+```{r}
+splits_long = get_multi_split_times(stageId)
+```
+
+### Obtaining Split Distances
+
+We can find the distance between each split as the difference between consecutive values:
+
+```{r}
+split_distances = c(splits_locations$distance[1],
+                    diff(splits_locations$distance))
+
+split_distances
+```
+
+We recall that the split points do not include the final timing line (the finish), so a complete set of distances also means we neeed to access the overall stage distance and account for that:
+
+```{r}
+stage_dist = stages[stages['stageId']==stageId,'distance']
+stage_dist
+```
+
+The complete set of intermediate distances is then:
+
+```{r}
+full_split_distances = c(split_distances, stage_dist-sum(split_distances))
+
+full_split_distances
 ```
 
 ## Calculating Splits Pace
 
-TO DO...
+To calculate pace between two split points we need to get the elapsed time between those two points as well as the distance between split points.
+
+We can obtain the split differences 
+
+```{r}
+split_cols = get_split_cols(splits)
+
+split_durations_wide = get_split_duration(splits_wide, split_cols,
+                                          idcol='code')
+
+split_durations_wide %>% head(3)
+```
+
+
+

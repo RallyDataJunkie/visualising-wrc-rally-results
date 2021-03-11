@@ -2,6 +2,10 @@
 knitr::opts_chunk$set(error = TRUE)
 knitr::opts_chunk$set(fig.path = "images/split-times-")
 ```
+```{r include=FALSE, cache=FALSE}
+# Import code into empty but named chunks
+knitr::read_chunk('code/wrc-wrangling.R')
+```
 # Visualising Split Times
 
 In this chapter we'll explore some of the ways in which we might visualise the split times on a stage. We can do these either either on a time basis, or we can explore the time differences in terms of *pace* differences by normalising the split times over split distances.
@@ -46,28 +50,35 @@ stageId = stages_lookup[[stage_code]]
 
 ## Get Splits Data
 
+The split times represented the accumulated time going the the stage at each split point. 
+
+*The split times __do not__ include the overall stage time, so we need to be mindful that if we want to report on a stage the split times in and of themselves do not contain any information about the final section of the stage between the final split point and the stage finish line.*
+
 We can load the splits data if we know the event and stage ID:
 
 ```{r}
 splits = get_splits(eventId, stageId)
 ```
 
-The split times represented the accumulated time going the the stage at each split point. However, the split times *do not* include the overall stage time, so we need to be mindful that if we want to report on a stage the split times in and of themselves do not contain any information about the final section of the stage between the final split point and the stage finish line.
+The splits data actually comprises two dataframes in columns `splitPoints` and `entrySplitPointTimes`.
 
-The splits data actually comprises two dataframes. The first is the splits locations:
+
+### Split Locations
+
+The `splitPoints` dataframe contains information about the splits locations:
 
 ```{r}
 get_split_locations = function(splits){
   splits_locations = splits$splitPoints
-  splits_locations
+  splits_locations %>% arrange(number)
 }
 
 splits_locations = get_split_locations(splits)
+splits_list = splits_locations$splitPointId
 
 splits_locations %>% head(2)
 ```
-
-To produce a wide data frame of split times by driver, we need to be able to reference the split codes ordered by the distance into the stage of each split point:
+We can retrieve the split codes ordered by the distance into the stage of each split point from a lookup on the split points:
 
 ```{r}
 get_split_cols = function(splits){
@@ -80,11 +91,35 @@ split_cols = get_split_cols(splits)
 split_cols
 ```
 
-For reference, we can also get the full stage distance from the `stages` dataframe:
+Since the the split points dataframe does not including the final timing point location (i.e. the stage finish), we can get the full stage distance from the `stages` dataframe:
 
 ```{r}
 stages[stages['code']==stage_code, 'distance']
 ```
+
+### Mapping Split Codes to Split Numbers
+
+To provide a human readable version of the split identifiers, let's map them onto a more meaningful label:
+
+```{r}
+get_split_label = function(x){
+  paste0('split_', splits_locations[splits_locations$splitPointId==x,
+                                    'number'])
+}
+
+splits_locations$splitname = sapply(splits_locations$splitPointId,
+                                 get_split_label)
+
+splits_locations %>% head(3)
+```
+
+We can generate a lookup list of split point names and IDs as:
+
+```{r}
+get_stages_lookup(splits_locations, 'splitPointId', 'splitname')
+```
+
+### Split Times
 
 The second dataframe returned from the splits API call contains the splits times, accessed via the `get_driver_splits()` function defined previously and imported from the *wrc-api.R* file. The data is returned in a long format, with each row describing a single split time for a particular driver on the single stage the split times were retrieved for.
 
@@ -92,29 +127,15 @@ The second dataframe returned from the splits API call contains the splits times
 driver_splits = get_driver_splits(splits)
 driver_splits %>% head(2)
 ```
+
+The `get_multi_split_times(stage_list)` function can also provide us the long form data for multiple stages given one or more stage IDs.
+
 ### Wide Driver Split Times
 
-We then cast the the driver split points into a wide format using the split point codes, ordered by split distance into the stage, as the widened column names:
+We can cast the the driver split points into a wide format using the split point codes, ordered by split distance into the stage, as the widened column names:
 
-```{r}
-get_splits_wide = function(splits){
-    driver_splits = get_driver_splits(splits)
-    
-    split_cols =  get_split_cols(splits)
-    splits_cols = c('entryId', 'splitPointId', 'elapsedDurationS')
-    
-    splits_wide = driver_splits %>% 
-                      group_by(entryId) %>%
-                      select(all_of(splits_cols)) %>%
-                      tidyr::spread(key = splitPointId,
-                                    value = elapsedDurationS) %>%
-                      select(all_of(c('entryId', split_cols))) %>%
-                      # If we don't cast, it's a
-                      # non-rankable rowwise df
-                      as.data.frame()
-    
-    splits_wide
-}
+```{r get_splits_wide}
+# Loaded in from file
 ```
 
 Rather than retrieve the split times into a long format, with one row per driver split, we can now retrieve the data into a wide form with one row per driver and a column for each split on the stage:
@@ -124,6 +145,28 @@ splits_wide = get_splits_wide(splits)
 
 splits_wide %>% head(2)
 ```
+
+The following function, which closely resembles a simpilar function function for relabeling stage codes, allows us to rename the splt points with more meaningful splits names:
+
+```{r}
+map_split_codes = function(df, splits_list) {
+  # Get stage codes lookup id->code
+  splits_lookup_code = get_stages_lookup(splits_locations,
+                                         'splitPointId', 'splitname')
+  
+  #https://stackoverflow.com/a/34299333/454773
+  plyr::rename(df, replace = splits_lookup_code,
+               warn_missing = FALSE)
+}
+```
+
+For example:
+
+```{r}
+splits_wide %>% map_split_codes(splits_list) %>% 
+                map_driver_names(cars) %>% head()
+```
+
 ## Rebasing Split Times
 
 The split times describe the split times recorded for each driver, but in many situations we may be interested in knowing the difference in split times for a specific driver relative to every other driver.
@@ -212,6 +255,7 @@ out$dependencies = c(out$dependencies,
 out
 ```
 
+
 ## Finding the Rank Position at Each Split Point
 
 It can often be tricky to work out the rank at each split by eye, so let's create a simple function to display the rank at each split for us:
@@ -260,7 +304,8 @@ Let's see how that works in practice:
 ```{r}
 #https://stackoverflow.com/a/50411529/454773
 
-get_split_duration = function(df, split_cols, retId=TRUE) {
+get_split_duration = function(df, split_cols,
+                              retId=TRUE, idcol='entryId') {
   
   # [-1] drops the first column, [-ncol()] drops the last
   df_ = df[,split_cols][-1] - df[,split_cols][-ncol(df[,split_cols])]
@@ -270,10 +315,10 @@ get_split_duration = function(df, split_cols, retId=TRUE) {
   
   if (retId) {
     # Add in the entryId column
-    df_$entryId = df$entryId
+    df_[[idcol]] = df[[idcol]]
   
     # Return the dataframe in a sensible column order
-    df_ %>% select(c('entryId', split_cols))
+    df_ %>% select(c(idcol, split_cols))
   } else {
     df_
   }

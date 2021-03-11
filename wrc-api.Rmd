@@ -14,7 +14,8 @@ library(jsonlite)
 library(stringr)
 library(dplyr)
 
-get_active_season = function(active_season_url="https://api.wrc.com/contel-page/83388/calendar/active-season/") {
+season_url = "https://api.wrc.com/contel-page/83388/calendar/active-season/"
+get_active_season = function(active_season_url=season_url) {
   jsonlite::fromJSON(active_season_url)$rallyEvents$items
 }
 
@@ -64,32 +65,10 @@ get_itinerary = function(eventId) {
 
 itinerary = get_itinerary(eventId)
 
-itinerary
+itinerary %>% select(-itinerarySections)
 ```
 
-The *startListId* can be used alongside the event ID to look up the startlist for a leg. We can order the startlist by start order:
-
-```{r}
-get_startlist = function(eventId, startListId) {
-  startlist_url = paste0(results_api, '/rally-event/',
-                         eventId,'/start-list-external/', startListId)
-  
-  startlist = jsonlite::fromJSON(startlist_url)$startListItems
-  
-  # Order the startlist dataframe by start order
-  startlist %>% arrange(order)
-}
-
-# Example startlist ID
-# Use a regular expression to find the startlist ID by day
-startListId = itinerary[str_detect(itinerary$name,
-                                   regex('Friday', ignore_case = T)),
-                       'startListId']
-
-startlist = get_startlist(eventId, startListId)
-
-startlist %>% head()
-```
+The *itinerarySections* columns dataframes describing details of each leg.
 
 ### Leg Sections
 
@@ -103,20 +82,38 @@ get_sections = function(itinerary){
 
 sections = get_sections(itinerary)
 
-sections %>% head()
+sections %>% select(-c(controls, stages))
 ```
 
-In the sections dataframe we have one row per section. We notice again the presence of columns that use dataframes to "nest" subdataframes within each row relating to to timing controls and stages associated with each leg.
+In the sections dataframe we have one row per section. Two of the columns, `*controls* and *stages* each use dataframes to "nest" subdataframes within each row.
+
+For example, here's one of the *controls* dataframes that describes timing controls:
+
+```{r}
+sections$controls[[1]]
+```
+
+And an example of a dataframe from the first row of the *stages* column:
+
+```{r}
+sections$stages[[1]]
+```
 
 ### Time Controls
 
 We can look up information about each time control from data provided as part of the itinerary lookup using the same trick as before to "unroll" the contents of each dataframe in a specified column into a single dataframe.
 
-An alternative to the `do.call()` approach is to use a tidy approach and use the `dplyr::bind_rows()` function on the `sections$controls` column values via a pipe:
+An alternative to the `do.call()` approach is to use a tidy approach and use the `dplyr::bind_rows()` function on the `sections$controls` column values via a pipe. We can add a reference to the original section ID by naming each row in the *controls* column with the *itinerarySectionId* value and then ensuring an identifier column is defined when we bind the dataframes:
 
 ```{r}
 get_controls = function(sections){
-  controls = sections$controls %>% bind_rows()
+  # Name each row in the list of dataframes we want to bind
+  names(sections$controls) = sections$itinerarySectionId
+  
+  controls = sections$controls %>%
+    # Ensure that we create an identifier column (uses list names)
+    bind_rows(.id='itinerarySectionId')
+  
   controls
 }
 
@@ -131,7 +128,13 @@ We can pull stage details from the dataframes contained in the `sections` datafr
 
 ```{r}
 get_stages = function(sections){
-  stages = sections$stages %>% bind_rows()
+  # Name each row in the list of dataframes we want to bind
+  names(sections$stages) = sections$itinerarySectionId
+  
+  stages = sections$stages %>%
+    # Ensure that we create an identifier column (uses list names)
+    bind_rows(.id='itinerarySectionId')
+    
   stages
 }
 
@@ -202,6 +205,45 @@ get_stage_info = function(stages, sid, typ='stageId', clean=TRUE){
 get_stage_info(stages, stageId)
 ```
 
+### Road Order Start Lists
+
+The *startListId* can be used alongside the event ID to look up the startlist for a leg. We can order the startlist by start order:
+
+```{r}
+get_startlist = function(eventId, startListId) {
+  startlist_url = paste0(results_api, '/rally-event/',
+                         eventId,'/start-list-external/', startListId)
+  
+  startlist = jsonlite::fromJSON(startlist_url)$startListItems
+  
+  # Order the startlist dataframe by start order
+  startlist %>% arrange(order)
+}
+
+# Example startlist ID
+# Use a regular expression to find the startlist ID by day
+startListId = itinerary[str_detect(itinerary$name,
+                                   regex('Friday', ignore_case = T)),
+                       'startListId']
+
+startlist = get_startlist(eventId, startListId)
+
+startlist %>% head()
+```
+
+Looking up a startlist ID is a little fiddly:
+
+```{r}
+get_startlist_id = function(itinerary, itinerarySectionId){
+  sections = get_sections(itinerary)
+  itineraryLegId = sections[sections$itinerarySectionId==itinerarySectionId,
+                            'itineraryLegId']
+  itinerary[itinerary$itineraryLegId==itineraryLegId,'startListId']
+}
+
+get_startlist_id(itinerary, stages$itinerarySectionId[[1]])
+```
+
 ## Competitor Details
 
 Details of car entries for each event can be retrieved from the WRC live timing API given an event ID.
@@ -220,11 +262,15 @@ entries = get_rally_entries(eventId)
 entries %>% head(2)
 ```
 
+### Looking Up Entries by Group
+
 We can index the entries by group to find all the WRC car `entryId` values:
 
 ```{r}
 entries[entries$group$name=='WRC', 'entryId']
 ```
+
+### Driver & Codriver Details
 
 Detailed information for each driver and codriver can be found in the corresponding sub-dataframes.
 
@@ -281,6 +327,8 @@ From the driver person identifier we can get the entry identifier for the rally 
 ogierEntryId  = entries[entries['driverId']==ogierDriverId, 'entryId']
 ogierEntryId
 ```
+
+### Summarising Essential Entry Data
 
 We can manually create a dataframe containing essential fields from the original cars dataframe and the dataframes contained within it:
 
@@ -631,4 +679,30 @@ get_driver_splits_wide = function(driver_splits, splits){
 driver_splits_wide =  get_driver_splits_wide(driver_splits, splits)
 
 driver_splits_wide %>% head(2)
+```
+
+### Multiple Stage Long Splits Data
+
+A convenient way of working with the split times across multiple stages is to put the splits into a long form and then filter out the rows we are interested in.
+
+We can generate a long form dataframe using the `dlplyr::bind_rows()` that we have met before:
+
+```{r}
+get_split_times2 = function(stageId, eventId) {
+                              splits = get_splits(eventId, stageId)
+                              split_times = splits$entrySplitPointTimes
+                              names(split_times$splitPointTimes) = splits$splitPoints$splitPointId
+                              split_times$splitPointTimes
+                            }
+
+get_multi_split_times = function(stage_list){
+  multi_split_times = stage_list %>%
+                      map(get_split_times2, eventId=eventId) %>% 
+                      bind_rows()
+  multi_split_times
+}
+
+stage_list_sample = stage_list[1:2]
+
+get_multi_split_times(stage_list[1:2]) %>% head(3)
 ```

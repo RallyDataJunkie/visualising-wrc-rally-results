@@ -484,7 +484,7 @@ out$dependencies = c(out$dependencies,
 out
 ```
 
-*Note that to render the sparkline, we need to cast the formatted table to an *htmlwidget* and also ensure that the required *sparkline* Javascript package is loaded into the widget.*
+*Note that to render the sparkline, we need to cast the formatted table to an `htmlwidget` and also ensure that the required `sparkline` Javascript package is loaded into the widget.*
 
 One issue with the sparkline bars is that the scales may differ. For example, across different drivers, a position change of +1 for one driver may have the same height as a position change of +2 for another driver.
 
@@ -640,14 +640,24 @@ We can then cast the data to a wide format and relabel the resulting dataframe.
 One recipe for doing this is pretty well proven now, so let's make it more convenient:
 
 ```{r}
+relabel_times_df = function(df, stage_list, cars) {
+  df %>%  
+      map_stage_codes(stage_list) %>%
+      map_driver_names(cars)
+}
+```
+
+And let's create another function to relabel a dataframe and grab the top 10:
+
+```{r}
 clean_top10 = function(df) {
-  df %>%  map_stage_codes(stage_list)  %>%
-                            map_driver_names(cars) %>% dplyr::arrange(!!as.symbol(stage_codes[length(stage_codes)])) %>%
-                              head(10)
+  df %>% relabel_times_df(stage_list, cars) %>%
+          dplyr::arrange(!!as.symbol(stage_codes[length(stage_codes)])) %>%
+          head(10)
 }          
 ```
 
-For example, we can get a wide format dataframe containing individual stage times cleaned and reduced to the top 10:
+We can now get a wide format dataframe containing individual stage times cleaned and reduced to the top 10:
 
 ```{r}
 multi_stage_times_wide = multi_stage_times %>%

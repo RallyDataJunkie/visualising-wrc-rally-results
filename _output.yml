@@ -1,4 +1,5 @@
 bookdown::gitbook:
+  #table_css: false
   config:
     toc_depth: 3
     toc:

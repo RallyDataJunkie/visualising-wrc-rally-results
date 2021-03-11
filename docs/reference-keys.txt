@@ -1,5 +1,5 @@
-tab:unnamed-chunk-51
-tab:unnamed-chunk-57
+tab:unnamed-chunk-56
+tab:unnamed-chunk-64
 introduction
 accessing-data-from-the-wrc-live-timing-api
 current-season-rallies
@@ -7,7 +7,11 @@ itinerary-lookup
 leg-sections
 time-controls
 stage-details
+road-order-start-lists
 competitor-details
+looking-up-entries-by-group
+driver-codriver-details
+summarising-essential-entry-data
 penalties-and-retirements
 results-and-stage-winner
 stage-result
@@ -20,6 +24,7 @@ getting-generic-wide-dataframes
 split-times
 driver-split-times-detail
 wide-driver-split-times
+multiple-stage-long-splits-data
 visualising-results-for-a-single-stage
 load-base-data
 get-stage-results-data
@@ -65,6 +70,9 @@ off-the-pace-charts
 visualising-split-times
 load-base-data-3
 get-splits-data
+split-locations
+mapping-split-codes-to-split-numbers
+split-times-1
 wide-driver-split-times-1
 rebasing-split-times
 visualising-rebased-split-times-using-sparklines
@@ -74,4 +82,5 @@ finding-split-section-ranks
 adding-overall-stage-time-to-the-split-times
 finding-pace-across-splits
 load-base-data-4
+obtaining-split-distances
 calculating-splits-pace

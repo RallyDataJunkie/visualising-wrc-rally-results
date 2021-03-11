@@ -80,7 +80,7 @@ cars = get_car_data(entries)
 cars %>% head(2)
 ```
 
-We can the merge this data into out original table, and filter out some of the less useful columns. We'll also limit ourselves to just the top 10 results:
+We can the merge this data into our original table, and filter out some of the less useful columns. Since the driver code may not be unique, we should retain the driver `entryId` in the table and then suppress its display when we render the dataframe. We'll also limit ourselves to just the top 10 results.
 
 ```{r}
 top10_display_cols_base = c('position', 'identifier', 'code',
@@ -106,7 +106,8 @@ top10_stage_times = stage_times %>%
                              gap = diffFirstMs/1000,
                              diff = diffPrevMs/1000)  %>%
                       # Limit columns and set column order
-                      select(all_of(top10_display_cols_base)) %>%
+                      select(all_of(top10_display_cols_base),
+                             'entryId') %>%
                       # The merge may upset the row order
                       # so reset the order again
                       arrange(position) %>%
@@ -117,7 +118,13 @@ top10_stage_times = stage_times %>%
                              `Time (s)` = TimeInS,
                              Gap = gap, Diff = diff)
 
-formattable( top10_stage_times )
+top10_stage_times %>% head(3) %>% formattable()
+```
+
+We can suppress the display of the *entryId* colum to keep the table tidy:
+
+```{r}
+top10_stage_times %>% head(3) %>% formattable(list(entryId=FALSE))
 ```
 
 ## Adding Stage Metadata to Table Captions
@@ -149,17 +156,47 @@ caption = paste0('Stage ', stage_info_$code,
 caption
 ```
 
-We can add a caption to the table via the *caption* parameter:
+We can add a caption to the table via the *caption* parameter. Using the `%>%` pipe operator to pass the dataframe as the first argument of the `formattable()` function allows us to more clearly see what parameter we need to set in the function to create the caption.
+
+The pipe operator also allows us to limit the number of rows in the dataframe passed to the `formattable()` function via the `head()` function:
 
 ```{r}
-formattable( top10_stage_times, caption = caption)
+top10_stage_times %>% head(3) %>% formattable(caption = caption,
+                                              list(entryId=FALSE))
+```
+
+We can also align text within the columns:
+
+```{r}
+top10_stage_times %>% head(3) %>% formattable(align='c',
+                                              list(entryId=FALSE))
 ```
 
 ## Colour Highlighting Stage Results
 
 The `formattable::formattable()` function is capable of highlighting cell values in a variety of customisable ways.
 
-For example, we can emphasise differences that exceed a specific amount: 
+One straightforward way of highlighting a table is to use colour to emphasise a ranking. Trivially, and perhaps redundantly, we might highlight stage positions for example:
+
+```{r}
+top10_stage_times %>%
+    head() %>%
+    formattable(align='c',
+                list(Pos = color_tile("#DeF7E9", "#71CA97"),
+                     entryId=FALSE))
+```
+
+This may not make so much sense when the ranking we are highlighting is the sort order of the table, but it makes more sense when we want to compare two columns, such as the stage position and the start order.
+
+So let's also pull in the start order (that is, the road order) and see how it compares to the stage position.
+
+TO DO:
+- get `itinerarySectionId` from `stages` (`stages$itinerarySectionId`)
+- get `startListId` (`get_startlist_id(itinerary, itinerarySectionId)`)
+- lookup startlist details (`get_startlist(eventId, startListId)[,c('entryId','order')]`)
+- merge startlist data into stage result
+
+We can also explore highlights based on conditional requirements. For example, we can emphasise differences that exceed a specific amount: 
 
 ```{r}
 large_diff = 2
@@ -168,17 +205,19 @@ formattable(top10_stage_times,
             list(Diff = formatter("span",
                           style = x ~ style(font.weight =
                                               ifelse(x>=large_diff,
-                                                     "bold", 'normal'))))) 
+                                                     "bold", 'normal'))),
+                 entryId=FALSE)) 
 ```
 
-Alternatively, we can add a coloured bar that depicts the increasing gap time down the leaderboard:
+Alternatively, we can add a coloured bar that depicts the increasing gap time down the leaderboard. If we pass an 8 hex digit colour code, rather than a sic digt RGB hex colour code, we can modify the transparency of the colour bar:
 
 ```{r}
 #https://www.displayr.com/formattable/
 unit.scale = function(x) (x - min(x)) / (max(x) - min(x))
 
 formattable(top10_stage_times,
-            list(Gap = color_bar("#FA614B66", fun = unit.scale)))
+            list(Gap = color_bar("#FA614B66", fun = unit.scale),
+                 entryId=FALSE))
 
 ```
 
@@ -198,7 +237,8 @@ new_color_bar <- function(color = "lightgreen", ...){
 }
 
 formattable(top10_stage_times,
-            list(Gap =  new_color_bar("#FA614B66")))
+            list(Gap =  new_color_bar("#FA614B66"),
+                 entryId=FALSE))
 ```
 
 The edge effect is gone, but the default `color_bar()` function doesn't seem to render the values very well where the bars is narrow, at least when the table is rendered to HTML using `bookdown`.
@@ -220,18 +260,19 @@ color_bar2 =  function (color = "lightgray", fun = "proportion", ...)
                 "background" = bg(1-fun(as.numeric(x), ...), 1, color), "width"="100%" ))
 }
 
-formattable(top10_stage_times,
-            list(Gap = color_bar2("#FA614B66") ))
+top10_stage_times %>% formattable(list(Gap = color_bar2("#FA614B66"),
+                                       entryId=FALSE))
 ```
 
 ### Heatmap Style Column Cell Backgrounds
 
-As well as in cell bar charts, we can also use more of a heatmap style approach and colour the background down a column according to value.
+As well as in cell bar charts, we can also use more of a heatmap style approach and colour the background down other numerical columns according to value.
 
 ```{r}
-formattable(top10_stage_times,
-            list(Gap = color_bar2("#FA614B66"),
-                 Diff = color_tile("#DeF7E9", "#71CA97")))
+top10_stage_times %>% 
+  formattable(list(Gap = color_bar2("#FA614B66"),
+                   Diff = color_tile("#DeF7E9","#71CA97"),
+                   entryId=FALSE))
 ```
 
 ## An Aside — Calculating DIFF and GAP times
@@ -267,7 +308,8 @@ top10_stage_times %>%
   mutate(DIFF = c(0, diff(`Time (s)`)),
          GAP = cumsum(DIFF)) %>%
   select(c('Car', 'Gap', 'GAP', 'Diff', 'DIFF')) %>%
-  formattable(caption = caption)
+  formattable(caption = caption,
+              list(entryId=FALSE))
 ```
 
 ## Rebasing Stage Results
@@ -401,7 +443,8 @@ formattable(rov_rebased_gap,
                                             # Example additional style
                                             font.weight = ifelse(abs(x)>=2,
                                                             'bold',
-                                                            'normal') ))))
+                                                            'normal') )),
+                 entryId=FALSE))
 ```
 
 Although the `formattable()` function does not directly support divergent colour indicators, we can create a custom formatter that does provide such a view over the data.
@@ -447,7 +490,8 @@ color_tile2 <- function (...) {
   })}
 
 formattable(rov_rebased_gap, align='c',
-            list(Gap = color_tile2(c("red",'white', "forestgreen"))))
+            list(Gap = color_tile2(c("red",'white', "forestgreen")),
+                 entryId=FALSE))
 ```
 
 *For further possible discussions about divergent palette definitions, see [here](https://stackoverflow.com/questions/37482977/what-is-a-good-palette-for-divergent-colors-in-r-or-can-viridis-and-magma-b).*
@@ -473,7 +517,8 @@ pm_color_bar2 <- function(color1 = "lightgreen", color2 = "pink", ...){
             ))
 }
 
-formattable(rov_rebased_gap, align='c',
-            list(Gap = pm_color_bar2()
-              ))
+rov_rebased_gap %>%
+  formattable(align='c',
+              list(Gap = pm_color_bar2(),
+                   entryId=FALSE))
 ```

@@ -32,6 +32,7 @@ stages = get_stages(sections)
 stages_lookup = get_stages_lookup(stages)
 
 # Driver details
+entries = get_rally_entries(eventId)
 cars = get_car_data(entries)
 ```
 
@@ -148,6 +149,7 @@ multi_stage_pace = multi_stage_times %>%
 
 multi_stage_pace %>% head(3)
 ```
+
 Create a mapping from stage ID to stage codes and cast the ordered list of stage Ids to an ordered list of stage codes:
 
 ```{r}
