@@ -6,11 +6,11 @@ knitr::opts_chunk$set(fig.path = "images/split-times-")
 # Import code into empty but named chunks
 knitr::read_chunk('code/wrc-wrangling.R')
 ```
-# Visualising Split Times
+# Working With Split Times
 
-In this chapter we'll explore some of the ways in which we might visualise the split times on a stage. We can do these either either on a time basis, or we can explore the time differences in terms of *pace* differences by normalising the split times over split distances.
+In this chapter we'll explore some of the ways in which we might start to wotk with split times data from a particular stage. On the one hand, we can consider split times purely on a time basis; on the other, we can explore the split times in terms of *pace* differences calculated by normalising the split times over split distances.
 
-We'll also see how we can make split time comparisons as gaps relative to a specified driver, rather than the stage winner as well as calculating times to complete each split (that is, the difference between consecutive split times for a particular driver).
+As with stage times, we can rebase split times to compare a specified driver directly with other drivers, not just the stage winner. We can also calculate how much time was spent on each split sectionby finding the difference between consecutive split times for a particular driver.
 
 From the split section times, we can also calculate various derived measures, such as the ultimate possible stage time, based on the sum of fastest times to complete each split section.
 
@@ -61,7 +61,6 @@ splits = get_splits(eventId, stageId)
 ```
 
 The splits data actually comprises two dataframes in columns `splitPoints` and `entrySplitPointTimes`.
-
 
 ### Split Locations
 
@@ -255,7 +254,6 @@ out$dependencies = c(out$dependencies,
 out
 ```
 
-
 ## Finding the Rank Position at Each Split Point
 
 It can often be tricky to work out the rank at each split by eye, so let's create a simple function to display the rank at each split for us:
@@ -378,3 +376,6 @@ split_cols =  get_split_cols(splits)
 split_cols = c(split_cols, 'elapsedDurationS')
 ```
 
+## Calculating Ultimate Stage Times
+
+TO DO

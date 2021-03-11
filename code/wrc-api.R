@@ -2,6 +2,7 @@ library(jsonlite)
 library(stringr)
 library(dplyr)
 library(purrr)
+library(tidyr)
 
 results_api = 'https://api.wrc.com/results-api'
 

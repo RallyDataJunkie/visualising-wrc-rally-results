@@ -132,7 +132,8 @@ We can generate the pace by adding the stage distance as an extra column and per
 We'll also take the opportunity to merge in driver metadata and limit cars to WRC group entries:
 
 ```{r}
-multi_stage_pace = multi_stage_times %>%
+get_multi_stage_pace = function(multi_stage_times, cars) {
+  multi_stage_times %>%
                     merge(stages[,c('stageId' ,'distance',
                                     'number', 'code')],
                           by='stageId') %>%
@@ -146,6 +147,10 @@ multi_stage_pace = multi_stage_times %>%
                     select(c('stageId', 'number', 'code_driver',
                              'elapsedDurationS', 'pace', 'code'))  %>%
                     arrange(number, elapsedDurationS)
+  
+}
+
+multi_stage_pace = get_multi_stage_pace(multi_stage_times, cars)
 
 multi_stage_pace %>% head(3)
 ```
@@ -153,15 +158,19 @@ multi_stage_pace %>% head(3)
 Create a mapping from stage ID to stage codes and cast the ordered list of stage Ids to an ordered list of stage codes:
 
 ```{r}
-# Create a stage code mapping function
-stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
-stage_code_map = function(stageId)
-  stages_lookup_code[[as.character(stageId)]]
+get_stage_codes = function(stages){
+     # Create a stage code mapping function
+    stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
+    stage_code_map = function(stageId)
+      stages_lookup_code[[as.character(stageId)]]
+    
+    # Map stage ID column names to stage codes
+    stage_codes = unlist(purrr::map(stage_list,
+                                    function (x) stage_code_map(x)))
+    stage_codes 
+}
 
-# Map stage ID column names to stage codes
-stage_codes = unlist(purrr::map(stage_list,
-                                function (x) stage_code_map(x)))
-stage_codes
+stage_codes = get_stage_codes(stages)
 ```
 
 Use the generic widener function to widen the pace dataframe to give the pace for each driver on each stage:
@@ -196,269 +205,3 @@ $$
 {_S}p_i^j = {_S}p_i - {_S}p_j = \frac{{_S}t_i - {_S}t_j}{d_S} = \frac{{_S}t_i^j}{d_S}
 $$
 
-## Visualising Stage Pace Using Pace Maps
-
-To compare pace, it is useful to look at rebased pace times relative to a particular driver and also indicate the length of stage with which particular pace levels are associated.
-
-We can do this with a chart that presents distance into stage along the horizontal x-axis and relative pace on the y axis, using a line to indicate the pace for each driver relative to a specified driver.
-
-One of the easiest way of plotting charts is to plot from a tidy dataframe, so let's cast the rebased wide pace dataframe back to a long form and also add in the distance into stage at the start and end of each stage:
-
-```{r}
-library(tidyr)
-
-stage_range = c(start=stage_codes[1],
-                end=stage_codes[length(stage_codes)])
-
-stages$cum_dist = cumsum(stages$distance)
-stages$start_dist = c(0, stages$cum_dist[-length(stages$cum_dist)])
-
-pace_long = pace_wide_rebased %>% 
-                gather(code, pace,
-                       stage_range['start']:stage_range['end']) %>%
-                merge(stages[,c('code', 'start_dist', 'cum_dist')],
-                          by='code')
-  
-pace_long %>% head(3)
-```
-
-We can now construct a chart using line segments to represent the pace for each driver on each stage:
-
-```{r basic_stage_pace, message=FALSE, warning=FALSE}
-library(ggplot2)
-
-g0 = ggplot(pace_long, aes(group=code_driver)) +
-      geom_hline(yintercept = 0,
-                 colour='lightgrey', linetype='dotted') +
-      geom_segment(aes(x=start_dist, xend=cum_dist,
-                       y=pace, yend=pace),
-                   color = 'lightgrey')
-
-g = g0 + geom_text(aes(x=(start_dist+cum_dist)/2,y=pace+0.03,
-                    label=code_driver,group=code_driver),
-                position = position_dodge(15), size=1) +
-                coord_cartesian(ylim=c(-0.5,2)) +
-                theme_classic()
-
-g
-```
-
-We could highlight positive and negative differences in the label colourings:
-
-```{r posneg_highlighted_stage_pace, warning=FALSE}
-g0 + geom_text(aes(x=(start_dist+cum_dist)/2,
-                   y=ifelse(pace>0,pace+0.03,pace-0.03),
-                    label=code_driver,group=code_driver,
-                   color=pace>0),
-                position = position_dodge(15), size=1) +
-                coord_cartesian(ylim=c(-0.5,2)) +
-                theme_classic() + theme(legend.position="none")
-```
-
-
-We can also highlight values for a particular driver:
-
-```{r driver_highlighted_stage_pace, warning=FALSE}
-g + geom_segment(data=pace_long[pace_long$code_driver=='EVA',],
-                 aes(x=start_dist, xend=cum_dist,
-                       y=pace, yend=pace, color = pace>0)) +
-   theme(legend.position="none")
-```
-
-Or abuse the `gghiglight` package to modify the aesthetics of unselected items:
-
-```{r driver_highlighted_stage_pace2, warning=FALSE}
-g + gghighlight::gghighlight(code_driver=='EVA',
-                             unhighlighted_params=list(alpha=0.1))
-```
-Alternatively, abuse `gghighlight()` again with a negative form of selection to highlight items:
-
-```{r driver_highlighted_stage_pace3, warning=FALSE}
-g + gghighlight::gghighlight(code_driver!='EVA',label_key=code_driver,
-                             unhighlighted_params=list(color='blue'))
-```
-
-We could even add a transparency layer bar to highlight the pace difference compared to a particular driver:
-
-```{r block_highlighted_stage_pace, warning=FALSE}
-g + geom_rect(data=pace_long[pace_long$code_driver=='EVA',],
-              aes(xmin=start_dist, xmax=cum_dist,
-                   ymin = ifelse(pace>0,0,pace),
-                   ymax = ifelse(pace>0,pace,0),
-                   fill = pace>0, alpha=0.7)) +
-    theme(legend.position="none")
-```
-
-Could we perhaps also extend that a little to allow us to compare more drivers?
-
-```{r}
-pace_map_highlight = function(sub_df, m, n){
-    # If we don't grab the actual value
-    # the referenced value is used...
-    m_ = m
-    geom_rect(data=sub_df,
-              aes(xmin= start_dist + (m_-1) * (cum_dist - start_dist)/n,
-                  xmax= start_dist + m_ * (cum_dist - start_dist)/n,
-                  ymin = ifelse(pace>0,0,pace),
-                  ymax = ifelse(pace>0,pace,0),
-                  fill = pace>0, alpha=0.7))
-}
-
-pace_map_highlight_many = function(df, g, codes){
-  n = length(codes)
-  for (m in 1:n){
-    sub_df = df[df$code_driver==codes[m],]
-    g = g + pace_map_highlight(sub_df, m, n)
-  }
-  
-  g
-}
-```
-
-Let's try it with two drivers:
-
-```{r pace_map_dual, warning=FALSE}
-pace_map_highlight_many(pace_long, g, c('EVA', 'ROV' )) +
-  theme(legend.position="none")
-```
-
-With multiple drivers, it may get difficult to see where the stages are delimited, so we might add separators to delimit them:
-
-```{r pace_map_stage_delimited, warning=FALSE}
-g + geom_vline(data = stages, aes(xintercept = cum_dist),
-               color='lightgrey', linetype='dotted')
-```
-
-To highlight stages further, we could add a "banner" to the chart:
-
-```{r banner_highlighted_stage_pace, warning=FALSE}
-g + geom_rect(data=pace_long[pace_long$code_driver==example_driver,],
-              aes(xmin=0, xmax=max(cum_dist),
-                  ymin = 1.8,  ymax = 2.0,
-                  alpha=0), fill = 'black') +
-    geom_text(data=pace_long[pace_long$code_driver==example_driver,],
-              aes(x=(cum_dist + start_dist)/2, label=code),
-              y=1.9, color='yellow', size=3) +
-    geom_segment(data=pace_long[pace_long$code_driver==example_driver,],
-                 aes(x=cum_dist, xend=cum_dist,
-                    y=1.8, yend=2.0), color='yellow') +
-    theme(legend.position="none")
-```
-
-## Off-the-Pace Charts
-
-Another way or reviewing pace is to consider the gap to leader, or rebased gap to a particular driver across the stages, using distance into stage along the x-axis to locate the x-value and gap (measured in seconds) along the y-axis. A moment's consideration suggests that the gradient ($\textrm{change_in_gap}/\textrm{change_in_distance}$) is a measure of pace. The slope of the line thus indicates relative pace between the focal driver and the other drivers.
-
-As with the pace map, if we have the data in a long, tidy form, we can create charts from it quite straightforwardly. So let's add in the accumulated distance into stage and accumulated stage time for each time:
-
-```{r}
-off_the_pace = multi_stage_pace %>%
-                           merge(stages[,c('stageId', 'cum_dist')],
-                                 by='stageId') %>%
-                          arrange(number) %>%
-                          group_by(code_driver) %>%
-                          mutate(totalDurationS = cumsum(elapsedDurationS))
-
-off_the_pace %>% head(3)
-```
-
-Now we can create a basic off-the pace chart:
-
-```{r off-the-pace-basic, warning=FALSE}
-ggplot(off_the_pace, aes(x=cum_dist, y=totalDurationS,
-                         color=code_driver)) + geom_line()
-```
-
-As with the pace map, the chart is often most informative if we rebase it relative to a particular driver.
-
-Let's create a wide dataframe to simplify the rebasing process:
-
-```{r}
-off_the_pace_wide = get_multi_stage_generic_wide(off_the_pace,
-                                         stage_codes, 'totalDurationS',
-                                         group_key=c('code_driver'),
-                                         spread_key='code')
-
-off_the_pace_wide %>% head(3)
-```
-
-Now we can rebase:
-
-```{r}
-off_the_pace_wide_rebased = rebase(off_the_pace_wide,
-                                   example_driver, stage_codes,
-                                   id_col='code_driver')
-
-off_the_pace_wide_rebased %>% head(3)
-```
-
-And cast back to the long, tidy form:
-
-```{r}
-off_the_pace_long = off_the_pace_wide_rebased %>% 
-                        gather(code, totalDurationGapS,
-                               stage_range['start']:stage_range['end']) %>%
-                               merge(stages[,c('code', 'cum_dist')],
-                                     by='code')
-
-off_the_pace_long %>% head(3)
-```
-
-And now we can plot the simple rebased off-the-pace chart:
-
-```{r off-the-pace-rebased, warning=FALSE}
-g_otp = ggplot(off_the_pace_long, aes(x=cum_dist, y=totalDurationGapS,
-                                      color=code_driver)) +
-            geom_line() +
-            # Retain the points outside the limits
-            # by using coord_cartesian()
-            # We can also flip the coordinate axis
-            coord_cartesian(ylim=c(100, -100)) + theme_classic()
-
-g_otp
-```
-
-Trivially, we might try to add labels at the end of each line:
-
-```{r off-the-pace-end1, warning=FALSE}
-off_the_pace_end = off_the_pace_long %>% filter(cum_dist == max(cum_dist))
-                                                
-g_otp + geom_text(data = off_the_pace_end,
-                  aes(x = cum_dist+ 10, y = totalDurationGapS,
-                      label = code_driver, color = code_driver)) +
-        theme(legend.position="none")
-```
-
-However, there are various other packages that provide alternative ways of doing this, including `directlabels` and `ggrepel`.
-
-For example, using `directlabels`:
-
-```{r off-the-pace-labeled1, warning=FALSE}
-library(directlabels)
-
-g_otp +
-    geom_dl(aes(label = code_driver, x=cum_dist+2),
-            # cex is text label size
-            method = list('last.bumpup', cex = 0.5)) +
-    theme(legend.position="none")
-    
-```
-
-And using `ggrepel`, which also has the advantage of adding labels for drivers who curves are really of the pace, albeit not in an obviously natural order:
-
-```{r off-the-pace-labeled2, warning=FALSE}
-g_otp + ggrepel::geom_text_repel(data = off_the_pace_end,
-                                 aes(label = code_driver),
-                                 size = 3) +
-        theme(legend.position="none")
-```
-
-The `gghighlight` package is also useful in highlighting traces, as well as usefully automatically labeling highlighted lines:
-
-```{r off-the-pace-highlight, warning=FALSE}
-g_otp +
-    gghighlight::gghighlight(code_driver=='EVA',
-                             unhighlighted_params=list(alpha=0.1)) +
-    theme(legend.position="none")
-  
-```

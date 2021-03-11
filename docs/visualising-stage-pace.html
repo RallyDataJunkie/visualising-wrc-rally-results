@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 Visualising Stage Pace | Visualising WRC Rally Timing and Results Data</title>
+  <meta name="description" content="An introduction to visualising timing and results data for WRC rally events." />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 Visualising Stage Pace | Visualising WRC Rally Timing and Results Data" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="An introduction to visualising timing and results data for WRC rally events." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 Visualising Stage Pace | Visualising WRC Rally Timing and Results Data" />
+  
+  <meta name="twitter:description" content="An introduction to visualising timing and results data for WRC rally events." />
+  
+
+<meta name="author" content="Tony Hirst" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="finding-pace-across-stages.html"/>
+<link rel="next" href="working-with-split-times.html"/>
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/formattable_widget-binding-0.2.1/formattable_widget.js"></script>
+<link href="libs/jquery-sparkline-2.1.2/jquery.sparkline.css" rel="stylesheet" />
+<script src="libs/jquery-sparkline-2.1.2/jquery.sparkline.js"></script>
+<script src="libs/sparkline-binding-2.0/sparkline.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./"><strong>Visualising WRC Rally Results and Timing Data</strong></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Index</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html"><i class="fa fa-check"></i><b>2</b> Accessing Data from the WRC Live Timing API</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#current-season-rallies"><i class="fa fa-check"></i><b>2.1</b> Current Season Rallies</a></li>
+<li class="chapter" data-level="2.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#itinerary-lookup"><i class="fa fa-check"></i><b>2.2</b> Itinerary Lookup</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#leg-sections"><i class="fa fa-check"></i><b>2.2.1</b> Leg Sections</a></li>
+<li class="chapter" data-level="2.2.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#time-controls"><i class="fa fa-check"></i><b>2.2.2</b> Time Controls</a></li>
+<li class="chapter" data-level="2.2.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-details"><i class="fa fa-check"></i><b>2.2.3</b> Stage Details</a></li>
+<li class="chapter" data-level="2.2.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#road-order-start-lists"><i class="fa fa-check"></i><b>2.2.4</b> Road Order Start Lists</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#competitor-details"><i class="fa fa-check"></i><b>2.3</b> Competitor Details</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#looking-up-entries-by-group"><i class="fa fa-check"></i><b>2.3.1</b> Looking Up Entries by Group</a></li>
+<li class="chapter" data-level="2.3.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#driver-codriver-details"><i class="fa fa-check"></i><b>2.3.2</b> Driver &amp; Codriver Details</a></li>
+<li class="chapter" data-level="2.3.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#summarising-essential-entry-data"><i class="fa fa-check"></i><b>2.3.3</b> Summarising Essential Entry Data</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#penalties-and-retirements"><i class="fa fa-check"></i><b>2.4</b> Penalties and Retirements</a></li>
+<li class="chapter" data-level="2.5" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#results-and-stage-winner"><i class="fa fa-check"></i><b>2.5</b> Results and Stage Winner</a></li>
+<li class="chapter" data-level="2.6" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-result"><i class="fa fa-check"></i><b>2.6</b> Stage Result</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-results-for-multiple-stages"><i class="fa fa-check"></i><b>2.6.1</b> Getting Stage Results for Multiple Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#stage-times"><i class="fa fa-check"></i><b>2.7</b> Stage Times</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.1</b> Getting Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="2.7.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-times-for-multiple-stages"><i class="fa fa-check"></i><b>2.7.2</b> Getting Wide Stage Times for Multiple Stages</a></li>
+<li class="chapter" data-level="2.7.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-wide-stage-positions"><i class="fa fa-check"></i><b>2.7.3</b> Getting Wide Stage Positions</a></li>
+<li class="chapter" data-level="2.7.4" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#getting-generic-wide-dataframes"><i class="fa fa-check"></i><b>2.7.4</b> Getting Generic Wide Dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#split-times"><i class="fa fa-check"></i><b>2.8</b> Split Times</a>
+<ul>
+<li class="chapter" data-level="2.8.1" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#driver-split-times-detail"><i class="fa fa-check"></i><b>2.8.1</b> Driver Split Times Detail</a></li>
+<li class="chapter" data-level="2.8.2" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#wide-driver-split-times"><i class="fa fa-check"></i><b>2.8.2</b> Wide Driver Split Times</a></li>
+<li class="chapter" data-level="2.8.3" data-path="accessing-data-from-the-wrc-live-timing-api.html"><a href="accessing-data-from-the-wrc-live-timing-api.html#multiple-stage-long-splits-data"><i class="fa fa-check"></i><b>2.8.3</b> Multiple Stage Long Splits Data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html"><i class="fa fa-check"></i><b>3</b> Visualising Results for a Single Stage</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#load-base-data"><i class="fa fa-check"></i><b>3.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="3.2" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#get-stage-results-data"><i class="fa fa-check"></i><b>3.2</b> Get Stage Results Data</a></li>
+<li class="chapter" data-level="3.3" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#previewing-stage-results-data"><i class="fa fa-check"></i><b>3.3</b> Previewing Stage Results Data</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-entry-metadata"><i class="fa fa-check"></i><b>3.3.1</b> Adding Entry Metadata</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#adding-stage-metadata-to-table-captions"><i class="fa fa-check"></i><b>3.4</b> Adding Stage Metadata to Table Captions</a></li>
+<li class="chapter" data-level="3.5" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#colour-highlighting-stage-results"><i class="fa fa-check"></i><b>3.5</b> Colour Highlighting Stage Results</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#heatmap-style-column-cell-backgrounds"><i class="fa fa-check"></i><b>3.5.1</b> Heatmap Style Column Cell Backgrounds</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#an-aside-calculating-diff-and-gap-times"><i class="fa fa-check"></i><b>3.6</b> An Aside — Calculating DIFF and GAP times</a></li>
+<li class="chapter" data-level="3.7" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#rebasing-stage-results"><i class="fa fa-check"></i><b>3.7</b> Rebasing Stage Results</a></li>
+<li class="chapter" data-level="3.8" data-path="visualising-results-for-a-single-stage.html"><a href="visualising-results-for-a-single-stage.html#colour-highlighting-rebased-values"><i class="fa fa-check"></i><b>3.8</b> Colour Highlighting Rebased Values</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html"><i class="fa fa-check"></i><b>4</b> Visualising Results for Multiple Stages</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#load-base-data-1"><i class="fa fa-check"></i><b>4.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="4.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-mutliple-stage-results"><i class="fa fa-check"></i><b>4.2</b> Retrieving Mutliple Stage Results</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#reshaping-overall-position-data"><i class="fa fa-check"></i><b>4.2.1</b> Reshaping Overall Position Data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#reshaping-overall-rally-time-data"><i class="fa fa-check"></i><b>4.2.2</b> Reshaping Overall Rally Time Data</a></li>
+<li class="chapter" data-level="4.2.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#reshaping-time-to-first-data"><i class="fa fa-check"></i><b>4.2.3</b> Reshaping Time to First Data</a></li>
+<li class="chapter" data-level="4.2.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#mapping-stage-and-driver-identifiers-to-meaningful-labels"><i class="fa fa-check"></i><b>4.2.4</b> Mapping Stage and Driver Identifiers to Meaningful Labels</a></li>
+<li class="chapter" data-level="4.2.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#rebasing-overall-times"><i class="fa fa-check"></i><b>4.2.5</b> Rebasing Overall Times</a></li>
+<li class="chapter" data-level="4.2.6" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#finding-changes-in-rebased-gaps-across-stages"><i class="fa fa-check"></i><b>4.2.6</b> Finding Changes in Rebased Gaps Across Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-overall-results"><i class="fa fa-check"></i><b>4.3</b> Visualising Overall Results</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-first-position"><i class="fa fa-check"></i><b>4.3.1</b> Visualising First Position</a></li>
+<li class="chapter" data-level="4.3.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-changes-over-a-rally"><i class="fa fa-check"></i><b>4.3.2</b> Visualising Position Changes Over a Rally</a></li>
+<li class="chapter" data-level="4.3.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-position-gainslosses"><i class="fa fa-check"></i><b>4.3.3</b> Visualising Position Gains/Losses</a></li>
+<li class="chapter" data-level="4.3.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#per-driver-position-charts"><i class="fa fa-check"></i><b>4.3.4</b> Per Driver Position Charts</a></li>
+<li class="chapter" data-level="4.3.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-time-to-first"><i class="fa fa-check"></i><b>4.3.5</b> Visualising Time to First</a></li>
+<li class="chapter" data-level="4.3.6" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-rebased-gaps"><i class="fa fa-check"></i><b>4.3.6</b> Visualising Rebased Gaps</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#retrieving-stage-times-and-results"><i class="fa fa-check"></i><b>4.4</b> Retrieving Stage Times and Results</a></li>
+<li class="chapter" data-level="4.5" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#visualising-stage-times"><i class="fa fa-check"></i><b>4.5</b> Visualising Stage Times</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#stage-position-sparklines"><i class="fa fa-check"></i><b>4.5.1</b> Stage Position Sparklines</a></li>
+<li class="chapter" data-level="4.5.2" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#gap-to-stage-winner-sparklines"><i class="fa fa-check"></i><b>4.5.2</b> Gap to Stage Winner Sparklines</a></li>
+<li class="chapter" data-level="4.5.3" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#stage-position-charts"><i class="fa fa-check"></i><b>4.5.3</b> Stage Position Charts</a></li>
+<li class="chapter" data-level="4.5.4" data-path="visualising-results-for-multiple-stages.html"><a href="visualising-results-for-multiple-stages.html#individual-stage-position-charts"><i class="fa fa-check"></i><b>4.5.4</b> Individual Stage position Charts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html"><i class="fa fa-check"></i><b>5</b> Finding Pace Across Stages</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#load-base-data-2"><i class="fa fa-check"></i><b>5.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="5.2" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#defining-pace"><i class="fa fa-check"></i><b>5.2</b> Defining Pace</a></li>
+<li class="chapter" data-level="5.3" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-stage-pace"><i class="fa fa-check"></i><b>5.3</b> Calculating Stage Pace</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-pace-for-a-single-stage"><i class="fa fa-check"></i><b>5.3.1</b> Calculating Pace for a Single Stage</a></li>
+<li class="chapter" data-level="5.3.2" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#calculating-pace-for-multiple-stages"><i class="fa fa-check"></i><b>5.3.2</b> Calculating Pace for Multiple Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="finding-pace-across-stages.html"><a href="finding-pace-across-stages.html#rebasing-stage-pace"><i class="fa fa-check"></i><b>5.4</b> Rebasing Stage Pace</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="visualising-stage-pace.html"><a href="visualising-stage-pace.html"><i class="fa fa-check"></i><b>6</b> Visualising Stage Pace</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="visualising-stage-pace.html"><a href="visualising-stage-pace.html#load-base-data-3"><i class="fa fa-check"></i><b>6.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="6.2" data-path="visualising-stage-pace.html"><a href="visualising-stage-pace.html#pace-maps"><i class="fa fa-check"></i><b>6.2</b> Pace Maps</a></li>
+<li class="chapter" data-level="6.3" data-path="visualising-stage-pace.html"><a href="visualising-stage-pace.html#a-pace-map-function"><i class="fa fa-check"></i><b>6.3</b> A Pace Map Function</a></li>
+<li class="chapter" data-level="6.4" data-path="visualising-stage-pace.html"><a href="visualising-stage-pace.html#off-the-pace-charts"><i class="fa fa-check"></i><b>6.4</b> Off-the-Pace Charts</a></li>
+<li class="chapter" data-level="6.5" data-path="visualising-stage-pace.html"><a href="visualising-stage-pace.html#comparing-pace-across-stages"><i class="fa fa-check"></i><b>6.5</b> Comparing Pace Across Stages</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="working-with-split-times.html"><a href="working-with-split-times.html"><i class="fa fa-check"></i><b>7</b> Working With Split Times</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#load-base-data-4"><i class="fa fa-check"></i><b>7.1</b> Load Base Data</a></li>
+<li class="chapter" data-level="7.2" data-path="working-with-split-times.html"><a href="working-with-split-times.html#get-splits-data"><i class="fa fa-check"></i><b>7.2</b> Get Splits Data</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#split-locations"><i class="fa fa-check"></i><b>7.2.1</b> Split Locations</a></li>
+<li class="chapter" data-level="7.2.2" data-path="working-with-split-times.html"><a href="working-with-split-times.html#mapping-split-codes-to-split-numbers"><i class="fa fa-check"></i><b>7.2.2</b> Mapping Split Codes to Split Numbers</a></li>
+<li class="chapter" data-level="7.2.3" data-path="working-with-split-times.html"><a href="working-with-split-times.html#split-times-1"><i class="fa fa-check"></i><b>7.2.3</b> Split Times</a></li>
+<li class="chapter" data-level="7.2.4" data-path="working-with-split-times.html"><a href="working-with-split-times.html#wide-driver-split-times-1"><i class="fa fa-check"></i><b>7.2.4</b> Wide Driver Split Times</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="working-with-split-times.html"><a href="working-with-split-times.html#rebasing-split-times"><i class="fa fa-check"></i><b>7.3</b> Rebasing Split Times</a></li>
+<li class="chapter" data-level="7.4" data-path="working-with-split-times.html"><a href="working-with-split-times.html#visualising-rebased-split-times-using-sparklines"><i class="fa fa-check"></i><b>7.4</b> Visualising Rebased Split Times Using Sparklines</a></li>
+<li class="chapter" data-level="7.5" data-path="working-with-split-times.html"><a href="working-with-split-times.html#finding-the-rank-position-at-each-split-point"><i class="fa fa-check"></i><b>7.5</b> Finding the Rank Position at Each Split Point</a></li>
+<li class="chapter" data-level="7.6" data-path="working-with-split-times.html"><a href="working-with-split-times.html#finding-split-section-durations"><i class="fa fa-check"></i><b>7.6</b> Finding Split Section Durations</a>
+<ul>
+<li class="chapter" data-level="7.6.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#finding-split-section-ranks"><i class="fa fa-check"></i><b>7.6.1</b> Finding Split Section Ranks</a></li>
+</ul></li>
+<li class="chapter" data-level="7.7" data-path="working-with-split-times.html"><a href="working-with-split-times.html#adding-overall-stage-time-to-the-split-times"><i class="fa fa-check"></i><b>7.7</b> Adding Overall Stage Time to the Split Times</a></li>
+<li class="chapter" data-level="7.8" data-path="working-with-split-times.html"><a href="working-with-split-times.html#calculating-ultimate-stage-times"><i class="fa fa-check"></i><b>7.8</b> Calculating Ultimate Stage Times</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html"><i class="fa fa-check"></i><b>8</b> Visualising Pace Across Splits</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html#load-base-data-5"><i class="fa fa-check"></i><b>8.1</b> Load Base Data</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html#obtaining-split-distances"><i class="fa fa-check"></i><b>8.1.1</b> Obtaining Split Distances</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html#calculating-splits-pace"><i class="fa fa-check"></i><b>8.2</b> Calculating Splits Pace</a></li>
+<li class="chapter" data-level="8.3" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html#visualising-the-splits-pace"><i class="fa fa-check"></i><b>8.3</b> Visualising the Splits Pace</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html#splits-sections-pace-maps"><i class="fa fa-check"></i><b>8.3.1</b> Splits Sections Pace Maps</a></li>
+<li class="chapter" data-level="8.3.2" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html#off-the-pace-splits-pace-mapping"><i class="fa fa-check"></i><b>8.3.2</b> Off-the-Pace Splits Pace Mapping</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://rallydatajunkie.com/"><em>RallyDataJunkie.com</em></a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Visualising WRC Rally Timing and Results Data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="visualising-stage-pace" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Visualising Stage Pace</h1>
+<p>In this chapter, we’ll start to explore various ways in which we might visualise pace data.</p>
+<div id="load-base-data-3" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Load Base Data</h2>
+<p>To get the stage data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages, and from that access the stage ID for the stage or stages we are interested in.</p>
+<p>Load in the helper functions:</p>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="visualising-stage-pace.html#cb227-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span>
+<span id="cb227-2"><a href="visualising-stage-pace.html#cb227-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-wrangling.R&#39;</span>)</span>
+<span id="cb227-3"><a href="visualising-stage-pace.html#cb227-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-charts.R&#39;</span>)</span></code></pre></div>
+<p>And get the base data:</p>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="visualising-stage-pace.html#cb228-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb228-2"><a href="visualising-stage-pace.html#cb228-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb228-3"><a href="visualising-stage-pace.html#cb228-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb228-4"><a href="visualising-stage-pace.html#cb228-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb228-5"><a href="visualising-stage-pace.html#cb228-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb228-6"><a href="visualising-stage-pace.html#cb228-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb228-7"><a href="visualising-stage-pace.html#cb228-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb228-8"><a href="visualising-stage-pace.html#cb228-8" aria-hidden="true" tabindex="-1"></a>stage_list <span class="ot">=</span> <span class="fu">get_stage_list</span>(stages)</span>
+<span id="cb228-9"><a href="visualising-stage-pace.html#cb228-9" aria-hidden="true" tabindex="-1"></a>stage_codes <span class="ot">=</span> <span class="fu">get_stage_codes</span>(stages)</span>
+<span id="cb228-10"><a href="visualising-stage-pace.html#cb228-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb228-11"><a href="visualising-stage-pace.html#cb228-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb228-12"><a href="visualising-stage-pace.html#cb228-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
+<span id="cb228-13"><a href="visualising-stage-pace.html#cb228-13" aria-hidden="true" tabindex="-1"></a>entries <span class="ot">=</span> <span class="fu">get_rally_entries</span>(eventId)</span>
+<span id="cb228-14"><a href="visualising-stage-pace.html#cb228-14" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<p>Get a sample stage ID:</p>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="visualising-stage-pace.html#cb229-1" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span></code></pre></div>
+<p>Let’s also get some pace data:</p>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="visualising-stage-pace.html#cb230-1" aria-hidden="true" tabindex="-1"></a>multi_stage_times <span class="ot">=</span> <span class="fu">get_multi_stage_times</span>(stage_list)</span>
+<span id="cb230-2"><a href="visualising-stage-pace.html#cb230-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb230-3"><a href="visualising-stage-pace.html#cb230-3" aria-hidden="true" tabindex="-1"></a>multi_stage_pace <span class="ot">=</span> <span class="fu">get_multi_stage_pace</span>(multi_stage_times, cars)</span>
+<span id="cb230-4"><a href="visualising-stage-pace.html#cb230-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb230-5"><a href="visualising-stage-pace.html#cb230-5" aria-hidden="true" tabindex="-1"></a>pace_wide <span class="ot">=</span> <span class="fu">get_multi_stage_generic_wide</span>(multi_stage_pace,</span>
+<span id="cb230-6"><a href="visualising-stage-pace.html#cb230-6" aria-hidden="true" tabindex="-1"></a>                                         stage_codes, <span class="st">&#39;pace&#39;</span>,</span>
+<span id="cb230-7"><a href="visualising-stage-pace.html#cb230-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="co"># Unique group keys required</span></span>
+<span id="cb230-8"><a href="visualising-stage-pace.html#cb230-8" aria-hidden="true" tabindex="-1"></a>                                         <span class="co"># Driver code not guaranteed unique</span></span>
+<span id="cb230-9"><a href="visualising-stage-pace.html#cb230-9" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">group_key=</span><span class="fu">c</span>(<span class="st">&#39;code_driver&#39;</span>),</span>
+<span id="cb230-10"><a href="visualising-stage-pace.html#cb230-10" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">spread_key=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb230-11"><a href="visualising-stage-pace.html#cb230-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb230-12"><a href="visualising-stage-pace.html#cb230-12" aria-hidden="true" tabindex="-1"></a>example_driver <span class="ot">=</span> pace_wide[<span class="dv">2</span>,]<span class="sc">$</span>code_driver</span>
+<span id="cb230-13"><a href="visualising-stage-pace.html#cb230-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb230-14"><a href="visualising-stage-pace.html#cb230-14" aria-hidden="true" tabindex="-1"></a>pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(pace_wide, example_driver, stage_codes,</span>
+<span id="cb230-15"><a href="visualising-stage-pace.html#cb230-15" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id_col=</span><span class="st">&#39;code_driver&#39;</span>)</span></code></pre></div>
+</div>
+<div id="pace-maps" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Pace Maps</h2>
+<p>To compare pace, it is useful to look at rebased pace times relative to a particular driver and also indicate the length of stage with which particular pace levels are associated.</p>
+<p>We can do this with a chart that presents distance into stage along the horizontal x-axis and relative pace on the y axis, using a line to indicate the pace for each driver relative to a specified driver.</p>
+<p>One of the easiest way of plotting charts is to plot from a tidy dataframe, so let’s cast the rebased wide pace dataframe back to a long form and also add in the distance into stage at the start and end of each stage:</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="visualising-stage-pace.html#cb231-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb231-2"><a href="visualising-stage-pace.html#cb231-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb231-3"><a href="visualising-stage-pace.html#cb231-3" aria-hidden="true" tabindex="-1"></a>stage_range <span class="ot">=</span> <span class="fu">c</span>(<span class="at">start=</span>stage_codes[<span class="dv">1</span>],</span>
+<span id="cb231-4"><a href="visualising-stage-pace.html#cb231-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">end=</span>stage_codes[<span class="fu">length</span>(stage_codes)])</span>
+<span id="cb231-5"><a href="visualising-stage-pace.html#cb231-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb231-6"><a href="visualising-stage-pace.html#cb231-6" aria-hidden="true" tabindex="-1"></a>stages<span class="sc">$</span>cum_dist <span class="ot">=</span> <span class="fu">cumsum</span>(stages<span class="sc">$</span>distance)</span>
+<span id="cb231-7"><a href="visualising-stage-pace.html#cb231-7" aria-hidden="true" tabindex="-1"></a>stages<span class="sc">$</span>start_dist <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, stages<span class="sc">$</span>cum_dist[<span class="sc">-</span><span class="fu">length</span>(stages<span class="sc">$</span>cum_dist)])</span>
+<span id="cb231-8"><a href="visualising-stage-pace.html#cb231-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb231-9"><a href="visualising-stage-pace.html#cb231-9" aria-hidden="true" tabindex="-1"></a>pace_stage <span class="ot">=</span> pace_wide_rebased <span class="sc">%&gt;%</span> </span>
+<span id="cb231-10"><a href="visualising-stage-pace.html#cb231-10" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(code, pace,</span>
+<span id="cb231-11"><a href="visualising-stage-pace.html#cb231-11" aria-hidden="true" tabindex="-1"></a>                       stage_range[<span class="st">&#39;start&#39;</span>]<span class="sc">:</span>stage_range[<span class="st">&#39;end&#39;</span>]) <span class="sc">%&gt;%</span></span>
+<span id="cb231-12"><a href="visualising-stage-pace.html#cb231-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>, <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
+<span id="cb231-13"><a href="visualising-stage-pace.html#cb231-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb231-14"><a href="visualising-stage-pace.html#cb231-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb231-15"><a href="visualising-stage-pace.html#cb231-15" aria-hidden="true" tabindex="-1"></a>pace_stage <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##   code code_driver      pace start_dist cum_dist
+## 1  SS1         BER 1.7004831          0    31.05
+## 2  SS1         BRE 0.0000000          0    31.05
+## 3  SS1         EVA 0.4219002          0    31.05</code></pre>
+<p>We can now construct a chart using line segments to represent the pace for each driver on each stage:</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="visualising-stage-pace.html#cb233-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb233-2"><a href="visualising-stage-pace.html#cb233-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb233-3"><a href="visualising-stage-pace.html#cb233-3" aria-hidden="true" tabindex="-1"></a>g0 <span class="ot">=</span> <span class="fu">ggplot</span>(pace_stage, <span class="fu">aes</span>(<span class="at">group=</span>code_driver)) <span class="sc">+</span></span>
+<span id="cb233-4"><a href="visualising-stage-pace.html#cb233-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>,</span>
+<span id="cb233-5"><a href="visualising-stage-pace.html#cb233-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>) <span class="sc">+</span></span>
+<span id="cb233-6"><a href="visualising-stage-pace.html#cb233-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb233-7"><a href="visualising-stage-pace.html#cb233-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span>pace, <span class="at">yend=</span>pace),</span>
+<span id="cb233-8"><a href="visualising-stage-pace.html#cb233-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">&#39;lightgrey&#39;</span>)</span>
+<span id="cb233-9"><a href="visualising-stage-pace.html#cb233-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb233-10"><a href="visualising-stage-pace.html#cb233-10" aria-hidden="true" tabindex="-1"></a>g <span class="ot">=</span> g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>(start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,<span class="at">y=</span>pace<span class="fl">+0.03</span>,</span>
+<span id="cb233-11"><a href="visualising-stage-pace.html#cb233-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label=</span>code_driver,<span class="at">group=</span>code_driver),</span>
+<span id="cb233-12"><a href="visualising-stage-pace.html#cb233-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="dv">15</span>), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb233-13"><a href="visualising-stage-pace.html#cb233-13" aria-hidden="true" tabindex="-1"></a>                <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb233-14"><a href="visualising-stage-pace.html#cb233-14" aria-hidden="true" tabindex="-1"></a>                <span class="fu">theme_classic</span>()</span>
+<span id="cb233-15"><a href="visualising-stage-pace.html#cb233-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb233-16"><a href="visualising-stage-pace.html#cb233-16" aria-hidden="true" tabindex="-1"></a>g</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-basic_stage_pace-1.png" width="672" /></p>
+<p>We could highlight positive and negative differences in the label colourings:</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="visualising-stage-pace.html#cb234-1" aria-hidden="true" tabindex="-1"></a>g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>(start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb234-2"><a href="visualising-stage-pace.html#cb234-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y=</span><span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace<span class="fl">+0.03</span>,pace<span class="fl">-0.03</span>),</span>
+<span id="cb234-3"><a href="visualising-stage-pace.html#cb234-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label=</span>code_driver,<span class="at">group=</span>code_driver,</span>
+<span id="cb234-4"><a href="visualising-stage-pace.html#cb234-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color=</span>pace<span class="sc">&gt;</span><span class="dv">0</span>),</span>
+<span id="cb234-5"><a href="visualising-stage-pace.html#cb234-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="dv">15</span>), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb234-6"><a href="visualising-stage-pace.html#cb234-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb234-7"><a href="visualising-stage-pace.html#cb234-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-posneg_highlighted_stage_pace-1.png" width="672" /></p>
+<p>We can also highlight values for a particular driver:</p>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="visualising-stage-pace.html#cb235-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_segment</span>(<span class="at">data=</span>pace_stage[pace_stage<span class="sc">$</span>code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,],</span>
+<span id="cb235-2"><a href="visualising-stage-pace.html#cb235-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb235-3"><a href="visualising-stage-pace.html#cb235-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span>pace, <span class="at">yend=</span>pace, <span class="at">color =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb235-4"><a href="visualising-stage-pace.html#cb235-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-driver_highlighted_stage_pace-1.png" width="672" /></p>
+<p>Or abuse the <code>gghiglight</code> package to modify the aesthetics of unselected items:</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="visualising-stage-pace.html#cb236-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,</span>
+<span id="cb236-2"><a href="visualising-stage-pace.html#cb236-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>))</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-driver_highlighted_stage_pace2-1.png" width="672" />
+Alternatively, abuse <code>gghighlight()</code> again with a negative form of selection to highlight items:</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="visualising-stage-pace.html#cb237-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver<span class="sc">!=</span><span class="st">&#39;EVA&#39;</span>,<span class="at">label_key=</span>code_driver,</span>
+<span id="cb237-2"><a href="visualising-stage-pace.html#cb237-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">color=</span><span class="st">&#39;blue&#39;</span>))</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-driver_highlighted_stage_pace3-1.png" width="672" /></p>
+<p>We could even add a transparency layer bar to highlight the pace difference compared to a particular driver:</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="visualising-stage-pace.html#cb238-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_rect</span>(<span class="at">data=</span>pace_stage[pace_stage<span class="sc">$</span>code_driver<span class="sc">==</span><span class="st">&#39;EVA&#39;</span>,],</span>
+<span id="cb238-2"><a href="visualising-stage-pace.html#cb238-2" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span>start_dist, <span class="at">xmax=</span>cum_dist,</span>
+<span id="cb238-3"><a href="visualising-stage-pace.html#cb238-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ymin =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">0</span>,pace),</span>
+<span id="cb238-4"><a href="visualising-stage-pace.html#cb238-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ymax =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace,<span class="dv">0</span>),</span>
+<span id="cb238-5"><a href="visualising-stage-pace.html#cb238-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">alpha=</span><span class="fl">0.7</span>)) <span class="sc">+</span></span>
+<span id="cb238-6"><a href="visualising-stage-pace.html#cb238-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-block_highlighted_stage_pace-1.png" width="672" /></p>
+<p>Could we perhaps also extend that a little to allow us to compare more drivers?</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="visualising-stage-pace.html#cb239-1" aria-hidden="true" tabindex="-1"></a>pace_map_highlight <span class="ot">=</span> <span class="cf">function</span>(sub_df, m, n){</span>
+<span id="cb239-2"><a href="visualising-stage-pace.html#cb239-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If we don&#39;t grab the actual value</span></span>
+<span id="cb239-3"><a href="visualising-stage-pace.html#cb239-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the referenced value is used...</span></span>
+<span id="cb239-4"><a href="visualising-stage-pace.html#cb239-4" aria-hidden="true" tabindex="-1"></a>    m_ <span class="ot">=</span> m</span>
+<span id="cb239-5"><a href="visualising-stage-pace.html#cb239-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_rect</span>(<span class="at">data=</span>sub_df,</span>
+<span id="cb239-6"><a href="visualising-stage-pace.html#cb239-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span> start_dist <span class="sc">+</span> (m_<span class="dv">-1</span>) <span class="sc">*</span> (cum_dist <span class="sc">-</span> start_dist)<span class="sc">/</span>n,</span>
+<span id="cb239-7"><a href="visualising-stage-pace.html#cb239-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">xmax=</span> start_dist <span class="sc">+</span> m_ <span class="sc">*</span> (cum_dist <span class="sc">-</span> start_dist)<span class="sc">/</span>n,</span>
+<span id="cb239-8"><a href="visualising-stage-pace.html#cb239-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,<span class="dv">0</span>,pace),</span>
+<span id="cb239-9"><a href="visualising-stage-pace.html#cb239-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> <span class="fu">ifelse</span>(pace<span class="sc">&gt;</span><span class="dv">0</span>,pace,<span class="dv">0</span>),</span>
+<span id="cb239-10"><a href="visualising-stage-pace.html#cb239-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">fill =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">alpha=</span><span class="fl">0.7</span>))</span>
+<span id="cb239-11"><a href="visualising-stage-pace.html#cb239-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb239-12"><a href="visualising-stage-pace.html#cb239-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-13"><a href="visualising-stage-pace.html#cb239-13" aria-hidden="true" tabindex="-1"></a>pace_map_highlight_many <span class="ot">=</span> <span class="cf">function</span>(df, g, codes,</span>
+<span id="cb239-14"><a href="visualising-stage-pace.html#cb239-14" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">idcol=</span><span class="st">&#39;code_driver&#39;</span>){</span>
+<span id="cb239-15"><a href="visualising-stage-pace.html#cb239-15" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(codes)</span>
+<span id="cb239-16"><a href="visualising-stage-pace.html#cb239-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (m <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb239-17"><a href="visualising-stage-pace.html#cb239-17" aria-hidden="true" tabindex="-1"></a>    sub_df <span class="ot">=</span> df[df[idcol]<span class="sc">==</span>codes[m],]</span>
+<span id="cb239-18"><a href="visualising-stage-pace.html#cb239-18" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">=</span> g <span class="sc">+</span> <span class="fu">pace_map_highlight</span>(sub_df, m, n)</span>
+<span id="cb239-19"><a href="visualising-stage-pace.html#cb239-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb239-20"><a href="visualising-stage-pace.html#cb239-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb239-21"><a href="visualising-stage-pace.html#cb239-21" aria-hidden="true" tabindex="-1"></a>  g</span>
+<span id="cb239-22"><a href="visualising-stage-pace.html#cb239-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s try it with two drivers:</p>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="visualising-stage-pace.html#cb240-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pace_map_highlight_many</span>(pace_stage, g, <span class="fu">c</span>(<span class="st">&#39;EVA&#39;</span>, <span class="st">&#39;ROV&#39;</span> )) <span class="sc">+</span></span>
+<span id="cb240-2"><a href="visualising-stage-pace.html#cb240-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-pace_map_dual-1.png" width="672" /></p>
+<p>With multiple drivers, it may get difficult to see where the stages are delimited, so we might add separators to delimit them:</p>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="visualising-stage-pace.html#cb241-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_vline</span>(<span class="at">data =</span> stages, <span class="fu">aes</span>(<span class="at">xintercept =</span> cum_dist),</span>
+<span id="cb241-2"><a href="visualising-stage-pace.html#cb241-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">color=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-pace_map_stage_delimited-1.png" width="672" /></p>
+<p>To highlight stages further, we could add a “banner” to the chart:</p>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="visualising-stage-pace.html#cb242-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_rect</span>(<span class="at">data=</span>pace_stage[pace_stage<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
+<span id="cb242-2"><a href="visualising-stage-pace.html#cb242-2" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">xmin=</span><span class="dv">0</span>, <span class="at">xmax=</span><span class="fu">max</span>(cum_dist),</span>
+<span id="cb242-3"><a href="visualising-stage-pace.html#cb242-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> <span class="fl">1.8</span>,  <span class="at">ymax =</span> <span class="fl">2.0</span>,</span>
+<span id="cb242-4"><a href="visualising-stage-pace.html#cb242-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">alpha=</span><span class="dv">0</span>), <span class="at">fill =</span> <span class="st">&#39;black&#39;</span>) <span class="sc">+</span></span>
+<span id="cb242-5"><a href="visualising-stage-pace.html#cb242-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="at">data=</span>pace_stage[pace_stage<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
+<span id="cb242-6"><a href="visualising-stage-pace.html#cb242-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x=</span>(cum_dist <span class="sc">+</span> start_dist)<span class="sc">/</span><span class="dv">2</span>, <span class="at">label=</span>code),</span>
+<span id="cb242-7"><a href="visualising-stage-pace.html#cb242-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">y=</span><span class="fl">1.9</span>, <span class="at">color=</span><span class="st">&#39;yellow&#39;</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb242-8"><a href="visualising-stage-pace.html#cb242-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data=</span>pace_stage[pace_stage<span class="sc">$</span>code_driver<span class="sc">==</span>example_driver,],</span>
+<span id="cb242-9"><a href="visualising-stage-pace.html#cb242-9" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb242-10"><a href="visualising-stage-pace.html#cb242-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y=</span><span class="fl">1.8</span>, <span class="at">yend=</span><span class="fl">2.0</span>), <span class="at">color=</span><span class="st">&#39;yellow&#39;</span>) <span class="sc">+</span></span>
+<span id="cb242-11"><a href="visualising-stage-pace.html#cb242-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-banner_highlighted_stage_pace-1.png" width="672" /></p>
+</div>
+<div id="a-pace-map-function" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> A Pace Map Function</h2>
+<p>Let’s start to work up a function based on the above sketches that will generate a pace map for us directly from a long format pace dataframe.</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="visualising-stage-pace.html#cb243-1" aria-hidden="true" tabindex="-1"></a>pace_map <span class="ot">=</span> <span class="cf">function</span>(pace_long, <span class="at">limits=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">2</span>),</span>
+<span id="cb243-2"><a href="visualising-stage-pace.html#cb243-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels=</span><span class="cn">TRUE</span>, <span class="at">drivers=</span><span class="cn">NULL</span>, <span class="at">lines=</span><span class="cn">TRUE</span>,</span>
+<span id="cb243-3"><a href="visualising-stage-pace.html#cb243-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">xstart=</span><span class="st">&#39;start_dist&#39;</span>, <span class="at">xend=</span><span class="st">&#39;cum_dist&#39;</span>,</span>
+<span id="cb243-4"><a href="visualising-stage-pace.html#cb243-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pace=</span><span class="st">&#39;pace&#39;</span>, <span class="at">typ=</span><span class="st">&#39;bar&#39;</span>, <span class="at">pace_label_offset=</span><span class="fl">0.03</span>,</span>
+<span id="cb243-5"><a href="visualising-stage-pace.html#cb243-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label_dodge=</span><span class="dv">15</span>,</span>
+<span id="cb243-6"><a href="visualising-stage-pace.html#cb243-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">idcol=</span><span class="st">&#39;code_driver&#39;</span>){</span>
+<span id="cb243-7"><a href="visualising-stage-pace.html#cb243-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-8"><a href="visualising-stage-pace.html#cb243-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># There are downstream dependencies with colnames baked in atm...</span></span>
+<span id="cb243-9"><a href="visualising-stage-pace.html#cb243-9" aria-hidden="true" tabindex="-1"></a>  pace_long<span class="sc">$</span>start_dist <span class="ot">=</span> pace_long[[xstart]]</span>
+<span id="cb243-10"><a href="visualising-stage-pace.html#cb243-10" aria-hidden="true" tabindex="-1"></a>  pace_long<span class="sc">$</span>cum_dist <span class="ot">=</span> pace_long[[xend]]</span>
+<span id="cb243-11"><a href="visualising-stage-pace.html#cb243-11" aria-hidden="true" tabindex="-1"></a>  pace_long<span class="sc">$</span>pace <span class="ot">=</span> pace_long[[pace]]</span>
+<span id="cb243-12"><a href="visualising-stage-pace.html#cb243-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-13"><a href="visualising-stage-pace.html#cb243-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-14"><a href="visualising-stage-pace.html#cb243-14" aria-hidden="true" tabindex="-1"></a>  g0 <span class="ot">=</span> <span class="fu">ggplot</span>(pace_long, <span class="fu">aes_string</span>(<span class="at">group=</span>idcol, <span class="at">label=</span>idcol)) <span class="sc">+</span></span>
+<span id="cb243-15"><a href="visualising-stage-pace.html#cb243-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>,</span>
+<span id="cb243-16"><a href="visualising-stage-pace.html#cb243-16" aria-hidden="true" tabindex="-1"></a>               <span class="at">colour=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>) <span class="sc">+</span></span>
+<span id="cb243-17"><a href="visualising-stage-pace.html#cb243-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb243-18"><a href="visualising-stage-pace.html#cb243-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">y=</span>pace, <span class="at">yend=</span>pace),</span>
+<span id="cb243-19"><a href="visualising-stage-pace.html#cb243-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">&#39;lightgrey&#39;</span>)</span>
+<span id="cb243-20"><a href="visualising-stage-pace.html#cb243-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-21"><a href="visualising-stage-pace.html#cb243-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (lines) {</span>
+<span id="cb243-22"><a href="visualising-stage-pace.html#cb243-22" aria-hidden="true" tabindex="-1"></a>    lines_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">cum_dist=</span><span class="fu">unique</span>(pace_long<span class="sc">$</span>cum_dist))</span>
+<span id="cb243-23"><a href="visualising-stage-pace.html#cb243-23" aria-hidden="true" tabindex="-1"></a>    g0 <span class="ot">=</span>g0 <span class="sc">+</span> <span class="fu">geom_vline</span>(<span class="at">data=</span>lines_df, <span class="fu">aes</span>(<span class="at">xintercept =</span> cum_dist),</span>
+<span id="cb243-24"><a href="visualising-stage-pace.html#cb243-24" aria-hidden="true" tabindex="-1"></a>               <span class="at">color=</span><span class="st">&#39;lightgrey&#39;</span>, <span class="at">linetype=</span><span class="st">&#39;dotted&#39;</span>)</span>
+<span id="cb243-25"><a href="visualising-stage-pace.html#cb243-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb243-26"><a href="visualising-stage-pace.html#cb243-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-27"><a href="visualising-stage-pace.html#cb243-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (labels){</span>
+<span id="cb243-28"><a href="visualising-stage-pace.html#cb243-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb243-29"><a href="visualising-stage-pace.html#cb243-29" aria-hidden="true" tabindex="-1"></a>    g0 <span class="ot">=</span> g0 <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span> (start_dist<span class="sc">+</span>cum_dist)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb243-30"><a href="visualising-stage-pace.html#cb243-30" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">y=</span>pace<span class="sc">+</span>pace_label_offset),</span>
+<span id="cb243-31"><a href="visualising-stage-pace.html#cb243-31" aria-hidden="true" tabindex="-1"></a>                        <span class="at">position =</span> <span class="fu">position_dodge</span>(label_dodge), <span class="at">size=</span><span class="dv">1</span>)</span>
+<span id="cb243-32"><a href="visualising-stage-pace.html#cb243-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb243-33"><a href="visualising-stage-pace.html#cb243-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(drivers) ){</span>
+<span id="cb243-34"><a href="visualising-stage-pace.html#cb243-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (typ<span class="sc">==</span><span class="st">&#39;bar&#39;</span>){</span>
+<span id="cb243-35"><a href="visualising-stage-pace.html#cb243-35" aria-hidden="true" tabindex="-1"></a>      g0 <span class="ot">=</span> <span class="fu">pace_map_highlight_many</span>(pace_long, g0,</span>
+<span id="cb243-36"><a href="visualising-stage-pace.html#cb243-36" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">c</span>(drivers), <span class="at">idcol=</span>idcol)</span>
+<span id="cb243-37"><a href="visualising-stage-pace.html#cb243-37" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (typ<span class="sc">==</span><span class="st">&#39;highlight&#39;</span>)</span>
+<span id="cb243-38"><a href="visualising-stage-pace.html#cb243-38" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb243-39"><a href="visualising-stage-pace.html#cb243-39" aria-hidden="true" tabindex="-1"></a>      focus <span class="ot">=</span> pace_long[pace_long[idcol] <span class="sc">%in%</span> <span class="fu">c</span>(drivers),]</span>
+<span id="cb243-40"><a href="visualising-stage-pace.html#cb243-40" aria-hidden="true" tabindex="-1"></a>      g0 <span class="ot">=</span> g0 <span class="sc">+</span> <span class="fu">geom_segment</span>(<span class="at">data=</span>focus,</span>
+<span id="cb243-41"><a href="visualising-stage-pace.html#cb243-41" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">aes</span>(<span class="at">x=</span>start_dist, <span class="at">xend=</span>cum_dist,</span>
+<span id="cb243-42"><a href="visualising-stage-pace.html#cb243-42" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">y=</span>pace, <span class="at">yend=</span>pace, <span class="at">color =</span> pace<span class="sc">&gt;</span><span class="dv">0</span>))</span>
+<span id="cb243-43"><a href="visualising-stage-pace.html#cb243-43" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb243-44"><a href="visualising-stage-pace.html#cb243-44" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb243-45"><a href="visualising-stage-pace.html#cb243-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-46"><a href="visualising-stage-pace.html#cb243-46" aria-hidden="true" tabindex="-1"></a>  g0 <span class="ot">=</span> g0 <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span>limits)</span>
+<span id="cb243-47"><a href="visualising-stage-pace.html#cb243-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb243-48"><a href="visualising-stage-pace.html#cb243-48" aria-hidden="true" tabindex="-1"></a>  g0 <span class="sc">+</span> <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span>
+<span id="cb243-49"><a href="visualising-stage-pace.html#cb243-49" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s try it:</p>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="visualising-stage-pace.html#cb244-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pace_map</span>(pace_stage, <span class="at">drivers=</span><span class="fu">c</span>(<span class="st">&#39;EVA&#39;</span>, <span class="st">&#39;ROV&#39;</span>))</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-pace-map-function-1.png" width="672" /></p>
+</div>
+<div id="off-the-pace-charts" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Off-the-Pace Charts</h2>
+<p>Another way or reviewing pace is to consider the gap to leader, or rebased gap to a particular driver across the stages, using distance into stage along the x-axis to locate the x-value and gap (measured in seconds) along the y-axis. A moment’s consideration suggests that the gradient (<span class="math inline">\(\textrm{change_in_gap}/\textrm{change_in_distance}\)</span>) is a measure of pace. The slope of the line thus indicates relative pace between the focal driver and the other drivers.</p>
+<p>As with the pace map, if we have the data in a long, tidy form, we can create charts from it quite straightforwardly. So let’s add in the accumulated distance into stage and accumulated stage time for each time:</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="visualising-stage-pace.html#cb245-1" aria-hidden="true" tabindex="-1"></a>off_the_pace <span class="ot">=</span> multi_stage_pace <span class="sc">%&gt;%</span></span>
+<span id="cb245-2"><a href="visualising-stage-pace.html#cb245-2" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;stageId&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
+<span id="cb245-3"><a href="visualising-stage-pace.html#cb245-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">by=</span><span class="st">&#39;stageId&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb245-4"><a href="visualising-stage-pace.html#cb245-4" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">arrange</span>(number) <span class="sc">%&gt;%</span></span>
+<span id="cb245-5"><a href="visualising-stage-pace.html#cb245-5" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">group_by</span>(code_driver) <span class="sc">%&gt;%</span></span>
+<span id="cb245-6"><a href="visualising-stage-pace.html#cb245-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">mutate</span>(<span class="at">totalDurationS =</span> <span class="fu">cumsum</span>(elapsedDurationS))</span>
+<span id="cb245-7"><a href="visualising-stage-pace.html#cb245-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb245-8"><a href="visualising-stage-pace.html#cb245-8" aria-hidden="true" tabindex="-1"></a>off_the_pace <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 8
+## # Groups:   code_driver [3]
+##   stageId number code_driver elapsedDurationS  pace code  cum_dist
+##     &lt;int&gt;  &lt;int&gt; &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1    1747      1 TÄN                     958.  30.8 SS1       31.0
+## 2    1747      1 BRE                     961.  31.0 SS1       31.0
+## 3    1747      1 ROV                     968.  31.2 SS1       31.0
+## # … with 1 more variable: totalDurationS &lt;dbl&gt;</code></pre>
+<p>Now we can create a basic off-the pace chart:</p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="visualising-stage-pace.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(off_the_pace, <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">y=</span>totalDurationS,</span>
+<span id="cb247-2"><a href="visualising-stage-pace.html#cb247-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color=</span>code_driver)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-basic-1.png" width="672" /></p>
+<p>As with the pace map, the chart is often most informative if we rebase it relative to a particular driver.</p>
+<p>Let’s create a wide dataframe to simplify the rebasing process:</p>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="visualising-stage-pace.html#cb248-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide <span class="ot">=</span> <span class="fu">get_multi_stage_generic_wide</span>(off_the_pace,</span>
+<span id="cb248-2"><a href="visualising-stage-pace.html#cb248-2" aria-hidden="true" tabindex="-1"></a>                                         stage_codes, <span class="st">&#39;totalDurationS&#39;</span>,</span>
+<span id="cb248-3"><a href="visualising-stage-pace.html#cb248-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">group_key=</span><span class="fu">c</span>(<span class="st">&#39;code_driver&#39;</span>),</span>
+<span id="cb248-4"><a href="visualising-stage-pace.html#cb248-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">spread_key=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb248-5"><a href="visualising-stage-pace.html#cb248-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb248-6"><a href="visualising-stage-pace.html#cb248-6" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##   code_driver    SS1    SS2    SS3    SS4    SS5    SS6    SS7    SS8     SS9
+## 1         BER 1014.2 2034.0 3468.5 4615.1 5965.2 7402.5 8551.3 9915.3 10560.0
+## 2         BRE  961.4 1926.9 2768.8 3320.3 4076.9 4928.1 5486.4 6265.5  6879.5
+## 3         EVA  974.5 1942.7 2788.5 3335.1 4085.3 4938.9 5491.5 6275.6  6883.1
+##        SS10
+## 1 11203.580
+## 2  7482.231
+## 3  7491.128</code></pre>
+<p>Now we can rebase:</p>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="visualising-stage-pace.html#cb250-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(off_the_pace_wide,</span>
+<span id="cb250-2"><a href="visualising-stage-pace.html#cb250-2" aria-hidden="true" tabindex="-1"></a>                                   example_driver, stage_codes,</span>
+<span id="cb250-3"><a href="visualising-stage-pace.html#cb250-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">id_col=</span><span class="st">&#39;code_driver&#39;</span>)</span>
+<span id="cb250-4"><a href="visualising-stage-pace.html#cb250-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb250-5"><a href="visualising-stage-pace.html#cb250-5" aria-hidden="true" tabindex="-1"></a>off_the_pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##   code_driver  SS1   SS2   SS3    SS4    SS5    SS6    SS7    SS8    SS9
+## 1         BER 52.8 107.1 699.7 1294.8 1888.3 2474.4 3064.9 3649.8 3680.5
+## 2         BRE  0.0   0.0   0.0    0.0    0.0    0.0    0.0    0.0    0.0
+## 3         EVA 13.1  15.8  19.7   14.8    8.4   10.8    5.1   10.1    3.6
+##       SS10
+## 1 3721.349
+## 2    0.000
+## 3    8.897</code></pre>
+<p>And cast back to the long, tidy form:</p>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="visualising-stage-pace.html#cb252-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_long <span class="ot">=</span> off_the_pace_wide_rebased <span class="sc">%&gt;%</span> </span>
+<span id="cb252-2"><a href="visualising-stage-pace.html#cb252-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">gather</span>(code, totalDurationGapS,</span>
+<span id="cb252-3"><a href="visualising-stage-pace.html#cb252-3" aria-hidden="true" tabindex="-1"></a>                               stage_range[<span class="st">&#39;start&#39;</span>]<span class="sc">:</span>stage_range[<span class="st">&#39;end&#39;</span>]) <span class="sc">%&gt;%</span></span>
+<span id="cb252-4"><a href="visualising-stage-pace.html#cb252-4" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">merge</span>(stages[,<span class="fu">c</span>(<span class="st">&#39;code&#39;</span>, <span class="st">&#39;cum_dist&#39;</span>)],</span>
+<span id="cb252-5"><a href="visualising-stage-pace.html#cb252-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">by=</span><span class="st">&#39;code&#39;</span>)</span>
+<span id="cb252-6"><a href="visualising-stage-pace.html#cb252-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb252-7"><a href="visualising-stage-pace.html#cb252-7" aria-hidden="true" tabindex="-1"></a>off_the_pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##   code code_driver totalDurationGapS cum_dist
+## 1  SS1         BER              52.8    31.05
+## 2  SS1         BRE               0.0    31.05
+## 3  SS1         EVA              13.1    31.05</code></pre>
+<p>And now we can plot the simple rebased off-the-pace chart:</p>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="visualising-stage-pace.html#cb254-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="ot">=</span> <span class="fu">ggplot</span>(off_the_pace_long, <span class="fu">aes</span>(<span class="at">x=</span>cum_dist,</span>
+<span id="cb254-2"><a href="visualising-stage-pace.html#cb254-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">y=</span>totalDurationGapS,</span>
+<span id="cb254-3"><a href="visualising-stage-pace.html#cb254-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">color=</span>code_driver)) <span class="sc">+</span></span>
+<span id="cb254-4"><a href="visualising-stage-pace.html#cb254-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb254-5"><a href="visualising-stage-pace.html#cb254-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Retain the points outside the limits</span></span>
+<span id="cb254-6"><a href="visualising-stage-pace.html#cb254-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># by using coord_cartesian()</span></span>
+<span id="cb254-7"><a href="visualising-stage-pace.html#cb254-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We can also flip the coordinate axis</span></span>
+<span id="cb254-8"><a href="visualising-stage-pace.html#cb254-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">100</span>)) <span class="sc">+</span> <span class="fu">theme_classic</span>()</span>
+<span id="cb254-9"><a href="visualising-stage-pace.html#cb254-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb254-10"><a href="visualising-stage-pace.html#cb254-10" aria-hidden="true" tabindex="-1"></a>g_otp</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-rebased-1.png" width="672" /></p>
+<p>We might also want to zero the origin, for example by adding a row for each driver with a zeroed distance and gap.</p>
+<p>Let’s create some dummy data to represent that:</p>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="visualising-stage-pace.html#cb255-1" aria-hidden="true" tabindex="-1"></a>zero_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">code_driver=</span><span class="fu">unique</span>(off_the_pace_long<span class="sc">$</span>code_driver))</span>
+<span id="cb255-2"><a href="visualising-stage-pace.html#cb255-2" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>cum_dist <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb255-3"><a href="visualising-stage-pace.html#cb255-3" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>totalDurationGapS <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb255-4"><a href="visualising-stage-pace.html#cb255-4" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>code <span class="ot">=</span> <span class="st">&#39;SS0&#39;</span></span></code></pre></div>
+<p>We can then bind that data into our long form splits data and view the result:</p>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="visualising-stage-pace.html#cb256-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="ot">=</span> <span class="fu">bind_rows</span>(off_the_pace_long, zero_df) <span class="sc">%&gt;%</span></span>
+<span id="cb256-2"><a href="visualising-stage-pace.html#cb256-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>cum_dist,</span>
+<span id="cb256-3"><a href="visualising-stage-pace.html#cb256-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y=</span>totalDurationGapS,</span>
+<span id="cb256-4"><a href="visualising-stage-pace.html#cb256-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color=</span>code_driver)) <span class="sc">+</span></span>
+<span id="cb256-5"><a href="visualising-stage-pace.html#cb256-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb256-6"><a href="visualising-stage-pace.html#cb256-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Retain the points outside the limits</span></span>
+<span id="cb256-7"><a href="visualising-stage-pace.html#cb256-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># by using coord_cartesian()</span></span>
+<span id="cb256-8"><a href="visualising-stage-pace.html#cb256-8" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We can also flip the coordinate axis</span></span>
+<span id="cb256-9"><a href="visualising-stage-pace.html#cb256-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">100</span>)) <span class="sc">+</span> <span class="fu">theme_classic</span>()</span>
+<span id="cb256-10"><a href="visualising-stage-pace.html#cb256-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb256-11"><a href="visualising-stage-pace.html#cb256-11" aria-hidden="true" tabindex="-1"></a>g_otp</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-zeroed-1.png" width="672" /></p>
+<p>Trivially, we might try to add labels at the end of each line:</p>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="visualising-stage-pace.html#cb257-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_end <span class="ot">=</span> off_the_pace_long <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cum_dist <span class="sc">==</span> <span class="fu">max</span>(cum_dist))</span>
+<span id="cb257-2"><a href="visualising-stage-pace.html#cb257-2" aria-hidden="true" tabindex="-1"></a>                                                </span>
+<span id="cb257-3"><a href="visualising-stage-pace.html#cb257-3" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> off_the_pace_end,</span>
+<span id="cb257-4"><a href="visualising-stage-pace.html#cb257-4" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">x =</span> cum_dist<span class="sc">+</span> <span class="dv">10</span>, <span class="at">y =</span> totalDurationGapS,</span>
+<span id="cb257-5"><a href="visualising-stage-pace.html#cb257-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">label =</span> code_driver, <span class="at">color =</span> code_driver)) <span class="sc">+</span></span>
+<span id="cb257-6"><a href="visualising-stage-pace.html#cb257-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-end1-1.png" width="672" /></p>
+<p>However, there are various other packages that provide alternative ways of doing this, including <code>directlabels</code> and <code>ggrepel</code>.</p>
+<p>For example, using <code>directlabels</code>:</p>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="visualising-stage-pace.html#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(directlabels)</span>
+<span id="cb258-2"><a href="visualising-stage-pace.html#cb258-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb258-3"><a href="visualising-stage-pace.html#cb258-3" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span></span>
+<span id="cb258-4"><a href="visualising-stage-pace.html#cb258-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dl</span>(<span class="fu">aes</span>(<span class="at">label =</span> code_driver, <span class="at">x=</span>cum_dist<span class="sc">+</span><span class="dv">2</span>),</span>
+<span id="cb258-5"><a href="visualising-stage-pace.html#cb258-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># cex is text label size</span></span>
+<span id="cb258-6"><a href="visualising-stage-pace.html#cb258-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="fu">list</span>(<span class="st">&#39;last.bumpup&#39;</span>, <span class="at">cex =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb258-7"><a href="visualising-stage-pace.html#cb258-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-labeled1-1.png" width="672" /></p>
+<p>And using <code>ggrepel</code>, which also has the advantage of adding labels for drivers who curves are really of the pace, albeit not in an obviously natural order:</p>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="visualising-stage-pace.html#cb259-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span> ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data =</span> off_the_pace_end,</span>
+<span id="cb259-2"><a href="visualising-stage-pace.html#cb259-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">aes</span>(<span class="at">label =</span> code_driver),</span>
+<span id="cb259-3"><a href="visualising-stage-pace.html#cb259-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb259-4"><a href="visualising-stage-pace.html#cb259-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-labeled2-1.png" width="672" /></p>
+<p>The <code>gghighlight</code> package is also useful in highlighting traces, as well as usefully automatically labeling highlighted lines:</p>
+<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="visualising-stage-pace.html#cb260-1" aria-hidden="true" tabindex="-1"></a>g_otp <span class="sc">+</span></span>
+<span id="cb260-2"><a href="visualising-stage-pace.html#cb260-2" aria-hidden="true" tabindex="-1"></a>    gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;EVA&#39;</span>,<span class="st">&#39;ROV&#39;</span>),</span>
+<span id="cb260-3"><a href="visualising-stage-pace.html#cb260-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb260-4"><a href="visualising-stage-pace.html#cb260-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off-the-pace-highlight-1.png" width="672" /></p>
+<p>Again, let’s routinise the process of chart production with the beginnings of a function to generate the off-the-pace chart directly from an appropriate form dataframe:</p>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="visualising-stage-pace.html#cb261-1" aria-hidden="true" tabindex="-1"></a>off_the_pace_chart <span class="ot">=</span> <span class="cf">function</span>(pace_long, <span class="at">highlight=</span><span class="cn">NULL</span>,</span>
+<span id="cb261-2"><a href="visualising-stage-pace.html#cb261-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">label_typ=</span><span class="st">&#39;dl&#39;</span>,</span>
+<span id="cb261-3"><a href="visualising-stage-pace.html#cb261-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">dist=</span><span class="st">&#39;cum_dist&#39;</span>, <span class="at">t=</span><span class="st">&#39;totalDurationGapS&#39;</span>,</span>
+<span id="cb261-4"><a href="visualising-stage-pace.html#cb261-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">code=</span><span class="st">&#39;code_driver&#39;</span>, <span class="at">ylim=</span><span class="cn">NULL</span>){</span>
+<span id="cb261-5"><a href="visualising-stage-pace.html#cb261-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb261-6"><a href="visualising-stage-pace.html#cb261-6" aria-hidden="true" tabindex="-1"></a>  g_otp <span class="ot">=</span> <span class="fu">ggplot</span>(pace_long, <span class="fu">aes_string</span>(<span class="at">x=</span>dist, <span class="at">y=</span>t,</span>
+<span id="cb261-7"><a href="visualising-stage-pace.html#cb261-7" aria-hidden="true" tabindex="-1"></a>                                <span class="at">color=</span>code)) <span class="sc">+</span></span>
+<span id="cb261-8"><a href="visualising-stage-pace.html#cb261-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb261-9"><a href="visualising-stage-pace.html#cb261-9" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Retain the points outside the limits</span></span>
+<span id="cb261-10"><a href="visualising-stage-pace.html#cb261-10" aria-hidden="true" tabindex="-1"></a>            <span class="co"># by using coord_cartesian()</span></span>
+<span id="cb261-11"><a href="visualising-stage-pace.html#cb261-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We can also flip the coordinate axis</span></span>
+<span id="cb261-12"><a href="visualising-stage-pace.html#cb261-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span>ylim) <span class="sc">+</span> <span class="fu">theme_classic</span>()</span>
+<span id="cb261-13"><a href="visualising-stage-pace.html#cb261-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb261-14"><a href="visualising-stage-pace.html#cb261-14" aria-hidden="true" tabindex="-1"></a>  off_the_pace_end <span class="ot">=</span>  pace_long[pace_long[dist] <span class="sc">==</span> <span class="fu">max</span>(pace_long[dist]),]</span>
+<span id="cb261-15"><a href="visualising-stage-pace.html#cb261-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(highlight))</span>
+<span id="cb261-16"><a href="visualising-stage-pace.html#cb261-16" aria-hidden="true" tabindex="-1"></a>    g_otp <span class="ot">=</span> g_otp <span class="sc">+</span> gghighlight<span class="sc">::</span><span class="fu">gghighlight</span>(code_driver <span class="sc">%in%</span> <span class="fu">c</span>(highlight),</span>
+<span id="cb261-17"><a href="visualising-stage-pace.html#cb261-17" aria-hidden="true" tabindex="-1"></a>                             <span class="at">unhighlighted_params=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>))</span>
+<span id="cb261-18"><a href="visualising-stage-pace.html#cb261-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (label_typ<span class="sc">==</span><span class="st">&#39;dl&#39;</span>)</span>
+<span id="cb261-19"><a href="visualising-stage-pace.html#cb261-19" aria-hidden="true" tabindex="-1"></a>    g_otp <span class="ot">=</span> g_otp <span class="sc">+</span> <span class="fu">geom_dl</span>(<span class="fu">aes_string</span>(<span class="at">label =</span> code, <span class="at">x=</span>dist),</span>
+<span id="cb261-20"><a href="visualising-stage-pace.html#cb261-20" aria-hidden="true" tabindex="-1"></a>            <span class="co"># cex is text label size</span></span>
+<span id="cb261-21"><a href="visualising-stage-pace.html#cb261-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="fu">list</span>(<span class="st">&#39;last.bumpup&#39;</span>, <span class="at">cex =</span> <span class="fl">0.5</span>))</span>
+<span id="cb261-22"><a href="visualising-stage-pace.html#cb261-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> </span>
+<span id="cb261-23"><a href="visualising-stage-pace.html#cb261-23" aria-hidden="true" tabindex="-1"></a>    g_otp <span class="ot">=</span> g_otp <span class="sc">+</span> ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data =</span> off_the_pace_end,</span>
+<span id="cb261-24"><a href="visualising-stage-pace.html#cb261-24" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">aes_string</span>(<span class="at">label =</span> code),</span>
+<span id="cb261-25"><a href="visualising-stage-pace.html#cb261-25" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">size =</span> <span class="dv">3</span>)</span>
+<span id="cb261-26"><a href="visualising-stage-pace.html#cb261-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb261-27"><a href="visualising-stage-pace.html#cb261-27" aria-hidden="true" tabindex="-1"></a>  g_otp <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span>
+<span id="cb261-28"><a href="visualising-stage-pace.html#cb261-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s quickly test it, noting how we cast the limits to an inverted y-axis to show the leaders above the x-axis:</p>
+<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="visualising-stage-pace.html#cb262-1" aria-hidden="true" tabindex="-1"></a><span class="fu">off_the_pace_chart</span>(off_the_pace_long, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">50</span>,<span class="sc">-</span><span class="dv">50</span>))</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off_the_pace_function-1.png" width="672" /></p>
+<p>And with highlighting:</p>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="visualising-stage-pace.html#cb263-1" aria-hidden="true" tabindex="-1"></a><span class="fu">off_the_pace_chart</span>(off_the_pace_long, <span class="at">highlight=</span><span class="fu">c</span>(<span class="st">&#39;EVA&#39;</span>, <span class="st">&#39;ROV&#39;</span>),</span>
+<span id="cb263-2"><a href="visualising-stage-pace.html#cb263-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">50</span>,<span class="sc">-</span><span class="dv">50</span>))</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-off_pace_function_highlight-1.png" width="672" /></p>
+</div>
+<div id="comparing-pace-across-stages" class="section level2" number="6.5">
+<h2><span class="header-section-number">6.5</span> Comparing Pace Across Stages</h2>
+<p>One way of characterising stages is based on pace As a quick guide to possible pace variations over the stages of a rally, we might review the average pace. For example, here’s a look at pace over the course of the rally using a box plot to summarise the (non-outlier) pace values for each stage (we should probably use an ordered categorical <em>stageId</em> basis for the x-axis):</p>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="visualising-stage-pace.html#cb264-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(off_the_pace[off_the_pace<span class="sc">$</span>pace<span class="sc">&lt;</span><span class="dv">40</span>,],</span>
+<span id="cb264-2"><a href="visualising-stage-pace.html#cb264-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span>cum_dist, <span class="at">y=</span>pace)) <span class="sc">+</span></span>
+<span id="cb264-3"><a href="visualising-stage-pace.html#cb264-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">group=</span>cum_dist))</span></code></pre></div>
+<p><img src="images/visualising-stage-pace-median-pace-1.png" width="672" /></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="finding-pace-across-stages.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="working-with-split-times.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": {}
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/visualising-stage-pace.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/RallyDataJunkie/rally-event-sketches-2021/blob/master/visualising-stage-pace.Rmd",
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section",
+"scroll_highlight": true
+},
+"toc_depth": 3,
+"toolbar": {
+"position": "fixed"
+},
+"search": true,
+"info": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

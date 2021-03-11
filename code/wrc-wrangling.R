@@ -1,3 +1,35 @@
+## ---- get_multi_stage_pace --------
+get_multi_stage_pace = function(multi_stage_times, cars) {
+  multi_stage_times %>%
+    merge(stages[,c('stageId' ,'distance',
+                    'number', 'code')],
+          by='stageId') %>%
+    mutate(elapsedDurationS = elapsedDurationMs / 1000,
+           pace = elapsedDurationS / distance) %>%
+    merge(cars[,c('entryId','drivername',
+                  'code', 'groupname')],
+          by='entryId',
+          suffixes=c('','_driver')) %>%
+    filter(groupname=='WRC') %>%
+    select(c('stageId', 'number', 'code_driver',
+             'elapsedDurationS', 'pace', 'code'))  %>%
+    arrange(number, elapsedDurationS)
+  
+}
+
+## ---- get_stage_codes --------
+get_stage_codes = function(stages){
+  # Create a stage code mapping function
+  stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
+  stage_code_map = function(stageId)
+    stages_lookup_code[[as.character(stageId)]]
+  
+  # Map stage ID column names to stage codes
+  stage_codes = unlist(purrr::map(stage_list,
+                                  function (x) stage_code_map(x)))
+  stage_codes 
+}
+
 ## ---- get_splits_wide --------
 get_splits_wide = function(splits){
   driver_splits = get_driver_splits(splits)

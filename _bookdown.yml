@@ -5,5 +5,5 @@ edit: https://github.com/RallyDataJunkie/rally-event-sketches-2021/edit/master/%
 output_dir: "docs"
 rmd_files:  ["index.Rmd", "intro.Rmd", "wrc-api.Rmd", 
              "stage-results.Rmd", 'multi-stage-results.Rmd',
-             "finding-stage-pace.Rmd",
+             "finding-stage-pace.Rmd", "visualising-stage-pace.Rmd",
              "split-times.Rmd", "finding-splits-pace.Rmd"]
