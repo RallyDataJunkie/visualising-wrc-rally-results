@@ -91,7 +91,7 @@ per-split-ultimate-rebasing
 ultimate-stage-rebasing
 actual-best-elapsed-time-rebasing
 visualising-rebased-times
-context-sensistve-cell-colouring
+context-sensitive-cell-colouring
 using-sparklines-to-summarise-rebased-deltas
 visualising-pace-across-splits
 load-base-data-5

@@ -24,7 +24,7 @@ Let's start by loading in key helper libraries:
 
 ```{r message=F, warning=F}
 source('code/wrc-api.R')
-source('code/wrc-wrangling')
+source('code/wrc-wrangling.R')
 source('code/wrc-charts.R')
 ```
 
@@ -603,7 +603,7 @@ actual_ultimate = full_splits_wide %>%
 actual_ultimate
 ```
 
-We can add this time to out ultimate times dataframe to provide an immediate point of reference betweem the actual best accumulated split times and the ultimate accumulated ideal split times:
+We can add this time to out ultimate times dataframe to provide an immediate point of reference between the actual best accumulated split times and the ultimate accumulated ideal split times:
 
 ```{r}
 ultimate_splits_long$actual = actual_ultimate$actualUltimate
@@ -635,9 +635,9 @@ In this case, there is at least one zero value per split corresponding to the dr
 
 ## Visualising Rebased Times
 
-There are various quick techiques we can use to help visualise the rebased split times and try to highlight significant patterns or peculiarities. For example, we can use coloured backgrounds to highlight each cell in a table, or sparklines to summarise each row.
+There are various quick techniques we can use to help visualise the rebased split times and try to highlight significant patterns or peculiarities. For example, we can use coloured backgrounds to highlight each cell in a table, or sparklines to summarise each row.
 
-### Context Sensistve Cell Colouring
+### Context Sensitive Cell Colouring
 
 As a quick example, let's first look at the split duration rebasing where we compare each driver's time in getting from one split point to the next against the fastest completion of that distance:
 
@@ -677,7 +677,6 @@ formattable(ultimate_between_split, align='c',
 
 Let's compare that chart with how the accumulated stage time of each driver compares with the accumulated ultimate section times:
 
-
 ```{r}
 formattable(ultimate_accumulated, align='c',
             list(area(col = 2:7) ~ color_tile2(c("red",'white',
@@ -685,7 +684,7 @@ formattable(ultimate_accumulated, align='c',
                  entryId=FALSE))
 ```
 
-Finally, let's see how the driver's actual split times varied gainst the best recorded split time at each split:
+Finally, let's see how the driver's actual split times varied against the best recorded split time at each split:
 
 ```{r}
 formattable(ultimate_actual, align='c',
@@ -694,10 +693,9 @@ formattable(ultimate_actual, align='c',
                  entryId=FALSE))
 ```
 
-
 ### Using Sparklines to Summarise Rebased Deltas
 
-A quick way of summarising rebased times in a more space efficient way is to us a sparkline. As we have seen previously, these can be used added as an extra column alongside a row of data, oer could be used to as a quick visual indicative summary of a row of values.
+A quick way of summarising rebased times in a more space efficient way is to us a sparkline. As we have seen previously, these can be used added as an extra column alongside a row of data, or could be used to as a quick visual indicative summary of a row of values.
 
 Let's create a sparkline summarising each of the above tables.
 
