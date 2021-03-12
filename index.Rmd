@@ -8,6 +8,9 @@ site: bookdown::bookdown_site
 always_allow_html: yes
 new_session: no
 ---
+```{r}
+options(pillar.sigfig = 7)
+```
 # Index {-}
 
  

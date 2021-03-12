@@ -463,7 +463,8 @@ We can also get the duration of each section:
 ```{r}
 full_durations_wide = get_split_duration(full_splits_wide,
                                           split_names, id_col='code')
-full_durations_wide
+
+full_durations_wide %>% head()
 ```
 
 To rebase on on an ultimate time basis, it helps to think of an ultimate driver whom we define as having a time equivalent to the fastest split duration time between two split points.
@@ -472,10 +473,10 @@ If we group by *splitPointId*, we can summarise on *sectionDurationS* to find th
 
 ```{r}
 ultimate_splits_long = full_durations_wide %>%
-                     pivot_longer(split_names,
+                     pivot_longer(all_of(split_names),
                                   names_to = "splitname",
                                   values_to = "sectionDurationS") %>%
-                     select(c(splitname, sectionDurationS)) %>%
+                     select(splitname, sectionDurationS) %>%
                      # Defensive measure
                      filter(!is.na(sectionDurationS) & sectionDurationS>0) %>%
                      group_by(splitname) %>% 
@@ -498,7 +499,7 @@ We can rebase to the ultimate split times in three senses:
 - on an ideal elapsed time basis (the cumulative sum of ideal ultimate split durations);
 - on an actual best elapsed (stage) time basis at each split, rebasing relative to the minimum actual recorded elapsed time at each split.
 
-#### Per Split Ultimate Rebasing
+### Per Split Ultimate Rebasing
 
 To rebase on a per split basis, we can simply rebase durations relative to the minimum split duration at each split.
 
@@ -519,12 +520,13 @@ We can now add the ultimate driver split durations to the *full_durations_wide* 
 full_durations_wide %>%
   select(code, all_of(split_names)) %>% 
   bind_rows(ultimate_wide_durations) %>%
-  rebase('ultimate', ultimate_splits$splitname, id_col='code')
+  rebase('ultimate', split_names, id_col='code') %>%
+  head(10)
 ```
 
 In this case we note there is at least one driver in each column with a zero gap to the ultimate driver, specifically, the driver(s) who made it between two consecutive split points in the fastest time, and no driver with a negative gap.
 
-#### Ultimate Stage Rebasing
+### Ultimate Stage Rebasing
 
 We can add an "ultimate" driver to the wide splits dataframe and then rebase as normal. The following function routinises the widening recipe we used above:
 
@@ -562,12 +564,13 @@ ultimate_rebaser = function(df, ultimate_df, split_names,
 
 ```{r}
 full_splits_wide %>% 
-  ultimate_rebaser(ultimate_wide_elapsed, split_names, 'ultimate')
+  ultimate_rebaser(ultimate_wide_elapsed, split_names, 'ultimate') %>%
+  head(10)
 ```
 
 We note there there is only one guaranteed difference of 0.0, from the driver with the fastest time at the first split, and that no times will be less than zero.
 
-#### Actual Best Elapsed Time Rebasing
+### Actual Best Elapsed Time Rebasing
 
 The *full_splits_wide* dataframe contains the elapsed times for each driver at each split so we can summarise the long form of that data to get the best actual recorded elapsed times:
 
@@ -604,7 +607,8 @@ And then rebase:
 
 ```{r}
 full_splits_wide %>% 
-  ultimate_rebaser(ultimate_wide_actual, split_names, 'ultimate')
+  ultimate_rebaser(ultimate_wide_actual, split_names, 'ultimate') %>%
+  head(10)
 ```
 
 In this case, there is at least one zero value per split corresponding to the drive(s) who recorded the fastest elapsed time up to each split point.
