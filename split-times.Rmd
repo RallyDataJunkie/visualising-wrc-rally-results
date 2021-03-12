@@ -18,11 +18,19 @@ Having access to split times also sets up the potential for rating the performan
 
 ## Load Base Data
 
-To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in:
+To get the splits data from a standing start, we can load in the current season list, select the rally we want, look up the itinerary from the rally, extract the sections and then the stages and the retrieve the stage ID for the stage we are interested in.
+
+Let's start by loading in key helper libraries:
 
 ```{r message=F, warning=F}
 source('code/wrc-api.R')
+source('code/wrc-wrangling')
+source('code/wrc-charts.R')
+```
 
+And getting some initial data:
+
+```{r}
 s = get_active_season()
 eventId = get_eventId_from_name(s, 'arctic')
 
@@ -191,8 +199,9 @@ splits_wide = get_splits_wide(splits) %>%
                 map_split_codes(splits_list) %>% 
                 map_driver_names(cars)
 
-splits_wide %>% head()
+splits_wide %>% head(10)
 ```
+
 We can also update our helper function to relabel stages with a more general function:
 
 ```{r}
@@ -383,10 +392,6 @@ To find the rank in terms of which driver completed each stage *section* in the 
 get_split_rank(split_durations_wide, split_names) %>% head(5)
 ```
 
-## Using Sparklines to Visdualise Split Time Differences
-
-TO DO
-
 ## Adding Overall Stage Time to the Split Times
 
 It is important to note that the split times data *does not* contain all the timing data for the stage, just the times relating to split points along the stage route. For a complete summary of stage timing data, we also need to add in the overall stage time from the stage results table:
@@ -517,11 +522,14 @@ ultimate_wide_durations
 We can now add the ultimate driver split durations to the *full_durations_wide* data and rebase against this dummy driver:
 
 ```{r}
-full_durations_wide %>%
-  select(code, all_of(split_names)) %>% 
-  bind_rows(ultimate_wide_durations) %>%
-  rebase('ultimate', split_names, id_col='code') %>%
-  head(10)
+ultimate_between_split = full_durations_wide %>%
+                            select(code, all_of(split_names)) %>% 
+                            bind_rows(ultimate_wide_durations) %>%
+                            rebase('ultimate', split_names,
+                                   id_col='code') %>%
+                            head(10)
+
+ultimate_between_split
 ```
 
 In this case we note there is at least one driver in each column with a zero gap to the ultimate driver, specifically, the driver(s) who made it between two consecutive split points in the fastest time, and no driver with a negative gap.
@@ -550,7 +558,7 @@ ultimate_wide_elapsed
 
 We can now add that to our original dataframe and rebase against the ultimate stage to show how far off the ultimate stage pace each driver was.
 
-Again, let's make a routine of the process...
+Again, let's make a routine of the process:
 
 ```{r}
 ultimate_rebaser = function(df, ultimate_df, split_names,
@@ -562,10 +570,15 @@ ultimate_rebaser = function(df, ultimate_df, split_names,
 }
 ```
 
+And let's use that routine:
+
 ```{r}
-full_splits_wide %>% 
-  ultimate_rebaser(ultimate_wide_elapsed, split_names, 'ultimate') %>%
-  head(10)
+ultimate_accumulated = full_splits_wide %>% 
+                          ultimate_rebaser(ultimate_wide_elapsed,
+                                         split_names, 'ultimate') %>%
+                          head(10)
+
+ultimate_accumulated
 ```
 
 We note there there is only one guaranteed difference of 0.0, from the driver with the fastest time at the first split, and that no times will be less than zero.
@@ -590,10 +603,14 @@ actual_ultimate = full_splits_wide %>%
 actual_ultimate
 ```
 
+We can add this time to out ultimate times dataframe to provide an immediate point of reference betweem the actual best accumulated split times and the ultimate accumulated ideal split times:
+
 ```{r}
 ultimate_splits_long$actual = actual_ultimate$actualUltimate
 ultimate_splits_long
 ```
+
+Let's cast the data to a long format in readiness for rebasing it:
 
 ```{r}
 ultimate_wide_actual = ultimate_widen(ultimate_splits_long,
@@ -606,10 +623,120 @@ ultimate_wide_actual
 And then rebase:
 
 ```{r}
-full_splits_wide %>% 
-  ultimate_rebaser(ultimate_wide_actual, split_names, 'ultimate') %>%
-  head(10)
+ultimate_actual = full_splits_wide %>% 
+                      ultimate_rebaser(ultimate_wide_actual,
+                                       split_names, 'ultimate') %>%
+                      head(10)
+
+ultimate_actual
 ```
 
 In this case, there is at least one zero value per split corresponding to the drive(s) who recorded the fastest elapsed time up to each split point.
+
+## Visualising Rebased Times
+
+There are various quick techiques we can use to help visualise the rebased split times and try to highlight significant patterns or peculiarities. For example, we can use coloured backgrounds to highlight each cell in a table, or sparklines to summarise each row.
+
+### Context Sensistve Cell Colouring
+
+As a quick example, let's first look at the split duration rebasing where we compare each driver's time in getting from one split point to the next against the fastest completion of that distance:
+
+Recall the divergent color tile formatter we met previously, reused here with a different colour sense:
+
+```{r}
+xnormalize = function(x){
+  # Normalise to the full range of values about 0
+  # O will map to 0.5 in the normalised range
+  x = c(x, -max(abs(x)), max(abs(x)))
+  normalize(x)[1:(length(x)-2)]
+}
+color_tile2 <- function (...) {
+  formatter("span", style = function(x) {
+    style(display = "block",
+          'text-align' = 'center',
+          padding = "0 4px", 
+          `border-radius` = "4px",
+          `font.weight` = ifelse(abs(x)> 0.3*max(x), "bold", "normal"),
+          color = ifelse(abs(x)> 0.3*max(x),'white',
+                         ifelse(x==0,'lightgrey','black')),
+          `background-color` = csscolor(matrix(as.integer(colorRamp(...)(xnormalize(as.numeric(x)))), 
+                byrow=TRUE, 
+                dimnames=list(c("green","red","blue"), NULL),
+                nrow=3)))
+  })}
+```
+
+We can use that to colour cells as a block (although we note that for ultimately rebased values we can never go below a zero value...). Pale colors are better (closer to the ultimate):
+
+```{r}
+formattable(ultimate_between_split, align='c',
+            list(area(col = 2:7) ~ color_tile2(c("red",'white',
+                                                 "forestgreen")),
+                 entryId=FALSE))
+```
+
+Let's compare that chart with how the accumulated stage time of each driver compares with the accumulated ultimate section times:
+
+
+```{r}
+formattable(ultimate_accumulated, align='c',
+            list(area(col = 2:7) ~ color_tile2(c("red",'white',
+                                                 "forestgreen")),
+                 entryId=FALSE))
+```
+
+Finally, let's see how the driver's actual split times varied gainst the best recorded split time at each split:
+
+```{r}
+formattable(ultimate_actual, align='c',
+            list(area(col = 2:7) ~ color_tile2(c("red",'white',
+                                                 "forestgreen")),
+                 entryId=FALSE))
+```
+
+
+### Using Sparklines to Summarise Rebased Deltas
+
+A quick way of summarising rebased times in a more space efficient way is to us a sparkline. As we have seen previously, these can be used added as an extra column alongside a row of data, oer could be used to as a quick visual indicative summary of a row of values.
+
+Let's create a sparkline summarising each of the above tables.
+
+First, the ultimate between split rebase:
+
+```{r}
+ultimate_between_split_spk = ultimate_between_split %>%
+                                gather(key ="Stage",
+                                value ="Gap", split_names) %>%
+                                group_by(code) %>%
+                                summarize(spk_ = spk_chr(-Gap,
+                                                         type ="bar"))
+
+spark_df(ultimate_between_split_spk)
+```
+
+How about for the accumulated ultimate split durations?
+
+```{r}
+ultimate_accumulated_spk = ultimate_accumulated %>%
+                                    gather(key ="Stage",
+                                    value ="Gap", split_names) %>%
+                                    group_by(code) %>%
+                                    summarize(spk_ = spk_chr(-Gap,
+                                                             type ="bar"))
+
+spark_df(ultimate_accumulated_spk)
+```
+
+And finally, compared to actual recorded best split time:
+
+```{r}
+ultimate_actual_spk = ultimate_actual %>%
+                                gather(key ="Stage",
+                                value ="Gap", split_names) %>%
+                                group_by(code) %>%
+                                summarize(spk_ = spk_chr(-Gap,
+                                                         type ="bar"))
+
+spark_df(ultimate_actual_spk)
+```
 

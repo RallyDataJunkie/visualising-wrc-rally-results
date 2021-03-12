@@ -84,13 +84,15 @@ visualising-rebased-split-times-using-sparklines
 finding-the-rank-position-at-each-split-point
 finding-split-section-durations
 finding-split-section-ranks
-using-sparklines-to-visdualise-split-time-differences
 adding-overall-stage-time-to-the-split-times
 calculating-the-ultimate-stage-from-ultimate-split-times
 rebasing-to-ultimate-split-times
 per-split-ultimate-rebasing
 ultimate-stage-rebasing
 actual-best-elapsed-time-rebasing
+visualising-rebased-times
+context-sensistve-cell-colouring
+using-sparklines-to-summarise-rebased-deltas
 visualising-pace-across-splits
 load-base-data-5
 obtaining-split-distances

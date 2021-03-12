@@ -273,14 +273,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="7.6.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#finding-split-section-ranks"><i class="fa fa-check"></i><b>7.6.1</b> Finding Split Section Ranks</a></li>
 </ul></li>
-<li class="chapter" data-level="7.7" data-path="working-with-split-times.html"><a href="working-with-split-times.html#using-sparklines-to-visdualise-split-time-differences"><i class="fa fa-check"></i><b>7.7</b> Using Sparklines to Visdualise Split Time Differences</a></li>
-<li class="chapter" data-level="7.8" data-path="working-with-split-times.html"><a href="working-with-split-times.html#adding-overall-stage-time-to-the-split-times"><i class="fa fa-check"></i><b>7.8</b> Adding Overall Stage Time to the Split Times</a></li>
-<li class="chapter" data-level="7.9" data-path="working-with-split-times.html"><a href="working-with-split-times.html#calculating-the-ultimate-stage-from-ultimate-split-times"><i class="fa fa-check"></i><b>7.9</b> Calculating the Ultimate Stage from Ultimate Split Times</a>
+<li class="chapter" data-level="7.7" data-path="working-with-split-times.html"><a href="working-with-split-times.html#adding-overall-stage-time-to-the-split-times"><i class="fa fa-check"></i><b>7.7</b> Adding Overall Stage Time to the Split Times</a></li>
+<li class="chapter" data-level="7.8" data-path="working-with-split-times.html"><a href="working-with-split-times.html#calculating-the-ultimate-stage-from-ultimate-split-times"><i class="fa fa-check"></i><b>7.8</b> Calculating the Ultimate Stage from Ultimate Split Times</a>
 <ul>
-<li class="chapter" data-level="7.9.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#rebasing-to-ultimate-split-times"><i class="fa fa-check"></i><b>7.9.1</b> Rebasing to Ultimate Split Times</a></li>
-<li class="chapter" data-level="7.9.2" data-path="working-with-split-times.html"><a href="working-with-split-times.html#per-split-ultimate-rebasing"><i class="fa fa-check"></i><b>7.9.2</b> Per Split Ultimate Rebasing</a></li>
-<li class="chapter" data-level="7.9.3" data-path="working-with-split-times.html"><a href="working-with-split-times.html#ultimate-stage-rebasing"><i class="fa fa-check"></i><b>7.9.3</b> Ultimate Stage Rebasing</a></li>
-<li class="chapter" data-level="7.9.4" data-path="working-with-split-times.html"><a href="working-with-split-times.html#actual-best-elapsed-time-rebasing"><i class="fa fa-check"></i><b>7.9.4</b> Actual Best Elapsed Time Rebasing</a></li>
+<li class="chapter" data-level="7.8.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#rebasing-to-ultimate-split-times"><i class="fa fa-check"></i><b>7.8.1</b> Rebasing to Ultimate Split Times</a></li>
+<li class="chapter" data-level="7.8.2" data-path="working-with-split-times.html"><a href="working-with-split-times.html#per-split-ultimate-rebasing"><i class="fa fa-check"></i><b>7.8.2</b> Per Split Ultimate Rebasing</a></li>
+<li class="chapter" data-level="7.8.3" data-path="working-with-split-times.html"><a href="working-with-split-times.html#ultimate-stage-rebasing"><i class="fa fa-check"></i><b>7.8.3</b> Ultimate Stage Rebasing</a></li>
+<li class="chapter" data-level="7.8.4" data-path="working-with-split-times.html"><a href="working-with-split-times.html#actual-best-elapsed-time-rebasing"><i class="fa fa-check"></i><b>7.8.4</b> Actual Best Elapsed Time Rebasing</a></li>
+</ul></li>
+<li class="chapter" data-level="7.9" data-path="working-with-split-times.html"><a href="working-with-split-times.html#visualising-rebased-times"><i class="fa fa-check"></i><b>7.9</b> Visualising Rebased Times</a>
+<ul>
+<li class="chapter" data-level="7.9.1" data-path="working-with-split-times.html"><a href="working-with-split-times.html#context-sensistve-cell-colouring"><i class="fa fa-check"></i><b>7.9.1</b> Context Sensistve Cell Colouring</a></li>
+<li class="chapter" data-level="7.9.2" data-path="working-with-split-times.html"><a href="working-with-split-times.html#using-sparklines-to-summarise-rebased-deltas"><i class="fa fa-check"></i><b>7.9.2</b> Using Sparklines to Summarise Rebased Deltas</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="visualising-pace-across-splits.html"><a href="visualising-pace-across-splits.html"><i class="fa fa-check"></i><b>8</b> Visualising Pace Across Splits</a>
@@ -324,54 +328,54 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="load-base-data-5" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Load Base Data</h2>
 <p>As ever, load in the helper functions:</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="visualising-pace-across-splits.html#cb343-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span>
-<span id="cb343-2"><a href="visualising-pace-across-splits.html#cb343-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-wrangling.R&#39;</span>)</span>
-<span id="cb343-3"><a href="visualising-pace-across-splits.html#cb343-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-charts.R&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="visualising-pace-across-splits.html#cb355-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-api.R&#39;</span>)</span>
+<span id="cb355-2"><a href="visualising-pace-across-splits.html#cb355-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-wrangling.R&#39;</span>)</span>
+<span id="cb355-3"><a href="visualising-pace-across-splits.html#cb355-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&#39;code/wrc-charts.R&#39;</span>)</span></code></pre></div>
 <p>And get the base data:</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="visualising-pace-across-splits.html#cb344-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
-<span id="cb344-2"><a href="visualising-pace-across-splits.html#cb344-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
-<span id="cb344-3"><a href="visualising-pace-across-splits.html#cb344-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb344-4"><a href="visualising-pace-across-splits.html#cb344-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
-<span id="cb344-5"><a href="visualising-pace-across-splits.html#cb344-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
-<span id="cb344-6"><a href="visualising-pace-across-splits.html#cb344-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
-<span id="cb344-7"><a href="visualising-pace-across-splits.html#cb344-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
-<span id="cb344-8"><a href="visualising-pace-across-splits.html#cb344-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb344-9"><a href="visualising-pace-across-splits.html#cb344-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick Lookups</span></span>
-<span id="cb344-10"><a href="visualising-pace-across-splits.html#cb344-10" aria-hidden="true" tabindex="-1"></a>stage_list <span class="ot">=</span> <span class="fu">get_stage_list</span>(stages)</span>
-<span id="cb344-11"><a href="visualising-pace-across-splits.html#cb344-11" aria-hidden="true" tabindex="-1"></a>stage_codes <span class="ot">=</span> stages<span class="sc">$</span>code</span>
-<span id="cb344-12"><a href="visualising-pace-across-splits.html#cb344-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb344-13"><a href="visualising-pace-across-splits.html#cb344-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
-<span id="cb344-14"><a href="visualising-pace-across-splits.html#cb344-14" aria-hidden="true" tabindex="-1"></a>entries <span class="ot">=</span> <span class="fu">get_rally_entries</span>(eventId)</span>
-<span id="cb344-15"><a href="visualising-pace-across-splits.html#cb344-15" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
+<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="visualising-pace-across-splits.html#cb356-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb356-2"><a href="visualising-pace-across-splits.html#cb356-2" aria-hidden="true" tabindex="-1"></a>eventId <span class="ot">=</span> <span class="fu">get_eventId_from_name</span>(s, <span class="st">&#39;arctic&#39;</span>)</span>
+<span id="cb356-3"><a href="visualising-pace-across-splits.html#cb356-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb356-4"><a href="visualising-pace-across-splits.html#cb356-4" aria-hidden="true" tabindex="-1"></a>itinerary <span class="ot">=</span> <span class="fu">get_itinerary</span>(eventId)</span>
+<span id="cb356-5"><a href="visualising-pace-across-splits.html#cb356-5" aria-hidden="true" tabindex="-1"></a>sections <span class="ot">=</span> <span class="fu">get_sections</span>(itinerary)</span>
+<span id="cb356-6"><a href="visualising-pace-across-splits.html#cb356-6" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">=</span> <span class="fu">get_stages</span>(sections)</span>
+<span id="cb356-7"><a href="visualising-pace-across-splits.html#cb356-7" aria-hidden="true" tabindex="-1"></a>stages_lookup <span class="ot">=</span> <span class="fu">get_stages_lookup</span>(stages)</span>
+<span id="cb356-8"><a href="visualising-pace-across-splits.html#cb356-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb356-9"><a href="visualising-pace-across-splits.html#cb356-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick Lookups</span></span>
+<span id="cb356-10"><a href="visualising-pace-across-splits.html#cb356-10" aria-hidden="true" tabindex="-1"></a>stage_list <span class="ot">=</span> <span class="fu">get_stage_list</span>(stages)</span>
+<span id="cb356-11"><a href="visualising-pace-across-splits.html#cb356-11" aria-hidden="true" tabindex="-1"></a>stage_codes <span class="ot">=</span> stages<span class="sc">$</span>code</span>
+<span id="cb356-12"><a href="visualising-pace-across-splits.html#cb356-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb356-13"><a href="visualising-pace-across-splits.html#cb356-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Driver details</span></span>
+<span id="cb356-14"><a href="visualising-pace-across-splits.html#cb356-14" aria-hidden="true" tabindex="-1"></a>entries <span class="ot">=</span> <span class="fu">get_rally_entries</span>(eventId)</span>
+<span id="cb356-15"><a href="visualising-pace-across-splits.html#cb356-15" aria-hidden="true" tabindex="-1"></a>cars <span class="ot">=</span> <span class="fu">get_car_data</span>(entries)</span></code></pre></div>
 <p>Get a sample stage ID and associated splits:</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="visualising-pace-across-splits.html#cb345-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get example stage ID</span></span>
-<span id="cb345-2"><a href="visualising-pace-across-splits.html#cb345-2" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span>
-<span id="cb345-3"><a href="visualising-pace-across-splits.html#cb345-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb345-4"><a href="visualising-pace-across-splits.html#cb345-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get splits for the stage</span></span>
-<span id="cb345-5"><a href="visualising-pace-across-splits.html#cb345-5" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">=</span> <span class="fu">get_splits</span>(eventId, stageId)</span>
-<span id="cb345-6"><a href="visualising-pace-across-splits.html#cb345-6" aria-hidden="true" tabindex="-1"></a>splits_locations <span class="ot">=</span> <span class="fu">get_split_locations</span>(splits)</span>
-<span id="cb345-7"><a href="visualising-pace-across-splits.html#cb345-7" aria-hidden="true" tabindex="-1"></a>splits_list <span class="ot">=</span> splits_locations<span class="sc">$</span>splitPointId</span>
-<span id="cb345-8"><a href="visualising-pace-across-splits.html#cb345-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb345-9"><a href="visualising-pace-across-splits.html#cb345-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get wide format data</span></span>
-<span id="cb345-10"><a href="visualising-pace-across-splits.html#cb345-10" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="ot">=</span> <span class="fu">get_splits_wide</span>(splits) <span class="sc">%&gt;%</span></span>
-<span id="cb345-11"><a href="visualising-pace-across-splits.html#cb345-11" aria-hidden="true" tabindex="-1"></a>                <span class="fu">relabel_times_df2</span>(splits_list, cars, <span class="at">typ=</span><span class="st">&#39;split&#39;</span>)</span>
-<span id="cb345-12"><a href="visualising-pace-across-splits.html#cb345-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb345-13"><a href="visualising-pace-across-splits.html#cb345-13" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="visualising-pace-across-splits.html#cb357-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get example stage ID</span></span>
+<span id="cb357-2"><a href="visualising-pace-across-splits.html#cb357-2" aria-hidden="true" tabindex="-1"></a>stageId <span class="ot">=</span> stages_lookup[[<span class="st">&#39;SS3&#39;</span>]]</span>
+<span id="cb357-3"><a href="visualising-pace-across-splits.html#cb357-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb357-4"><a href="visualising-pace-across-splits.html#cb357-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get splits for the stage</span></span>
+<span id="cb357-5"><a href="visualising-pace-across-splits.html#cb357-5" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">=</span> <span class="fu">get_splits</span>(eventId, stageId)</span>
+<span id="cb357-6"><a href="visualising-pace-across-splits.html#cb357-6" aria-hidden="true" tabindex="-1"></a>splits_locations <span class="ot">=</span> <span class="fu">get_split_locations</span>(splits)</span>
+<span id="cb357-7"><a href="visualising-pace-across-splits.html#cb357-7" aria-hidden="true" tabindex="-1"></a>splits_list <span class="ot">=</span> splits_locations<span class="sc">$</span>splitPointId</span>
+<span id="cb357-8"><a href="visualising-pace-across-splits.html#cb357-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb357-9"><a href="visualising-pace-across-splits.html#cb357-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get wide format data</span></span>
+<span id="cb357-10"><a href="visualising-pace-across-splits.html#cb357-10" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="ot">=</span> <span class="fu">get_splits_wide</span>(splits) <span class="sc">%&gt;%</span></span>
+<span id="cb357-11"><a href="visualising-pace-across-splits.html#cb357-11" aria-hidden="true" tabindex="-1"></a>                <span class="fu">relabel_times_df2</span>(splits_list, cars, <span class="at">typ=</span><span class="st">&#39;split&#39;</span>)</span>
+<span id="cb357-12"><a href="visualising-pace-across-splits.html#cb357-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb357-13"><a href="visualising-pace-across-splits.html#cb357-13" aria-hidden="true" tabindex="-1"></a>splits_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##   code split_1 split_2 split_3 split_4 split_5
 ## 1  OGI   161.7   272.3   471.3   690.4   789.2
 ## 2  EVA   162.3   273.7   472.3   692.1   792.4</code></pre>
 <p>Get long form splits data for one or more stages, in this case, just a single stage:</p>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="visualising-pace-across-splits.html#cb347-1" aria-hidden="true" tabindex="-1"></a>splits_long <span class="ot">=</span> <span class="fu">get_multi_split_times</span>(stageId)</span></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="visualising-pace-across-splits.html#cb359-1" aria-hidden="true" tabindex="-1"></a>splits_long <span class="ot">=</span> <span class="fu">get_multi_split_times</span>(stageId)</span></code></pre></div>
 <div id="obtaining-split-distances" class="section level3" number="8.1.1">
 <h3><span class="header-section-number">8.1.1</span> Obtaining Split Distances</h3>
 <p>We can find the distance between each split as the difference between consecutive values. Let’s augment the <em>splits_locations</em> with these values as well as with section start distances:</p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="visualising-pace-across-splits.html#cb348-1" aria-hidden="true" tabindex="-1"></a>splits_locations<span class="sc">$</span>start_dist <span class="ot">=</span> <span class="fu">lag</span>(splits_locations<span class="sc">$</span>distance,</span>
-<span id="cb348-2"><a href="visualising-pace-across-splits.html#cb348-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">default=</span><span class="dv">0</span>)</span>
-<span id="cb348-3"><a href="visualising-pace-across-splits.html#cb348-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb348-4"><a href="visualising-pace-across-splits.html#cb348-4" aria-hidden="true" tabindex="-1"></a>splits_locations<span class="sc">$</span>section_dist <span class="ot">=</span> <span class="fu">c</span>(splits_locations<span class="sc">$</span>distance[<span class="dv">1</span>],</span>
-<span id="cb348-5"><a href="visualising-pace-across-splits.html#cb348-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">diff</span>(splits_locations<span class="sc">$</span>distance))</span>
-<span id="cb348-6"><a href="visualising-pace-across-splits.html#cb348-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb348-7"><a href="visualising-pace-across-splits.html#cb348-7" aria-hidden="true" tabindex="-1"></a>splits_locations</span></code></pre></div>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="visualising-pace-across-splits.html#cb360-1" aria-hidden="true" tabindex="-1"></a>splits_locations<span class="sc">$</span>start_dist <span class="ot">=</span> <span class="fu">lag</span>(splits_locations<span class="sc">$</span>distance,</span>
+<span id="cb360-2"><a href="visualising-pace-across-splits.html#cb360-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">default=</span><span class="dv">0</span>)</span>
+<span id="cb360-3"><a href="visualising-pace-across-splits.html#cb360-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb360-4"><a href="visualising-pace-across-splits.html#cb360-4" aria-hidden="true" tabindex="-1"></a>splits_locations<span class="sc">$</span>section_dist <span class="ot">=</span> <span class="fu">c</span>(splits_locations<span class="sc">$</span>distance[<span class="dv">1</span>],</span>
+<span id="cb360-5"><a href="visualising-pace-across-splits.html#cb360-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">diff</span>(splits_locations<span class="sc">$</span>distance))</span>
+<span id="cb360-6"><a href="visualising-pace-across-splits.html#cb360-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb360-7"><a href="visualising-pace-across-splits.html#cb360-7" aria-hidden="true" tabindex="-1"></a>splits_locations</span></code></pre></div>
 <pre><code>##   splitPointId stageId number distance splitname start_dist section_dist
 ## 1         3615    1750      1     4.83   split_1       0.00         4.83
 ## 2         3601    1750      2     9.02   split_2       4.83         4.19
@@ -379,24 +383,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 4         3617    1750      4    20.63   split_4      14.87         5.76
 ## 5         3593    1750      5    23.21   split_5      20.63         2.58</code></pre>
 <p>We can also retrieve these section distances into a <em>splitPointId</em> named list:</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="visualising-pace-across-splits.html#cb350-1" aria-hidden="true" tabindex="-1"></a>split_distances <span class="ot">=</span> splits_locations<span class="sc">$</span>section_dist</span>
-<span id="cb350-2"><a href="visualising-pace-across-splits.html#cb350-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb350-3"><a href="visualising-pace-across-splits.html#cb350-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Label the values</span></span>
-<span id="cb350-4"><a href="visualising-pace-across-splits.html#cb350-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(split_distances) <span class="ot">=</span> splits_locations<span class="sc">$</span>splitPointId</span>
-<span id="cb350-5"><a href="visualising-pace-across-splits.html#cb350-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb350-6"><a href="visualising-pace-across-splits.html#cb350-6" aria-hidden="true" tabindex="-1"></a>split_distances</span></code></pre></div>
+<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="visualising-pace-across-splits.html#cb362-1" aria-hidden="true" tabindex="-1"></a>split_distances <span class="ot">=</span> splits_locations<span class="sc">$</span>section_dist</span>
+<span id="cb362-2"><a href="visualising-pace-across-splits.html#cb362-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb362-3"><a href="visualising-pace-across-splits.html#cb362-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Label the values</span></span>
+<span id="cb362-4"><a href="visualising-pace-across-splits.html#cb362-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(split_distances) <span class="ot">=</span> splits_locations<span class="sc">$</span>splitPointId</span>
+<span id="cb362-5"><a href="visualising-pace-across-splits.html#cb362-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb362-6"><a href="visualising-pace-across-splits.html#cb362-6" aria-hidden="true" tabindex="-1"></a>split_distances</span></code></pre></div>
 <pre><code>## 3615 3601 3621 3617 3593 
 ## 4.83 4.19 5.85 5.76 2.58</code></pre>
 <p>We recall that the split points do not include the final timing line (the finish), so a complete set of distances also means we need to access the overall stage distance and account for that:</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="visualising-pace-across-splits.html#cb352-1" aria-hidden="true" tabindex="-1"></a>stage_dist <span class="ot">=</span> stages[stages[<span class="st">&#39;stageId&#39;</span>]<span class="sc">==</span>stageId,<span class="st">&#39;distance&#39;</span>]</span>
-<span id="cb352-2"><a href="visualising-pace-across-splits.html#cb352-2" aria-hidden="true" tabindex="-1"></a>stage_dist</span></code></pre></div>
+<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="visualising-pace-across-splits.html#cb364-1" aria-hidden="true" tabindex="-1"></a>stage_dist <span class="ot">=</span> stages[stages[<span class="st">&#39;stageId&#39;</span>]<span class="sc">==</span>stageId,<span class="st">&#39;distance&#39;</span>]</span>
+<span id="cb364-2"><a href="visualising-pace-across-splits.html#cb364-2" aria-hidden="true" tabindex="-1"></a>stage_dist</span></code></pre></div>
 <pre><code>## [1] 24.43</code></pre>
 <p>The complete set of intermediate distances is then:</p>
-<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb354-1"><a href="visualising-pace-across-splits.html#cb354-1" aria-hidden="true" tabindex="-1"></a>full_split_distances <span class="ot">=</span> <span class="fu">c</span>(split_distances, stage_dist<span class="sc">-</span><span class="fu">sum</span>(split_distances))</span>
-<span id="cb354-2"><a href="visualising-pace-across-splits.html#cb354-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb354-3"><a href="visualising-pace-across-splits.html#cb354-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(full_split_distances) <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">names</span>(split_distances), <span class="st">&#39;total&#39;</span>)</span>
-<span id="cb354-4"><a href="visualising-pace-across-splits.html#cb354-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb354-5"><a href="visualising-pace-across-splits.html#cb354-5" aria-hidden="true" tabindex="-1"></a>full_split_distances</span></code></pre></div>
+<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="visualising-pace-across-splits.html#cb366-1" aria-hidden="true" tabindex="-1"></a>full_split_distances <span class="ot">=</span> <span class="fu">c</span>(split_distances, stage_dist<span class="sc">-</span><span class="fu">sum</span>(split_distances))</span>
+<span id="cb366-2"><a href="visualising-pace-across-splits.html#cb366-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb366-3"><a href="visualising-pace-across-splits.html#cb366-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(full_split_distances) <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">names</span>(split_distances), <span class="st">&#39;total&#39;</span>)</span>
+<span id="cb366-4"><a href="visualising-pace-across-splits.html#cb366-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb366-5"><a href="visualising-pace-across-splits.html#cb366-5" aria-hidden="true" tabindex="-1"></a>full_split_distances</span></code></pre></div>
 <pre><code>##  3615  3601  3621  3617  3593 total 
 ##  4.83  4.19  5.85  5.76  2.58  1.22</code></pre>
 </div>
@@ -405,26 +409,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">8.2</span> Calculating Splits Pace</h2>
 <p>To calculate pace between two split points we need to get the elapsed time between those two points as well as the distance between split points.</p>
 <p>We can obtain the split differences by finding differences between the columns of the wide format dataframe using the <code>get_split_duration()</code> function we created previously:</p>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="visualising-pace-across-splits.html#cb356-1" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">=</span> <span class="fu">get_split_cols</span>(splits)</span>
-<span id="cb356-2"><a href="visualising-pace-across-splits.html#cb356-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb356-3"><a href="visualising-pace-across-splits.html#cb356-3" aria-hidden="true" tabindex="-1"></a>split_durations_wide <span class="ot">=</span> <span class="fu">get_split_duration</span>(splits_wide, split_cols,</span>
-<span id="cb356-4"><a href="visualising-pace-across-splits.html#cb356-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="visualising-pace-across-splits.html#cb368-1" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">=</span> <span class="fu">get_split_cols</span>(splits)</span>
+<span id="cb368-2"><a href="visualising-pace-across-splits.html#cb368-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb368-3"><a href="visualising-pace-across-splits.html#cb368-3" aria-hidden="true" tabindex="-1"></a>split_durations_wide <span class="ot">=</span> <span class="fu">get_split_duration</span>(splits_wide, split_cols,</span>
+<span id="cb368-4"><a href="visualising-pace-across-splits.html#cb368-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>)</span></code></pre></div>
 <pre><code>## Error in `[.data.frame`(df, , split_cols): undefined columns selected</code></pre>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="visualising-pace-across-splits.html#cb358-1" aria-hidden="true" tabindex="-1"></a>split_durations_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="visualising-pace-across-splits.html#cb370-1" aria-hidden="true" tabindex="-1"></a>split_durations_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code split_1 split_2 split_3 split_4 split_5
 ## 1  OGI   161.7   110.6   199.0   219.1    98.8
 ## 2  EVA   162.3   111.4   198.6   219.8   100.3
 ## 3  NEU   159.1   109.5   197.2   216.9   100.0</code></pre>
 <p>We can then find the pace by dividing the split section times through by the split distances:</p>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="visualising-pace-across-splits.html#cb360-1" aria-hidden="true" tabindex="-1"></a>section_pace_wide <span class="ot">=</span> split_durations_wide</span>
-<span id="cb360-2"><a href="visualising-pace-across-splits.html#cb360-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb360-3"><a href="visualising-pace-across-splits.html#cb360-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> splits_list) {</span>
-<span id="cb360-4"><a href="visualising-pace-across-splits.html#cb360-4" aria-hidden="true" tabindex="-1"></a>  s_ <span class="ot">=</span> <span class="fu">as.character</span>(s)</span>
-<span id="cb360-5"><a href="visualising-pace-across-splits.html#cb360-5" aria-hidden="true" tabindex="-1"></a>  section_pace_wide[,s_] <span class="ot">=</span> section_pace_wide[,s_] <span class="sc">/</span> split_distances[s_]</span>
-<span id="cb360-6"><a href="visualising-pace-across-splits.html#cb360-6" aria-hidden="true" tabindex="-1"></a>                            </span>
-<span id="cb360-7"><a href="visualising-pace-across-splits.html#cb360-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="visualising-pace-across-splits.html#cb372-1" aria-hidden="true" tabindex="-1"></a>section_pace_wide <span class="ot">=</span> split_durations_wide</span>
+<span id="cb372-2"><a href="visualising-pace-across-splits.html#cb372-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb372-3"><a href="visualising-pace-across-splits.html#cb372-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> splits_list) {</span>
+<span id="cb372-4"><a href="visualising-pace-across-splits.html#cb372-4" aria-hidden="true" tabindex="-1"></a>  s_ <span class="ot">=</span> <span class="fu">as.character</span>(s)</span>
+<span id="cb372-5"><a href="visualising-pace-across-splits.html#cb372-5" aria-hidden="true" tabindex="-1"></a>  section_pace_wide[,s_] <span class="ot">=</span> section_pace_wide[,s_] <span class="sc">/</span> split_distances[s_]</span>
+<span id="cb372-6"><a href="visualising-pace-across-splits.html#cb372-6" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb372-7"><a href="visualising-pace-across-splits.html#cb372-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre><code>## Error in `[.data.frame`(section_pace_wide, , s_): undefined columns selected</code></pre>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="visualising-pace-across-splits.html#cb362-1" aria-hidden="true" tabindex="-1"></a>section_pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="visualising-pace-across-splits.html#cb374-1" aria-hidden="true" tabindex="-1"></a>section_pace_wide <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##   code split_1 split_2 split_3 split_4 split_5
 ## 1  OGI   161.7   110.6   199.0   219.1    98.8
 ## 2  EVA   162.3   111.4   198.6   219.8   100.3</code></pre>
@@ -436,50 +440,50 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="pace-over-each-section" class="section level3" number="8.3.1">
 <h3><span class="header-section-number">8.3.1</span> Pace Over Each Section</h3>
 <p>One quick way of inspecting the pace over each section is to use a box plot:</p>
-<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="visualising-pace-across-splits.html#cb364-1" aria-hidden="true" tabindex="-1"></a>section_pace_long <span class="ot">=</span> section_pace_wide <span class="sc">%&gt;%</span> </span>
-<span id="cb364-2"><a href="visualising-pace-across-splits.html#cb364-2" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb364-3"><a href="visualising-pace-across-splits.html#cb364-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(splitPointId, pace,</span>
-<span id="cb364-4"><a href="visualising-pace-across-splits.html#cb364-4" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">as.character</span>(splits_list)) <span class="sc">%&gt;%</span></span>
-<span id="cb364-5"><a href="visualising-pace-across-splits.html#cb364-5" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(splits_locations[,<span class="fu">c</span>(<span class="st">&#39;splitPointId&#39;</span>,</span>
-<span id="cb364-6"><a href="visualising-pace-across-splits.html#cb364-6" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;distance&#39;</span>)],</span>
-<span id="cb364-7"><a href="visualising-pace-across-splits.html#cb364-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;splitPointId&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="visualising-pace-across-splits.html#cb376-1" aria-hidden="true" tabindex="-1"></a>section_pace_long <span class="ot">=</span> section_pace_wide <span class="sc">%&gt;%</span> </span>
+<span id="cb376-2"><a href="visualising-pace-across-splits.html#cb376-2" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb376-3"><a href="visualising-pace-across-splits.html#cb376-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(splitPointId, pace,</span>
+<span id="cb376-4"><a href="visualising-pace-across-splits.html#cb376-4" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">as.character</span>(splits_list)) <span class="sc">%&gt;%</span></span>
+<span id="cb376-5"><a href="visualising-pace-across-splits.html#cb376-5" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(splits_locations[,<span class="fu">c</span>(<span class="st">&#39;splitPointId&#39;</span>,</span>
+<span id="cb376-6"><a href="visualising-pace-across-splits.html#cb376-6" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;distance&#39;</span>)],</span>
+<span id="cb376-7"><a href="visualising-pace-across-splits.html#cb376-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">by=</span><span class="st">&#39;splitPointId&#39;</span>)</span></code></pre></div>
 <pre><code>## Error: Can&#39;t subset columns that don&#39;t exist.
 ## x Columns `3615`, `3601`, `3621`, `3617`, and `3593` don&#39;t exist.</code></pre>
-<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="visualising-pace-across-splits.html#cb366-1" aria-hidden="true" tabindex="-1"></a>section_pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="visualising-pace-across-splits.html#cb378-1" aria-hidden="true" tabindex="-1"></a>section_pace_long <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   splitPointId code     pace start_dist distance
 ## 1         3593  OGI 38.29457      20.63    23.21
 ## 2         3593  EVA 38.87597      20.63    23.21
 ## 3         3593  NEU 38.75969      20.63    23.21</code></pre>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="visualising-pace-across-splits.html#cb368-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(section_pace_long[section_pace_long<span class="sc">$</span>pace<span class="sc">&lt;</span><span class="dv">40</span>,],</span>
-<span id="cb368-2"><a href="visualising-pace-across-splits.html#cb368-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span>distance, <span class="at">y=</span>pace)) <span class="sc">+</span></span>
-<span id="cb368-3"><a href="visualising-pace-across-splits.html#cb368-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">group=</span>distance))</span></code></pre></div>
-<p><img src="images/split-times-pace-over-splits-box-1.png" width="672" />
+<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="visualising-pace-across-splits.html#cb380-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(section_pace_long[section_pace_long<span class="sc">$</span>pace<span class="sc">&lt;</span><span class="dv">40</span>,],</span>
+<span id="cb380-2"><a href="visualising-pace-across-splits.html#cb380-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span>distance, <span class="at">y=</span>pace)) <span class="sc">+</span></span>
+<span id="cb380-3"><a href="visualising-pace-across-splits.html#cb380-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">group=</span>distance))</span></code></pre></div>
+<p><img src="images/finding-splits-pace-pace-over-splits-box-1.png" width="672" />
 This suggests that the section between the first and second split may be quite technical, and the final sections much faster.</p>
 <p><em>Comparing section times against route metrics as described in <a href="https://rallydatajunkie.com/visualising-rally-stages/"><strong>Visualising Rally Stages</strong></a> will be the focus of a future unbook. Comparing manufacturer performance against different section and stage route types might also be worth further investigation.</em></p>
 </div>
 <div id="splits-sections-pace-maps" class="section level3" number="8.3.2">
 <h3><span class="header-section-number">8.3.2</span> Splits Sections Pace Maps</h3>
 <p>To generate the pace map, let’s first rebase the split times with respect to a specified driver:</p>
-<div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb369-1"><a href="visualising-pace-across-splits.html#cb369-1" aria-hidden="true" tabindex="-1"></a>example_driver <span class="ot">=</span> section_pace_wide[<span class="dv">2</span>,]<span class="sc">$</span>code</span>
-<span id="cb369-2"><a href="visualising-pace-across-splits.html#cb369-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb369-3"><a href="visualising-pace-across-splits.html#cb369-3" aria-hidden="true" tabindex="-1"></a>section_pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(section_pace_wide, example_driver,</span>
-<span id="cb369-4"><a href="visualising-pace-across-splits.html#cb369-4" aria-hidden="true" tabindex="-1"></a>                                   splits_list, <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="visualising-pace-across-splits.html#cb381-1" aria-hidden="true" tabindex="-1"></a>example_driver <span class="ot">=</span> section_pace_wide[<span class="dv">2</span>,]<span class="sc">$</span>code</span>
+<span id="cb381-2"><a href="visualising-pace-across-splits.html#cb381-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb381-3"><a href="visualising-pace-across-splits.html#cb381-3" aria-hidden="true" tabindex="-1"></a>section_pace_wide_rebased <span class="ot">=</span> <span class="fu">rebase</span>(section_pace_wide, example_driver,</span>
+<span id="cb381-4"><a href="visualising-pace-across-splits.html#cb381-4" aria-hidden="true" tabindex="-1"></a>                                   splits_list, <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>)</span></code></pre></div>
 <pre><code>## Error in `[.data.frame`(df, df[[id_col]] == id, rebase_cols): undefined columns selected</code></pre>
-<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb371-1"><a href="visualising-pace-across-splits.html#cb371-1" aria-hidden="true" tabindex="-1"></a>section_pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="visualising-pace-across-splits.html#cb383-1" aria-hidden="true" tabindex="-1"></a>section_pace_wide_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code       3615       3601        3621       3617       3593
 ## 1  OGI -0.1242236 -0.1909308  0.06837607 -0.1215278 -0.5813953
 ## 2  EVA  0.0000000  0.0000000  0.00000000  0.0000000  0.0000000
 ## 3  NEU -0.6625259 -0.4534606 -0.23931624 -0.5034722 -0.1162791</code></pre>
 <p>To plot the pace map, we need to get the data into a long format:</p>
-<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb373-1"><a href="visualising-pace-across-splits.html#cb373-1" aria-hidden="true" tabindex="-1"></a>section_pace_long_rebased <span class="ot">=</span> section_pace_wide_rebased <span class="sc">%&gt;%</span> </span>
-<span id="cb373-2"><a href="visualising-pace-across-splits.html#cb373-2" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb373-3"><a href="visualising-pace-across-splits.html#cb373-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(splitPointId, pace,</span>
-<span id="cb373-4"><a href="visualising-pace-across-splits.html#cb373-4" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">as.character</span>(splits_list)) <span class="sc">%&gt;%</span></span>
-<span id="cb373-5"><a href="visualising-pace-across-splits.html#cb373-5" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(splits_locations[,<span class="fu">c</span>(<span class="st">&#39;splitPointId&#39;</span>,</span>
-<span id="cb373-6"><a href="visualising-pace-across-splits.html#cb373-6" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;distance&#39;</span>)],</span>
-<span id="cb373-7"><a href="visualising-pace-across-splits.html#cb373-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">by=</span><span class="st">&#39;splitPointId&#39;</span>)</span>
-<span id="cb373-8"><a href="visualising-pace-across-splits.html#cb373-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb373-9"><a href="visualising-pace-across-splits.html#cb373-9" aria-hidden="true" tabindex="-1"></a>section_pace_long_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb385"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb385-1"><a href="visualising-pace-across-splits.html#cb385-1" aria-hidden="true" tabindex="-1"></a>section_pace_long_rebased <span class="ot">=</span> section_pace_wide_rebased <span class="sc">%&gt;%</span> </span>
+<span id="cb385-2"><a href="visualising-pace-across-splits.html#cb385-2" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb385-3"><a href="visualising-pace-across-splits.html#cb385-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">gather</span>(splitPointId, pace,</span>
+<span id="cb385-4"><a href="visualising-pace-across-splits.html#cb385-4" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">as.character</span>(splits_list)) <span class="sc">%&gt;%</span></span>
+<span id="cb385-5"><a href="visualising-pace-across-splits.html#cb385-5" aria-hidden="true" tabindex="-1"></a>                <span class="fu">merge</span>(splits_locations[,<span class="fu">c</span>(<span class="st">&#39;splitPointId&#39;</span>,</span>
+<span id="cb385-6"><a href="visualising-pace-across-splits.html#cb385-6" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">&#39;start_dist&#39;</span>, <span class="st">&#39;distance&#39;</span>)],</span>
+<span id="cb385-7"><a href="visualising-pace-across-splits.html#cb385-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">by=</span><span class="st">&#39;splitPointId&#39;</span>)</span>
+<span id="cb385-8"><a href="visualising-pace-across-splits.html#cb385-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb385-9"><a href="visualising-pace-across-splits.html#cb385-9" aria-hidden="true" tabindex="-1"></a>section_pace_long_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
 <pre><code>##   splitPointId code        pace start_dist distance
 ## 1         3593  OGI -0.58139535      20.63    23.21
 ## 2         3593  EVA  0.00000000      20.63    23.21
@@ -488,56 +492,56 @@ This suggests that the section between the first and second split may be quite t
 ## 5         3593  KAT  0.03875969      20.63    23.21
 ## 6         3593  GRE -0.11627907      20.63    23.21</code></pre>
 <p>We can now view the rebased pace over the splits:</p>
-<div class="sourceCode" id="cb375"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb375-1"><a href="visualising-pace-across-splits.html#cb375-1" aria-hidden="true" tabindex="-1"></a>section_pace_long_rebased <span class="sc">%&gt;%</span></span>
-<span id="cb375-2"><a href="visualising-pace-across-splits.html#cb375-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pace_map</span>( <span class="at">xstart=</span><span class="st">&#39;start_dist&#39;</span>,</span>
-<span id="cb375-3"><a href="visualising-pace-across-splits.html#cb375-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">drivers=</span><span class="fu">c</span>(<span class="st">&#39;KAT&#39;</span>,<span class="st">&#39;ROV&#39;</span>),</span>
-<span id="cb375-4"><a href="visualising-pace-across-splits.html#cb375-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">xend=</span><span class="st">&#39;distance&#39;</span>, <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>, <span class="at">lines=</span><span class="cn">FALSE</span>, <span class="at">label_dodge=</span><span class="dv">2</span>)</span></code></pre></div>
-<p><img src="images/split-times-example_pace_splits-1.png" width="672" /></p>
+<div class="sourceCode" id="cb387"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb387-1"><a href="visualising-pace-across-splits.html#cb387-1" aria-hidden="true" tabindex="-1"></a>section_pace_long_rebased <span class="sc">%&gt;%</span></span>
+<span id="cb387-2"><a href="visualising-pace-across-splits.html#cb387-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pace_map</span>( <span class="at">xstart=</span><span class="st">&#39;start_dist&#39;</span>,</span>
+<span id="cb387-3"><a href="visualising-pace-across-splits.html#cb387-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">drivers=</span><span class="fu">c</span>(<span class="st">&#39;KAT&#39;</span>,<span class="st">&#39;ROV&#39;</span>),</span>
+<span id="cb387-4"><a href="visualising-pace-across-splits.html#cb387-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">xend=</span><span class="st">&#39;distance&#39;</span>, <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>, <span class="at">lines=</span><span class="cn">FALSE</span>, <span class="at">label_dodge=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="images/finding-splits-pace-example_pace_splits-1.png" width="672" /></p>
 </div>
 <div id="off-the-pace-splits-pace-mapping" class="section level3" number="8.3.3">
 <h3><span class="header-section-number">8.3.3</span> Off-the-Pace Splits Pace Mapping</h3>
 <p>To review the off-the-pace performance over the splits on a stage, we can use the off-the-pace chart function applied to rebased elapsed times data..</p>
 <p>Let’s get some rebased data using the accumulated stage time at each split, hackfix flipping the basis of the rebase for now until such a time as the off-the-pace chart is better behaved:</p>
-<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="visualising-pace-across-splits.html#cb376-1" aria-hidden="true" tabindex="-1"></a>wide_splits_rebased <span class="ot">=</span> splits_wide <span class="sc">%&gt;%</span></span>
-<span id="cb376-2"><a href="visualising-pace-across-splits.html#cb376-2" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb376-3"><a href="visualising-pace-across-splits.html#cb376-3" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rebase</span>(example_driver,</span>
-<span id="cb376-4"><a href="visualising-pace-across-splits.html#cb376-4" aria-hidden="true" tabindex="-1"></a>                               splits_locations<span class="sc">$</span>splitname,</span>
-<span id="cb376-5"><a href="visualising-pace-across-splits.html#cb376-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>, <span class="at">flip=</span><span class="cn">TRUE</span>)</span>
-<span id="cb376-6"><a href="visualising-pace-across-splits.html#cb376-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb376-7"><a href="visualising-pace-across-splits.html#cb376-7" aria-hidden="true" tabindex="-1"></a>wide_splits_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="visualising-pace-across-splits.html#cb388-1" aria-hidden="true" tabindex="-1"></a>wide_splits_rebased <span class="ot">=</span> splits_wide <span class="sc">%&gt;%</span></span>
+<span id="cb388-2"><a href="visualising-pace-across-splits.html#cb388-2" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb388-3"><a href="visualising-pace-across-splits.html#cb388-3" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rebase</span>(example_driver,</span>
+<span id="cb388-4"><a href="visualising-pace-across-splits.html#cb388-4" aria-hidden="true" tabindex="-1"></a>                               splits_locations<span class="sc">$</span>splitname,</span>
+<span id="cb388-5"><a href="visualising-pace-across-splits.html#cb388-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">id_col=</span><span class="st">&#39;code&#39;</span>, <span class="at">flip=</span><span class="cn">TRUE</span>)</span>
+<span id="cb388-6"><a href="visualising-pace-across-splits.html#cb388-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb388-7"><a href="visualising-pace-across-splits.html#cb388-7" aria-hidden="true" tabindex="-1"></a>wide_splits_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   code split_1 split_2 split_3 split_4 split_5
 ## 1  OGI     0.6     1.4     1.0     1.7     3.2
 ## 2  EVA     0.0     0.0     0.0     0.0     0.0
 ## 3  NEU     3.2     5.1     6.5     9.4     9.7</code></pre>
 <p>We can convert this to long form and add in distance information:</p>
-<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="visualising-pace-across-splits.html#cb378-1" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="ot">=</span> wide_splits_rebased <span class="sc">%&gt;%</span></span>
-<span id="cb378-2"><a href="visualising-pace-across-splits.html#cb378-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(splits_locations<span class="sc">$</span>splitname,</span>
-<span id="cb378-3"><a href="visualising-pace-across-splits.html#cb378-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">names_to =</span> <span class="st">&quot;splitname&quot;</span>,</span>
-<span id="cb378-4"><a href="visualising-pace-across-splits.html#cb378-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">values_to =</span> <span class="st">&quot;sectionDurationS&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb378-5"><a href="visualising-pace-across-splits.html#cb378-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">merge</span>(splits_locations[,<span class="fu">c</span>(<span class="st">&#39;splitname&#39;</span>,<span class="st">&#39;distance&#39;</span>)],</span>
-<span id="cb378-6"><a href="visualising-pace-across-splits.html#cb378-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">by=</span><span class="st">&#39;splitname&#39;</span>)</span>
-<span id="cb378-7"><a href="visualising-pace-across-splits.html#cb378-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb378-8"><a href="visualising-pace-across-splits.html#cb378-8" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb390"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb390-1"><a href="visualising-pace-across-splits.html#cb390-1" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="ot">=</span> wide_splits_rebased <span class="sc">%&gt;%</span></span>
+<span id="cb390-2"><a href="visualising-pace-across-splits.html#cb390-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(splits_locations<span class="sc">$</span>splitname,</span>
+<span id="cb390-3"><a href="visualising-pace-across-splits.html#cb390-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">names_to =</span> <span class="st">&quot;splitname&quot;</span>,</span>
+<span id="cb390-4"><a href="visualising-pace-across-splits.html#cb390-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">values_to =</span> <span class="st">&quot;sectionDurationS&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb390-5"><a href="visualising-pace-across-splits.html#cb390-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">merge</span>(splits_locations[,<span class="fu">c</span>(<span class="st">&#39;splitname&#39;</span>,<span class="st">&#39;distance&#39;</span>)],</span>
+<span id="cb390-6"><a href="visualising-pace-across-splits.html#cb390-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">by=</span><span class="st">&#39;splitname&#39;</span>)</span>
+<span id="cb390-7"><a href="visualising-pace-across-splits.html#cb390-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb390-8"><a href="visualising-pace-across-splits.html#cb390-8" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##   splitname code sectionDurationS distance
 ## 1   split_1  OGI              0.6     4.83
 ## 2   split_1  BRE              3.9     4.83
 ## 3   split_1  ROV              2.7     4.83</code></pre>
 <p>At the start of the chart, it’s convenient to add some zeroed values, so let’s create a dataframe to help us add those data points:</p>
-<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="visualising-pace-across-splits.html#cb380-1" aria-hidden="true" tabindex="-1"></a>zero_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">code=</span><span class="fu">unique</span>(long_splits_rebased<span class="sc">$</span>code))</span>
-<span id="cb380-2"><a href="visualising-pace-across-splits.html#cb380-2" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>distance <span class="ot">=</span> <span class="dv">0</span></span>
-<span id="cb380-3"><a href="visualising-pace-across-splits.html#cb380-3" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>sectionDurationS<span class="ot">=</span><span class="dv">0</span></span>
-<span id="cb380-4"><a href="visualising-pace-across-splits.html#cb380-4" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>splitname <span class="ot">=</span> <span class="st">&#39;split_0&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="visualising-pace-across-splits.html#cb392-1" aria-hidden="true" tabindex="-1"></a>zero_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">code=</span><span class="fu">unique</span>(long_splits_rebased<span class="sc">$</span>code))</span>
+<span id="cb392-2"><a href="visualising-pace-across-splits.html#cb392-2" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>distance <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb392-3"><a href="visualising-pace-across-splits.html#cb392-3" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>sectionDurationS<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb392-4"><a href="visualising-pace-across-splits.html#cb392-4" aria-hidden="true" tabindex="-1"></a>zero_df<span class="sc">$</span>splitname <span class="ot">=</span> <span class="st">&#39;split_0&#39;</span></span></code></pre></div>
 <p>And add them in:</p>
-<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="visualising-pace-across-splits.html#cb381-1" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="ot">=</span> <span class="fu">bind_rows</span>(long_splits_rebased, zero_df)</span></code></pre></div>
+<div class="sourceCode" id="cb393"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb393-1"><a href="visualising-pace-across-splits.html#cb393-1" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="ot">=</span> <span class="fu">bind_rows</span>(long_splits_rebased, zero_df)</span></code></pre></div>
 <p>The off-the-pace chart is intended to show how much time is lost over the course of a stage, the gradient of the slope in each section being an indicator of the pace differential within that section (i.e. between two consecutive split points).</p>
 <p>The off-the-pace chart is most easily generated from a long dataframe containing the accumulated stage time rather than the sectional times.</p>
 <p>For example, we can cast the wide form data to a long form and co-opt the pace chart to render the times for us:</p>
-<div class="sourceCode" id="cb382"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb382-1"><a href="visualising-pace-across-splits.html#cb382-1" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="sc">%&gt;%</span></span>
-<span id="cb382-2"><a href="visualising-pace-across-splits.html#cb382-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">off_the_pace_chart</span>(<span class="at">dist=</span><span class="st">&#39;distance&#39;</span>,</span>
-<span id="cb382-3"><a href="visualising-pace-across-splits.html#cb382-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">t=</span><span class="st">&#39;sectionDurationS&#39;</span>,</span>
-<span id="cb382-4"><a href="visualising-pace-across-splits.html#cb382-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">label_typ=</span><span class="st">&#39;ggrepel&#39;</span>,</span>
-<span id="cb382-5"><a href="visualising-pace-across-splits.html#cb382-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">code=</span><span class="st">&#39;code&#39;</span>)</span></code></pre></div>
-<p><img src="images/split-times-rebased_splits_pace-1.png" width="672" /></p>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb394-1"><a href="visualising-pace-across-splits.html#cb394-1" aria-hidden="true" tabindex="-1"></a>long_splits_rebased <span class="sc">%&gt;%</span></span>
+<span id="cb394-2"><a href="visualising-pace-across-splits.html#cb394-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">off_the_pace_chart</span>(<span class="at">dist=</span><span class="st">&#39;distance&#39;</span>,</span>
+<span id="cb394-3"><a href="visualising-pace-across-splits.html#cb394-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">t=</span><span class="st">&#39;sectionDurationS&#39;</span>,</span>
+<span id="cb394-4"><a href="visualising-pace-across-splits.html#cb394-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">label_typ=</span><span class="st">&#39;ggrepel&#39;</span>,</span>
+<span id="cb394-5"><a href="visualising-pace-across-splits.html#cb394-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">code=</span><span class="st">&#39;code&#39;</span>)</span></code></pre></div>
+<p><img src="images/finding-splits-pace-rebased_splits_pace-1.png" width="672" /></p>
 
 </div>
 </div>

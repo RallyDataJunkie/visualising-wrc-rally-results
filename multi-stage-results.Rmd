@@ -616,13 +616,13 @@ overall_wide_gap_rebased
 And now generate the sparklines:
 
 ```{r}
-overall_long_gap_rebased <- overall_wide_gap_rebased %>%
+overall_spark_gap_rebased <- overall_wide_gap_rebased %>%
                             gather(key ="Stage",
                             value ="Gap", stage_codes) %>%
                             group_by(code) %>%
                             summarize(spk_ = spk_chr(Gap, type ="bar"))
 
-spark_df(overall_long_gap_rebased)
+spark_df(overall_spark_gap_rebased)
 ```
 
 ## Retrieving Stage Times and Results

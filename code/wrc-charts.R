@@ -104,3 +104,15 @@ off_the_pace_chart = function(pace_long, highlight=NULL,
   
   g_otp + theme(legend.position="none")
 }
+
+## ---- spark_df --------
+spark_df = function(df){
+  # We need to create an htmlwidget form of the table
+  out = as.htmlwidget(formattable(df))
+  
+  # The table also has a requirement on the sparkline package
+  out$dependencies = c(out$dependencies,
+                       htmlwidgets:::widget_dependencies("sparkline",
+                                                         "sparkline"))
+  out
+}
