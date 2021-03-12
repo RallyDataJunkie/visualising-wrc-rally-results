@@ -368,7 +368,8 @@ get_multi_split_times = function(stage_list){
 
 ## ---- rebase --------
 rebase = function(df, id, rebase_cols,
-                  id_col='entryId', base=FALSE,  base_id=FALSE) {
+                  id_col='entryId', base=FALSE,
+                  base_id=FALSE, flip=FALSE) {
   
   df_ =  df
   
@@ -381,6 +382,9 @@ rebase = function(df, id, rebase_cols,
   # Do the rebasing
   df_[,rebase_cols] =  df[,rebase_cols] - rebase_vals
   
+  if (flip)
+    df_[,rebase_cols] =  -df_[,rebase_cols]
+
   df_[[id_col]] = df[[id_col]]
   
   # Return just the rebased and identifier columns or the

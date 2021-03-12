@@ -613,10 +613,10 @@ This includes handy information about split locations, such as distance into sta
 splits$splitPoints
 ```
 
-We can also view the split point times for each driver:
+We can also view the split point times for each driver. This second dataframe contains rows summarising the stage for each driver, and includes the stage start time and duration as well as a column *splitPointTimes* that itself contains a data frame of elapsed duration split point times:
 
 ```{r}
-splits$entrySplitPointTimes %>% head(2)
+splits$entrySplitPointTimes %>% select(-splitPointTimes) %>% head(2)
 ```
 
 To view the split times for a specific driver, we can index into the dataframe using the driver `entryId` value:
@@ -625,9 +625,13 @@ To view the split times for a specific driver, we can index into the dataframe u
 splits$entrySplitPointTimes[splits$entrySplitPointTimes['entryId']==ogierEntryId,]$splitPointTimes
 ```
 
+Each dataframe gives the split times on the stage for a particular driver in a long format.
+
+Note that the split point times are strictly increasing and describe the elapsed time into the stage at each split point from the start location and time.
+
 ### Driver Split Times Detail
 
-We can get a flatter structure over all drivers, converting the elapsed duration in milliseconds to seconds along the way:
+We can get an unrolled long structure by combining the *splitPointTimes*  dataframes from all drivers, also taking the opportunity to convert the elapsed duration in milliseconds to seconds along the way:
 
 ```{r}
 #driver_splits = do.call(rbind, entry_splits$splitPointTimes)

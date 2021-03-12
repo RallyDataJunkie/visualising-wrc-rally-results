@@ -14,10 +14,10 @@ pace_map_highlight = function(sub_df, m, n){
 }
 
 ## ---- pace_map_highlight_many --------
-pace_map_highlight_many = function(df, g, codes, idcol='code_driver'){
+pace_map_highlight_many = function(df, g, codes, id_col='code_driver'){
   n = length(codes)
   for (m in 1:n){
-    sub_df = df[df[idcol]==codes[m],]
+    sub_df = df[df[id_col]==codes[m],]
     g = g + pace_map_highlight(sub_df, m, n)
   }
   
@@ -31,7 +31,7 @@ pace_map = function(pace_long, limits=NULL,
                     xstart='start_dist', xend='cum_dist',
                     pace='pace', typ='bar', pace_label_offset=0.03,
                     label_dodge = 15,
-                    idcol='code_driver'){
+                    id_col='code_driver'){
   
   # There are downstream dependiencies with colnmaes baked in atm...
   pace_long$start_dist = pace_long[[xstart]]
@@ -39,7 +39,7 @@ pace_map = function(pace_long, limits=NULL,
   pace_long$pace = pace_long[[pace]]
   
   
-  g0 = ggplot(pace_long, aes_string(group=idcol, label=idcol)) +
+  g0 = ggplot(pace_long, aes_string(group=id_col, label=id_col)) +
     geom_hline(yintercept = 0,
                colour='lightgrey', linetype='dotted') +
     geom_segment(aes(x=start_dist, xend=cum_dist,
@@ -60,10 +60,10 @@ pace_map = function(pace_long, limits=NULL,
   if (!is.null(drivers) ){
     if (typ=='bar'){
       g0 = pace_map_highlight_many(pace_long, g0,
-                                   c(drivers), idcol=idcol)
+                                   c(drivers), id_col=id_col)
     } else if (typ=='highlight')
     {
-      focus = pace_long[pace_long[idcol] %in% c(drivers),]
+      focus = pace_long[pace_long[id_col] %in% c(drivers),]
       g0 = g0 + geom_segment(data=focus,
                              aes(x=start_dist, xend=cum_dist,
                                  y=pace, yend=pace, color = pace>0))

@@ -65,6 +65,7 @@ calculating-stage-pace
 calculating-pace-for-a-single-stage
 calculating-pace-for-multiple-stages
 rebasing-stage-pace
+the-ultimate-rally
 visualising-stage-pace
 load-base-data-3
 pace-maps
@@ -83,12 +84,18 @@ visualising-rebased-split-times-using-sparklines
 finding-the-rank-position-at-each-split-point
 finding-split-section-durations
 finding-split-section-ranks
+using-sparklines-to-visdualise-split-time-differences
 adding-overall-stage-time-to-the-split-times
-calculating-ultimate-stage-times
+calculating-the-ultimate-stage-from-ultimate-split-times
+rebasing-to-ultimate-split-times
+per-split-ultimate-rebasing
+ultimate-stage-rebasing
+actual-best-elapsed-time-rebasing
 visualising-pace-across-splits
 load-base-data-5
 obtaining-split-distances
 calculating-splits-pace
 visualising-the-splits-pace
+pace-over-each-section
 splits-sections-pace-maps
 off-the-pace-splits-pace-mapping

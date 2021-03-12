@@ -52,7 +52,7 @@ get_splits_wide = function(splits){
 
 ## ---- get_split_duration --------
 get_split_duration = function(df, split_cols,
-                              retId=TRUE, idcol='entryId') {
+                              retId=TRUE, id_col='entryId') {
   
   # [-1] drops the first column, [-ncol()] drops the last
   df_ = df[,split_cols][-1] - df[,split_cols][-ncol(df[,split_cols])]
@@ -62,10 +62,10 @@ get_split_duration = function(df, split_cols,
   
   if (retId) {
     # Add in the entryId column
-    df_[[idcol]] = df[[idcol]]
+    df_[[id_col]] = df[[id_col]]
     
     # Return the dataframe in a sensible column order
-    df_ %>% select(all_of(c(idcol, split_cols)))
+    df_ %>% select(all_of(c(id_col, all_of(split_cols))))
   } else {
     df_
   }
@@ -93,6 +93,17 @@ map_driver_names = function(df, cars){
     select('code', everything())
 }
 
+## ---- map_split_codes --------
+map_split_codes = function(df, splits_list) {
+  # Get stage codes lookup id->code
+  splits_lookup_code = get_stages_lookup(splits_locations,
+                                         'splitPointId', 'splitname')
+  
+  #https://stackoverflow.com/a/34299333/454773
+  plyr::rename(df, replace = splits_lookup_code,
+               warn_missing = FALSE)
+}
+
 ## ---- relabel_times_df --------
 relabel_times_df = function(df, stage_list, cars) {
   df %>%  
@@ -100,8 +111,22 @@ relabel_times_df = function(df, stage_list, cars) {
     map_driver_names(cars)
 }
 
+## ---- relabel_times_df2 --------
+relabel_times_df2 = function(df, s_list, cars, typ='stage') {
+  if (typ=='split')
+    df = df %>% map_split_codes(s_list)
+  else
+    df = df %>% map_stage_codes(s_list)
+  
+  df %>%
+    map_driver_names(cars)
+}
+
 ## ---- get_split_locations --------
 get_split_locations = function(splits){
   splits_locations = splits$splitPoints
-  splits_locations %>% arrange(number)
+  splits_locations$splitname = sapply(splits_locations$splitPointId,
+                                      get_split_label)
+  splits_locations %>%
+    arrange(number)
 }

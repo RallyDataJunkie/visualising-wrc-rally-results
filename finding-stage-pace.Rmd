@@ -205,3 +205,9 @@ $$
 {_S}p_i^j = {_S}p_i - {_S}p_j = \frac{{_S}t_i - {_S}t_j}{d_S} = \frac{{_S}t_i^j}{d_S}
 $$
 
+## The Ultimate Rally
+
+Finally, in passing, it is worth noting that we can calculate an "ultimate rally" time from the sum of th fastest stage times completed on the rally, by any driver. This gives us the fastest possible rally time from recorded stage times against which we can compare the performance of the rally winner. (Of course, it might be that a particularly fast time on one stage by a particular driver ruined the rest of their loop!)
+
+Furthermore, when split times are available, we can go even further and construct and ultimate ultimate (*sic*) rally time from ultimate stage times that have themselves been constructed from ultimate split times on the stage.
+

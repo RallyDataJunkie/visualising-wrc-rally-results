@@ -8,9 +8,9 @@ knitr::read_chunk('code/wrc-wrangling.R')
 ```
 # Working With Split Times
 
-In this chapter we'll explore some of the ways in which we might start to wotk with split times data from a particular stage. On the one hand, we can consider split times purely on a time basis; on the other, we can explore the split times in terms of *pace* differences calculated by normalising the split times over split distances.
+In this chapter we'll explore some of the ways in which we might start to work with split times data from a particular stage. On the one hand, we can consider split times purely on a time basis; on the other, we can explore the split times in terms of *pace* differences calculated by normalising the split times over split distances.
 
-As with stage times, we can rebase split times to compare a specified driver directly with other drivers, not just the stage winner. We can also calculate how much time was spent on each split sectionby finding the difference between consecutive split times for a particular driver.
+As with stage times, we can rebase split times to compare a specified driver directly with other drivers, not just the stage winner. We can also calculate how much time was spent on each split section by finding the difference between consecutive split times for a particular driver.
 
 From the split section times, we can also calculate various derived measures, such as the ultimate possible stage time, based on the sum of fastest times to complete each split section.
 
@@ -67,16 +67,17 @@ The splits data actually comprises two dataframes in columns `splitPoints` and `
 The `splitPoints` dataframe contains information about the splits locations:
 
 ```{r}
-get_split_locations = function(splits){
-  splits_locations = splits$splitPoints
-  splits_locations %>% arrange(number)
-}
-
-splits_locations = get_split_locations(splits)
-splits_list = splits_locations$splitPointId
-
-splits_locations %>% head(2)
+splits_locations = splits$splitPoints
+splits_locations %>% arrange(number) %>% head(2)
 ```
+
+We can also generate a list of the split IDs:
+
+```{r}
+splits_list = splits_locations$splitPointId
+splits_list
+```
+
 We can retrieve the split codes ordered by the distance into the stage of each split point from a lookup on the split points:
 
 ```{r}
@@ -118,6 +119,30 @@ We can generate a lookup list of split point names and IDs as:
 get_stages_lookup(splits_locations, 'splitPointId', 'splitname')
 ```
 
+We can use this in a function that provides an annotated *and ordered* form of the split locations dataframe: 
+
+```{r}
+get_split_locations = function(splits){
+  splits_locations = splits$splitPoints
+  splits_locations$splitname = sapply(splits_locations$splitPointId,
+                                      get_split_label)
+  splits_locations %>%
+    arrange(number)
+}
+
+splits_locations = get_split_locations(splits)
+splits_locations
+```
+
+Create a convenience list of splits names:
+
+```{r}
+# We could create these as ordered factors?
+split_names = splits_locations$splitname
+
+split_names
+```
+
 ### Split Times
 
 The second dataframe returned from the splits API call contains the splits times, accessed via the `get_driver_splits()` function defined previously and imported from the *wrc-api.R* file. The data is returned in a long format, with each row describing a single split time for a particular driver on the single stage the split times were retrieved for.
@@ -145,7 +170,7 @@ splits_wide = get_splits_wide(splits)
 splits_wide %>% head(2)
 ```
 
-The following function, which closely resembles a simpilar function function for relabeling stage codes, allows us to rename the splt points with more meaningful splits names:
+The following function, which closely resembles a similar function function for relabeling stage codes, allows us to rename the split points with more meaningful splits names:
 
 ```{r}
 map_split_codes = function(df, splits_list) {
@@ -162,9 +187,26 @@ map_split_codes = function(df, splits_list) {
 For example:
 
 ```{r}
-splits_wide %>% map_split_codes(splits_list) %>% 
-                map_driver_names(cars) %>% head()
+splits_wide = get_splits_wide(splits) %>%
+                map_split_codes(splits_list) %>% 
+                map_driver_names(cars)
+
+splits_wide %>% head()
 ```
+We can also update our helper function to relabel stages with a more general function:
+
+```{r}
+relabel_times_df2 = function(df, s_list, cars, typ='stage') {
+  if (typ=='split')
+    df = df %>% map_split_codes(s_list)
+  else
+    df = df %>% map_stage_codes(s_list)
+  
+  df %>%
+    map_driver_names(cars)
+}
+```
+
 
 ## Rebasing Split Times
 
@@ -179,12 +221,14 @@ although we may want to negate that value depending on the sense of whether we w
 .
 To calculate the rebased times, we note that the wide dataframe format gives rows containing the split times for each driver, which is to say ${_{S,*}}t_i$.
 
-To calculate the rebased times, we can simply subtract the row corresponding to the driver we want to rebase relative to, from the other driver rows:
+To calculate the rebased times, we can simply subtract the row corresponding to the driver we want to rebase relative to, from the other driver rows.
+
+Recall the heart of the rebase function we have previously defined:
 
 ```{r}
 #https://stackoverflow.com/a/32267785/454773
-rebase = function(df, id, rebase_cols,
-                  id_col='entryId', base=FALSE,  base_id=FALSE) {
+rebase_essence = function(df, id, rebase_cols,
+                          id_col='entryId') {
   
   df_ =  df
   
@@ -195,26 +239,17 @@ rebase = function(df, id, rebase_cols,
   # Do the rebasing
   df_[,rebase_cols] =  df[,rebase_cols] - rebase_vals
     
-  df_[[id_col]] = df[[id_col]]
-  
-  # Return just the rebased and identifier columns or the
-  # whole dataframe
-  cols = rebase_cols
-  if (base_id)
-    cols = c(id_col, cols)
-  if (base)
-    df_ %>% select(cols)
-  else
-    df_
+  df_
 }
 ```
 
-Let's try it with an example driver:
+Let's try the original function with an example driver:
 
 ```{r}
-ogierEntryId = get_person_id(cars, 'ogier', ret='entryId')
+ogierEntryId = get_person_id(cars, 'ogier', ret='code')
 
-ogier_rebased = rebase(splits_wide, ogierEntryId, split_cols)
+ogier_rebased = rebase(splits_wide, ogierEntryId,
+                       split_names, id_col='code')
 
 ogier_rebased %>% head(10)
 ```
@@ -229,7 +264,7 @@ library(tidyr)
 ogier_rebased_long <- ogier_rebased %>%
                         gather(key ="Split",
                                value ="TimeInS",
-                               all_of(split_cols))
+                               all_of(split_names))
 
 ogier_rebased_long %>% head(10)
 ```
@@ -241,7 +276,7 @@ library(formattable)
 library(sparkline)
 
 ogier_sparkline <- ogier_rebased_long %>%
-                      group_by(entryId) %>%
+                      group_by(code) %>%
                       summarize(spk_ = spk_chr(TimeInS, type ="bar"))
 
 # We need to create an htmlwidget form of the table
@@ -260,10 +295,14 @@ It can often be tricky to work out the rank at each split by eye, so let's creat
 
 ```{r}
 get_split_rank = function(df, split_cols){
+  # We need to drop any list names
+  split_names = as.character(split_names)
+  
   df %>% mutate(across( split_cols, dense_rank ))
 }
 
-get_split_rank(splits_wide, split_cols) %>% head(5)
+
+get_split_rank(splits_wide, split_names) %>% head(5)
 ```
 
 ## Finding Split Section Durations
@@ -303,7 +342,10 @@ Let's see how that works in practice:
 #https://stackoverflow.com/a/50411529/454773
 
 get_split_duration = function(df, split_cols,
-                              retId=TRUE, idcol='entryId') {
+                              retId=TRUE, id_col='entryId') {
+  
+  # Drop names if they are set
+  split_cols = as.character(split_cols)
   
   # [-1] drops the first column, [-ncol()] drops the last
   df_ = df[,split_cols][-1] - df[,split_cols][-ncol(df[,split_cols])]
@@ -313,17 +355,22 @@ get_split_duration = function(df, split_cols,
   
   if (retId) {
     # Add in the entryId column
-    df_[[idcol]] = df[[idcol]]
+    df_[[id_col]] = df[[id_col]]
   
     # Return the dataframe in a sensible column order
-    df_ %>% select(c(idcol, split_cols))
+    df_ %>% select(c(id_col, all_of(split_cols)))
   } else {
     df_
   }
   
 }
+```
 
-split_durations_wide = get_split_duration(splits_wide, split_cols)
+Let's see how that works:
+
+```{r}
+split_durations_wide = get_split_duration(splits_wide,
+                                          split_names, id_col='code')
 
 split_durations_wide %>% head(5)
 ```
@@ -333,8 +380,12 @@ split_durations_wide %>% head(5)
 To find the rank in terms of which driver completed each stage *section* in the quickest time, we can simply pass the `split_durations_wide` dataframe rather than the `split_durations` dataframe to the `get_split_rank()` function:
 
 ```{r}
-get_split_rank(split_durations_wide, split_cols) %>% head(5)
+get_split_rank(split_durations_wide, split_names) %>% head(5)
 ```
+
+## Using Sparklines to Visdualise Split Time Differences
+
+TO DO
 
 ## Adding Overall Stage Time to the Split Times
 
@@ -348,34 +399,213 @@ stage_times %>% head(2)
 
 *Recall that if required we can also retrieve stage time for multiple stages using the `get_multi_stage_times(stagelist)` function. The `get_stage_list(stages)` function will return a list of all stage IDs.*
 
-If we merge each driver's stage times as an extra, final column to the wide split times dataframe, we can calculate the split section durations over the whole stage, including the time taken to get from the final split to the stage end:
+If we merge each driver's stage times as an extra, final column to the wide split times dataframe, we can calculate the split section durations over the whole stage, including the time taken to get from the final split to the stage end.
+
+Recalling that driver codes may not be unique, we should use the unique *entryId* values to create the extended dataframe:
 
 ```{r}
-widen_splits_stage_times = function(splits_wide, stage_times){
+widen_splits_stage_times = function(splits_wide, stage_times,
+                                    id_col='entryId'){
   
-  results_cols = c('elapsedDurationMs', 'entryId',  'diffFirstMs', 'position')
+  results_cols = c('elapsedDurationMs', id_col,  'diffFirstMs', 'position')
 
   splits_wide = splits_wide %>%
                     merge(stage_times[,results_cols],
                           by = 'entryId') %>%
-                    mutate(elapsedDurationMs = elapsedDurationMs/1000) %>%
-                    rename(elapsedDurationS = elapsedDurationMs)
+                    mutate(split_N = elapsedDurationMs/1000)
 
   splits_wide
 }
 
-splits_wide = widen_splits_stage_times(splits_wide, stage_times)
+full_splits_wide = get_splits_wide(splits) %>%
+                      widen_splits_stage_times(stage_times) %>%
+                      map_split_codes(splits_list) %>% 
+                      map_driver_names(cars)
 
-splits_wide %>% head(2)
+full_splits_wide %>% head(2)
 ```
 
 To make further processing easier, we add the overall stage time to the list of split time column names. The "final split" is now the completed stage time:
 
 ```{r}
-split_cols =  get_split_cols(splits)
-split_cols = c(split_cols, 'elapsedDurationS')
+split_names = c(split_names, 'split_N')
+split_names
 ```
 
-## Calculating Ultimate Stage Times
+## Calculating the Ultimate Stage from Ultimate Split Times
 
-TO DO
+The ultimate stage time for a stage is the sum of the fastest sectional split times on the stage as recorded by any driver. Rebasing the stage winner's time against the ultimate stage time shows whether the driver potentially left time on the stage. (Of course, it might be that a very fast sectional time recorded by one driver may have wiped out their tyres and led to a relatively poor overall stage time, or risk taking that ended their stage prematurely...)
+
+So how can we calculate the ultimate splits? For split section times ${_{S,s}}t_{i}$, the ultimate section time ${_{S,s}}u$ is given as:
+
+$$
+{_{S,s}}u = \forall i: min({_{S,s}}t_i)
+$$
+
+We can calculate the times by case the wide split section duration dataframe to a long form, grouping by the *splitPointId* and then summarising the minimum time in each group.
+
+Here's how we can create the long form dataset:
+
+```{r}
+full_splits_wide %>%
+      #gather() is deprecated / retired...
+      #gather(splitPointId, sectionDurationS,
+      #                 as.character(split_names))
+      select(all_of(as.character(split_names)), code) %>%
+      pivot_longer(as.character(split_names),
+                   names_to = "splitname",
+                   values_to = "sectionDurationS") %>%
+      head(3)
+```
+
+We can also get the duration of each section:
+
+```{r}
+full_durations_wide = get_split_duration(full_splits_wide,
+                                          split_names, id_col='code')
+full_durations_wide
+```
+
+To rebase on on an ultimate time basis, it helps to think of an ultimate driver whom we define as having a time equivalent to the fastest split duration time between two split points.
+
+If we group by *splitPointId*, we can summarise on *sectionDurationS* to find the minimum duration at each split; we can also take the opportunity to add an accumulated stage time column at each split point as well:
+
+```{r}
+ultimate_splits_long = full_durations_wide %>%
+                     pivot_longer(split_names,
+                                  names_to = "splitname",
+                                  values_to = "sectionDurationS") %>%
+                     select(c(splitname, sectionDurationS)) %>%
+                     # Defensive measure
+                     filter(!is.na(sectionDurationS) & sectionDurationS>0) %>%
+                     group_by(splitname) %>% 
+                     summarise(ultimate = min(sectionDurationS,
+                                              na.rm = TRUE)) %>%
+                     mutate(ultimateElapsed = cumsum(ultimate))
+
+ultimate_splits_long
+```
+
+Rebasing arbitrary drivers against the ultimate stage (and the distribution of times recorded by other drivers) may give an idea of which drivers were pushing on what parts of a stage and where they were being more cautious.
+
+Note that ultimate split times can be used to create an ultimate stage time time that can itself contribute to the ultimate ultimate rally time (*sic*).
+
+### Rebasing to Ultimate Split Times
+
+We can rebase to the ultimate split times in three senses:
+
+- on an ideal, ultimate *per split* basis;
+- on an ideal elapsed time basis (the cumulative sum of ideal ultimate split durations);
+- on an actual best elapsed (stage) time basis at each split, rebasing relative to the minimum actual recorded elapsed time at each split.
+
+#### Per Split Ultimate Rebasing
+
+To rebase on a per split basis, we can simply rebase durations relative to the minimum split duration at each split.
+
+Let's reshape the ultimate driver durations to a wide format:
+
+```{r}
+ultimate_wide_durations = ultimate_splits_long %>% 
+                  select(splitname, ultimate) %>%
+                  pivot_wider(names_from = splitname,
+                              values_from = ultimate) %>%
+                  mutate(code='ultimate')
+
+ultimate_wide_durations
+```
+We can now add the ultimate driver split durations to the *full_durations_wide* data and rebase against this dummy driver:
+
+```{r}
+full_durations_wide %>%
+  select(code, all_of(split_names)) %>% 
+  bind_rows(ultimate_wide_durations) %>%
+  rebase('ultimate', ultimate_splits$splitname, id_col='code')
+```
+
+In this case we note there is at least one driver in each column with a zero gap to the ultimate driver, specifically, the driver(s) who made it between two consecutive split points in the fastest time, and no driver with a negative gap.
+
+#### Ultimate Stage Rebasing
+
+We can add an "ultimate" driver to the wide splits dataframe and then rebase as normal. The following function routinises the widening recipe we used above:
+
+```{r}
+ultimate_widen = function(df, col, valname){
+  df %>% select(splitname, all_of(col)) %>%
+              pivot_wider(names_from = splitname,
+                          values_from = col) %>%
+              mutate(code=valname)
+}
+```
+
+We can get the wide form as:
+
+```{r}
+ultimate_wide_elapsed = ultimate_widen(ultimate_splits_long,
+                                       'ultimateElapsed', 'ultimate')
+
+ultimate_wide_elapsed
+```
+
+We can now add that to our original dataframe and rebase against the ultimate stage to show how far off the ultimate stage pace each driver was.
+
+Again, let's make a routine of the process...
+
+```{r}
+ultimate_rebaser = function(df, ultimate_df, split_names,
+                            ultimate_col ){
+  df %>%
+    select(code, all_of(split_names)) %>% 
+  bind_rows(ultimate_df) %>%
+  rebase(ultimate_col, split_names, id_col='code')
+}
+```
+
+```{r}
+full_splits_wide %>% 
+  ultimate_rebaser(ultimate_wide_elapsed, split_names, 'ultimate')
+```
+
+We note there there is only one guaranteed difference of 0.0, from the driver with the fastest time at the first split, and that no times will be less than zero.
+
+#### Actual Best Elapsed Time Rebasing
+
+The *full_splits_wide* dataframe contains the elapsed times for each driver at each split so we can summarise the long form of that data to get the best actual recorded elapsed times:
+
+```{r}
+actual_ultimate = full_splits_wide %>% 
+                      select(code, all_of(split_names)) %>% 
+                      # Make long
+                      select(all_of(as.character(split_names)),
+                             code) %>%
+                      pivot_longer(as.character(split_names),
+                                   names_to = "splitname",
+                                   values_to = "sectionDurationS") %>%
+                      group_by(splitname) %>%
+                      summarise(actualUltimate = min(sectionDurationS,
+                                                     na.rm=TRUE))
+
+actual_ultimate
+```
+
+```{r}
+ultimate_splits_long$actual = actual_ultimate$actualUltimate
+ultimate_splits_long
+```
+
+```{r}
+ultimate_wide_actual = ultimate_widen(ultimate_splits_long,
+                                      'actual',
+                                      'ultimate')
+
+ultimate_wide_actual
+```
+
+And then rebase:
+
+```{r}
+full_splits_wide %>% 
+  ultimate_rebaser(ultimate_wide_actual, split_names, 'ultimate')
+```
+
+In this case, there is at least one zero value per split corresponding to the drive(s) who recorded the fastest elapsed time up to each split point.
+

@@ -51,10 +51,12 @@ splits_list = splits_locations$splitPointId
 
 # Get wide format data
 splits_wide = get_splits_wide(splits) %>%
-                relabel_times_df(stage_list, cars)
+                relabel_times_df2(splits_list, cars, typ='split')
+
+splits_wide %>% head(2)
 ```
 
-Get long form splits data for one or more stages:
+Get long form splits data for one or more stages, in this case, just a single stage:
 
 ```{r}
 splits_long = get_multi_split_times(stageId)
@@ -85,7 +87,7 @@ names(split_distances) = splits_locations$splitPointId
 split_distances
 ```
 
-We recall that the split points do not include the final timing line (the finish), so a complete set of distances also means we neeed to access the overall stage distance and account for that:
+We recall that the split points do not include the final timing line (the finish), so a complete set of distances also means we need to access the overall stage distance and account for that:
 
 ```{r}
 stage_dist = stages[stages['stageId']==stageId,'distance']
@@ -112,7 +114,7 @@ We can obtain the split differences by finding differences between the columns o
 split_cols = get_split_cols(splits)
 
 split_durations_wide = get_split_duration(splits_wide, split_cols,
-                                          idcol='code')
+                                          id_col='code')
 
 split_durations_wide %>% head(3)
 ```
@@ -120,96 +122,137 @@ split_durations_wide %>% head(3)
 We can then find the pace by dividing the split section times through by the split distances:
 
 ```{r}
-split_pace_wide = split_durations_wide
+section_pace_wide = split_durations_wide
 
 for (s in splits_list) {
   s_ = as.character(s)
-  split_pace_wide[,s_] = split_pace_wide[,s_] / split_distances[s_]
+  section_pace_wide[,s_] = section_pace_wide[,s_] / split_distances[s_]
                             
 }
 
-split_pace_wide %>% head(2)
+section_pace_wide %>% head(2)
 ```
 
 ## Visualising the Splits Pace
 
-To visualise the pace over each of the split sections, we can use exactly the same techaniques that we used to visualise the stage pace, including pace maps and off-the-pace charts.
+To visualise the pace over each of the split sections, we can use exactly the same techniques that we used to visualise the stage pace, including pace maps and off-the-pace charts.
+
+There are several different ways in which we might try to visualise pace. First, we can visualise absolute or rebased pace. Second, we can visualise pace *within* sections, using the times taken to get one split point to the next, or across the stage as a whole using the accumulated stage time.
+
+### Pace Over Each Section
+
+One quick way of inspecting the pace over each section is to use a box plot: 
+```{r}
+section_pace_long = section_pace_wide %>% 
+                  head(10) %>%
+                gather(splitPointId, pace,
+                       as.character(splits_list)) %>%
+                merge(splits_locations[,c('splitPointId',
+                                          'start_dist', 'distance')],
+                          by='splitPointId')
+
+section_pace_long %>% head(3)
+```
+
+```{r pace-over-splits-box, warning=FALSE}
+ggplot(section_pace_long[section_pace_long$pace<40,],
+       aes(x=distance, y=pace)) +
+    geom_boxplot(aes(group=distance))
+```
+This suggests that the section between the first and second split may be quite technical, and the final sections much faster.
+
+*Comparing section times against route metrics as described in [__Visualising Rally Stages__](https://rallydatajunkie.com/visualising-rally-stages/) will be the focus of a future unbook. Comparing manufacturer performance against different section and stage route types might also be worth further investigation.*
 
 ### Splits Sections Pace Maps
 
 To generate the pace map, let's first rebase the split times with respect to a specified driver:
 
 ```{r}
-example_driver = split_pace_wide[2,]$code
+example_driver = section_pace_wide[2,]$code
 
-split_pace_wide_rebased = rebase(split_pace_wide, example_driver,
-                           splits_list,
-                           id_col='code')
+section_pace_wide_rebased = rebase(section_pace_wide, example_driver,
+                                   splits_list, id_col='code')
 
-split_pace_wide_rebased %>% head(3)
+section_pace_wide_rebased %>% head(3)
 ```
 
 To plot the pace map, we need to get the data into a long format:
 
 ```{r}
-split_pace_long_rebased = split_pace_wide_rebased %>% 
+section_pace_long_rebased = section_pace_wide_rebased %>% 
                   head(10) %>%
                 gather(splitPointId, pace,
                        as.character(splits_list)) %>%
                 merge(splits_locations[,c('splitPointId',
                                           'start_dist', 'distance')],
-                          by='splitPointId')
+                      by='splitPointId')
 
-split_pace_long_rebased %>% head()
+section_pace_long_rebased %>% head()
 ```
 
 We can now view the rebased pace over the splits:
 
 ```{r example_pace_splits, warning=FALSE}
-split_pace_long_rebased %>%
+section_pace_long_rebased %>%
     pace_map( xstart='start_dist',
          drivers=c('KAT','ROV'),
-         xend='distance', idcol='code', lines=FALSE, label_dodge=2)
-```
-
-We might also want to compare actual pace across the splits. One way of doing that is to co--pt the off-the-pace chart:
-
-```{r pace-over-splits, warning=FALSE}
-split_pace_long = split_pace_wide %>% 
-                  head(10) %>%
-                gather(splitPointId, pace,
-                       as.character(splits_list)) %>%
-                merge(splits_locations[,c('splitPointId',
-                                          'start_dist', 'distance')],
-                          by='splitPointId')
-
-
-split_pace_long %>% 
-    off_the_pace_chart(dist='distance', t='pace',
-                              code='code', ylim=NULL)
+         xend='distance', id_col='code', lines=FALSE, label_dodge=2)
 ```
 
 ### Off-the-Pace Splits Pace Mapping
 
-To review the off-the-pace performance over the splits on a stage, we can reuse the off-the-pace chart function.
+To review the off-the-pace performance over the splits on a stage, we can use the off-the-pace chart function applied to rebased elapsed times data..
 
-At the start of the chart, let's add some zeroed values:
+Let's get some rebased data using the accumulated stage time at each split, hackfix flipping the basis of the rebase for now until such a time as the off-the-pace chart is better behaved:
 
 ```{r}
-zero_df = data.frame(code=unique(split_pace_long_rebased$code))
-zero_df$start_dist = 0
+wide_splits_rebased = splits_wide %>%
+                      head(10) %>%
+                        rebase(example_driver,
+                               splits_locations$splitname,
+                               id_col='code', flip=TRUE)
+
+wide_splits_rebased %>% head(3)
+```
+
+We can convert this to long form and add in distance information:
+
+```{r}
+long_splits_rebased = wide_splits_rebased %>%
+  pivot_longer(splits_locations$splitname,
+                   names_to = "splitname",
+                   values_to = "sectionDurationS") %>%
+  merge(splits_locations[,c('splitname','distance')],
+         by='splitname')
+
+long_splits_rebased %>% head(3)
+```
+
+At the start of the chart, it's convenient to add some zeroed values, so let's create a dataframe to help us add those data points:
+
+```{r}
+zero_df = data.frame(code=unique(long_splits_rebased$code))
 zero_df$distance = 0
-zero_df$pace=0
-zero_df$splitPointId = 'Split_0'
+zero_df$sectionDurationS=0
+zero_df$splitname = 'split_0'
 ```
 
-Let's see how our sample rebased times look:
+And add them in:
 
-```{r off-the-pace-splits-rebased, warning=FALSE, message=FALSE}
- bind_rows(split_pace_long_rebased, zero_df) %>% 
-    off_the_pace_chart(dist='distance', t='pace', label_typ='ggrepel',
-                              code='code', ylim=NULL)
+```{r}
+long_splits_rebased = bind_rows(long_splits_rebased, zero_df)
 ```
 
-There is currently something very wrong with the labeling; add that to the TO DO list!
+The off-the-pace chart is intended to show how much time is lost over the course of a stage, the gradient of the slope in each section being an indicator of the pace differential within that section (i.e. between two consecutive split points).
 
+The off-the-pace chart is most easily generated from a long dataframe containing the accumulated stage time rather than the sectional times.
+
+For example, we can cast the wide form data to a long form and co-opt the pace chart to render the times for us:
+
+```{r rebased_splits_pace, warning=FALSE}
+long_splits_rebased %>%
+        off_the_pace_chart(dist='distance',
+                           t='sectionDurationS',
+                           label_typ='ggrepel',
+                           code='code')
+```

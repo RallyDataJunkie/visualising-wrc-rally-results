@@ -386,13 +386,16 @@ df = top10_stage_times
 df[,rebase_cols] - c(df[df$Car==ogier, rebase_cols])
 ```
 
-Let's put that into a function, generalised to allow is to specify which column we want to use as a rebasing identifier column, and optioning allow the return of either just the rebased columns (and identifier) or the complete dataframe, including rebased columns:
+Let's put that into a function, generalised to allow is to specify which column we want to use as a rebasing identifier column. Optionally allow the return of either just the rebased columns (and identifier) or the complete dataframe, including rebased columns, we well as the ability to "flip" the basis of the differences:
 
 ```{r}
 rebase = function(df, id, rebase_cols,
-                  id_col='entryId', base=FALSE,  base_id=FALSE) {
+                  id_col='entryId', base=FALSE,
+                  base_id=FALSE, flip=FALSE) {
   
   df_ =  df
+  
+  rebase_cols = as.character(rebase_cols)
   
   # The rebase values are the ones
   # we want to subtract from each row
@@ -400,7 +403,10 @@ rebase = function(df, id, rebase_cols,
   
   # Do the rebasing
   df_[,rebase_cols] =  df[,rebase_cols] - rebase_vals
-    
+  
+  if (flip)
+    df_[,rebase_cols] =  -df_[,rebase_cols]
+
   df_[[id_col]] = df[[id_col]]
   
   # Return just the rebased and identifier columns or the
