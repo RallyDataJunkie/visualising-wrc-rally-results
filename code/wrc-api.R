@@ -5,10 +5,14 @@ library(purrr)
 library(tidyr)
 
 results_api = 'https://api.wrc.com/results-api'
+season_url = "https://api.wrc.com/contel-page/83388/calendar/active-season/"
 
 ## ---- get_active_season --------
-get_active_season = function(active_season_url="https://api.wrc.com/contel-page/83388/calendar/active-season/") {
-  jsonlite::fromJSON(active_season_url)$rallyEvents$items
+get_active_season = function(active_season_url=season_url, all=FALSE) {
+  if (all)
+    jsonlite::fromJSON(active_season_url)
+  else
+    jsonlite::fromJSON(active_season_url)$rallyEvents$items
 }
 
 ## ---- get_eventId_from_name --------

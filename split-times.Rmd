@@ -675,6 +675,10 @@ formattable(ultimate_between_split, align='c',
                  entryId=FALSE))
 ```
 
+We see that SOL was flying from the second split onwards, getting from one split to another in pretty much the fastest time after a relatively poor start.
+
+The variation in columns may also have something interesting to say. SOL somehow made time against pretty much every between split 4 and 5, but in the other sections (apart from the short last section to finish), there is quite a lot o variability. Checking this view against a split sectioned route map might help us understand whether there were particular features of the route that might explain these differences.
+
 Let's compare that chart with how the accumulated stage time of each driver compares with the accumulated ultimate section times:
 
 ```{r}
@@ -684,6 +688,8 @@ formattable(ultimate_accumulated, align='c',
                  entryId=FALSE))
 ```
 
+Here, we see that TAN was recording the best time compared the ultimate time as calculated against the sum of best split section times, but was still of the ultimate pace: it was his first split that made the difference.
+
 Finally, let's see how the driver's actual split times varied against the best recorded split time at each split:
 
 ```{r}
@@ -692,6 +698,8 @@ formattable(ultimate_actual, align='c',
                                                  "forestgreen")),
                  entryId=FALSE))
 ```
+
+Here, we see that TAN led the stage at each split point based on actual accumulated time.
 
 ### Using Sparklines to Summarise Rebased Deltas
 
@@ -706,7 +714,7 @@ ultimate_between_split_spk = ultimate_between_split %>%
                                 gather(key ="Stage",
                                 value ="Gap", split_names) %>%
                                 group_by(code) %>%
-                                summarize(spk_ = spk_chr(-Gap,
+                                summarize(ultimate_section = spk_chr(-Gap,
                                                          type ="bar"))
 
 spark_df(ultimate_between_split_spk)
@@ -716,11 +724,11 @@ How about for the accumulated ultimate split durations?
 
 ```{r}
 ultimate_accumulated_spk = ultimate_accumulated %>%
-                                    gather(key ="Stage",
-                                    value ="Gap", split_names) %>%
-                                    group_by(code) %>%
-                                    summarize(spk_ = spk_chr(-Gap,
-                                                             type ="bar"))
+                              gather(key ="Stage",
+                              value ="Gap", split_names) %>%
+                              group_by(code) %>%
+                              summarize(ultimate_acc = spk_chr(-Gap,
+                                                               type ="bar"))
 
 spark_df(ultimate_accumulated_spk)
 ```
@@ -729,11 +737,11 @@ And finally, compared to actual recorded best split time:
 
 ```{r}
 ultimate_actual_spk = ultimate_actual %>%
-                                gather(key ="Stage",
-                                value ="Gap", split_names) %>%
-                                group_by(code) %>%
-                                summarize(spk_ = spk_chr(-Gap,
-                                                         type ="bar"))
+                          gather(key ="Stage",
+                                 value ="Gap", split_names) %>%
+                          group_by(code) %>%
+                          summarize(ultimate_actual = spk_chr(-Gap,
+                                                              type ="bar"))
 
 spark_df(ultimate_actual_spk)
 ```

@@ -48,6 +48,7 @@ stageId = stages_lookup[['SS3']]
 splits = get_splits(eventId, stageId)
 splits_locations = get_split_locations(splits)
 splits_list = splits_locations$splitPointId
+split_names = splits_locations$splitname
 
 # Get wide format data
 splits_wide = get_splits_wide(splits) %>%
@@ -81,9 +82,12 @@ We can also retrieve these section distances into a *splitPointId* named list:
 ```{r}
 split_distances = splits_locations$section_dist
 
-# Label the values
-names(split_distances) = splits_locations$splitPointId
-  
+# Label distances using split names
+names(split_distances) = split_names
+
+# Label the values using spiltPointId
+#names(split_distances) = splits_locations$splitPointId
+
 split_distances
 ```
 
@@ -99,7 +103,7 @@ The complete set of intermediate distances is then:
 ```{r}
 full_split_distances = c(split_distances, stage_dist-sum(split_distances))
 
-names(full_split_distances) = c(names(split_distances), 'total')
+names(full_split_distances) = c(split_names, 'total')
   
 full_split_distances
 ```
@@ -111,9 +115,9 @@ To calculate pace between two split points we need to get the elapsed time betwe
 We can obtain the split differences by finding differences between the columns of the wide format dataframe using the `get_split_duration()` function we created previously:
 
 ```{r}
-split_cols = get_split_cols(splits)
+#split_cols = get_split_cols(splits)
 
-split_durations_wide = get_split_duration(splits_wide, split_cols,
+split_durations_wide = get_split_duration(splits_wide, split_names,
                                           id_col='code')
 
 split_durations_wide %>% head(3)
@@ -124,9 +128,8 @@ We can then find the pace by dividing the split section times through by the spl
 ```{r}
 section_pace_wide = split_durations_wide
 
-for (s in splits_list) {
-  s_ = as.character(s)
-  section_pace_wide[,s_] = section_pace_wide[,s_] / split_distances[s_]
+for (s in split_names) {
+  section_pace_wide[,s] = section_pace_wide[,s] / split_distances[s]
                             
 }
 
@@ -145,11 +148,10 @@ One quick way of inspecting the pace over each section is to use a box plot:
 ```{r}
 section_pace_long = section_pace_wide %>% 
                   head(10) %>%
-                gather(splitPointId, pace,
-                       as.character(splits_list)) %>%
-                merge(splits_locations[,c('splitPointId',
+                gather(splitname, pace, split_names) %>%
+                merge(splits_locations[,c('splitname',
                                           'start_dist', 'distance')],
-                          by='splitPointId')
+                          by='splitname')
 
 section_pace_long %>% head(3)
 ```
@@ -171,7 +173,7 @@ To generate the pace map, let's first rebase the split times with respect to a s
 example_driver = section_pace_wide[2,]$code
 
 section_pace_wide_rebased = rebase(section_pace_wide, example_driver,
-                                   splits_list, id_col='code')
+                                   split_names, id_col='code')
 
 section_pace_wide_rebased %>% head(3)
 ```
@@ -181,11 +183,11 @@ To plot the pace map, we need to get the data into a long format:
 ```{r}
 section_pace_long_rebased = section_pace_wide_rebased %>% 
                   head(10) %>%
-                gather(splitPointId, pace,
-                       as.character(splits_list)) %>%
-                merge(splits_locations[,c('splitPointId',
+                gather(splitname, pace,
+                       as.character(split_names)) %>%
+                merge(splits_locations[,c('splitname',
                                           'start_dist', 'distance')],
-                      by='splitPointId')
+                      by='splitname')
 
 section_pace_long_rebased %>% head()
 ```
@@ -256,3 +258,4 @@ long_splits_rebased %>%
                            label_typ='ggrepel',
                            code='code')
 ```
+

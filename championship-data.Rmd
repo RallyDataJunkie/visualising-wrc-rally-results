@@ -1,0 +1,30 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/champioship-data-")
+```
+# Accessing Championship Results Data
+
+```{r}
+source('code/wrc-api.R')
+```
+
+```{r}
+library(jsonlite)
+```
+
+
+```{r}
+s = get_active_season(all=TRUE)
+s
+```
+
+```{r}
+results_api = 'https://api.wrc.com/results-api'
+```
+
+```{r}
+# drivers
+## ---- get_drivers_championship --------
+get_drivers_championship = get_itinerary = function(seasonId, category) {
+  jsonlite::fromJSON(paste0(results_api,"/championship-standings/season/", seasonId, "/season-category/", category, "/driver/")
+}

@@ -744,7 +744,7 @@ NEU
 <span id="cb164-10"><a href="visualising-results-for-multiple-stages.html#cb164-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>()</span>
 <span id="cb164-11"><a href="visualising-results-for-multiple-stages.html#cb164-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb164-12"><a href="visualising-results-for-multiple-stages.html#cb164-12" aria-hidden="true" tabindex="-1"></a>g_pos</span></code></pre></div>
-<p><img src="rally-results_review_files/figure-html/simple_pos_chart-1.png" width="672" /></p>
+<p><img src="images/stage-results-simple_pos_chart-1.png" width="672" /></p>
 <p>We can producing a cleaner chart by adding driver labels to the start and end of each line using the <code>directlabels:geom_dl()</code> function, as well as dropping the axes:</p>
 <div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="visualising-results-for-multiple-stages.html#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(directlabels)</span>
 <span id="cb165-2"><a href="visualising-results-for-multiple-stages.html#cb165-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -758,7 +758,7 @@ NEU
 <span id="cb165-10"><a href="visualising-results-for-multiple-stages.html#cb165-10" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Add label at start of line</span></span>
 <span id="cb165-11"><a href="visualising-results-for-multiple-stages.html#cb165-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="fu">list</span>(<span class="st">&#39;first.points&#39;</span>, <span class="at">cex =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
 <span id="cb165-12"><a href="visualising-results-for-multiple-stages.html#cb165-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>()</span></code></pre></div>
-<p><img src="rally-results_review_files/figure-html/cleaner_pos_chart-1.png" width="672" /></p>
+<p><img src="images/stage-results-cleaner_pos_chart-1.png" width="672" /></p>
 <p>In the above chart, you may notice a gap at first stage position 6 where Ogier was originally placed. A more robust way to prepare the data for this sort of charts is to filter the data by class, for example limiting the data to cars in the <em>WRC</em> group/class, and then reranking the position by group/class. A finished position chart can then position the drivers by class ranking and use labels to overplot actual overall rally positions on stages where the overall stage position differs from the class rank.</p>
 </div>
 <div id="visualising-position-gainslosses" class="section level3" number="4.3.3">
@@ -936,7 +936,7 @@ NEU
 <span id="cb183-28"><a href="visualising-results-for-multiple-stages.html#cb183-28" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb183-29"><a href="visualising-results-for-multiple-stages.html#cb183-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb183-30"><a href="visualising-results-for-multiple-stages.html#cb183-30" aria-hidden="true" tabindex="-1"></a><span class="fu">get_pos_chart</span>(overall_pos_long_top10, rovCode)</span></code></pre></div>
-<p><img src="rally-results_review_files/figure-html/single-driver-pos-1.png" width="672" /></p>
+<p><img src="images/stage-results-single-driver-pos-1.png" width="672" /></p>
 <p>If we generate an image for each driver, we can then create a column of images to showing the change in position over the rally for each one on a row by row basis:</p>
 <div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="visualising-results-for-multiple-stages.html#cb184-1" aria-hidden="true" tabindex="-1"></a>overall_wide_pos_top5 <span class="ot">=</span> multi_overall_wide_pos <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span>
 <span id="cb184-2"><a href="visualising-results-for-multiple-stages.html#cb184-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1393,14 +1393,14 @@ Let’s remind ourselves of what the data looks like:</p>
 <span id="cb208-22"><a href="visualising-results-for-multiple-stages.html#cb208-22" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Add label at start of line</span></span>
 <span id="cb208-23"><a href="visualising-results-for-multiple-stages.html#cb208-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="fu">list</span>(<span class="st">&#39;first.points&#39;</span>, <span class="at">cex =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
 <span id="cb208-24"><a href="visualising-results-for-multiple-stages.html#cb208-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>()</span></code></pre></div>
-<p><img src="rally-results_review_files/figure-html/stage_position_chart-1.png" width="672" /></p>
+<p><img src="images/stage-results-stage_position_chart-1.png" width="672" /></p>
 <p>In this case we see the very obvious problem presented by drivers falling outside the typical position range. We really do need to organise this chart by group rank!</p>
 </div>
 <div id="individual-stage-position-charts" class="section level3" number="4.5.4">
 <h3><span class="header-section-number">4.5.4</span> Individual Stage position Charts</h3>
 <p>At the individual level, we can also reuse the approach we developed for charting overall stage positions at an individual level:</p>
 <div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="visualising-results-for-multiple-stages.html#cb209-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_pos_chart</span>(multi_stage_long_pos, rovCode)</span></code></pre></div>
-<p><img src="rally-results_review_files/figure-html/stage_pos_chart_excample-1.png" width="672" /></p>
+<p><img src="images/stage-results-stage_pos_chart_excample-1.png" width="672" /></p>
 <div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="visualising-results-for-multiple-stages.html#cb210-1" aria-hidden="true" tabindex="-1"></a>top10_codes <span class="ot">=</span> multi_stage_wide_pos<span class="sc">$</span>code</span>
 <span id="cb210-2"><a href="visualising-results-for-multiple-stages.html#cb210-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb210-3"><a href="visualising-results-for-multiple-stages.html#cb210-3" aria-hidden="true" tabindex="-1"></a>gt_stage_pos_plots <span class="ot">=</span> <span class="fu">list</span>()</span>

@@ -124,6 +124,11 @@ relabel_times_df2 = function(df, s_list, cars, typ='stage') {
 
 ## ---- get_split_locations --------
 get_split_locations = function(splits){
+  get_split_label = function(x){
+    paste0('split_', splits_locations[splits_locations$splitPointId==x,
+                                      'number'])
+  }
+  
   splits_locations = splits$splitPoints
   splits_locations$splitname = sapply(splits_locations$splitPointId,
                                       get_split_label)

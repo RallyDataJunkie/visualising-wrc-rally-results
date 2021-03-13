@@ -332,14 +332,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-3"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb2-4"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-5" aria-hidden="true" tabindex="-1"></a>season_url <span class="ot">=</span> <span class="st">&quot;https://api.wrc.com/contel-page/83388/calendar/active-season/&quot;</span></span>
-<span id="cb2-6"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-6" aria-hidden="true" tabindex="-1"></a>get_active_season <span class="ot">=</span> <span class="cf">function</span>(<span class="at">active_season_url=</span>season_url) {</span>
-<span id="cb2-7"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-7" aria-hidden="true" tabindex="-1"></a>  jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(active_season_url)<span class="sc">$</span>rallyEvents<span class="sc">$</span>items</span>
-<span id="cb2-8"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-9"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-10" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
-<span id="cb2-11"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview the column names of the resulting dataframe</span></span>
-<span id="cb2-13"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(s)</span></code></pre></div>
+<span id="cb2-6"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-7" aria-hidden="true" tabindex="-1"></a>get_active_season <span class="ot">=</span> <span class="cf">function</span>(<span class="at">active_season_url=</span>season_url, <span class="at">all=</span><span class="cn">FALSE</span>) {</span>
+<span id="cb2-8"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (all)</span>
+<span id="cb2-9"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-9" aria-hidden="true" tabindex="-1"></a>    jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(active_season_url)</span>
+<span id="cb2-10"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb2-11"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-11" aria-hidden="true" tabindex="-1"></a>    jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(active_season_url)<span class="sc">$</span>rallyEvents<span class="sc">$</span>items</span>
+<span id="cb2-12"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-13"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-14" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">get_active_season</span>()</span>
+<span id="cb2-15"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview the column names of the resulting dataframe</span></span>
+<span id="cb2-17"><a href="accessing-data-from-the-wrc-live-timing-api.html#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(s)</span></code></pre></div>
 <pre><code>##  [1] &quot;id&quot;         &quot;name&quot;       &quot;active&quot;     &quot;jwrc&quot;       &quot;deleted&quot;   
 ##  [6] &quot;rally&quot;      &quot;status&quot;     &quot;pageInfo&quot;   &quot;pageResult&quot; &quot;eventDays&quot; 
 ## [11] &quot;winner&quot;</code></pre>
