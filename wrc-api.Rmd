@@ -63,8 +63,10 @@ We can make another call to the WRC API to look up the itinerary for the event. 
 results_api = 'https://api.wrc.com/results-api'
 
 get_itinerary = function(eventId) {
-  jsonlite::fromJSON(paste0(results_api,"/rally-event/",
-                            eventId, "/itinerary"))$itineraryLegs
+  itinerary = jsonlite::fromJSON(paste0(results_api,"/rally-event/",
+                                 eventId,
+                                 "/itinerary"))$itineraryLegs
+  itinerary %>% arrange(order)
 }
 
 itinerary = get_itinerary(eventId)
@@ -81,7 +83,7 @@ Within each leg, the itinerary provides information about each section (that is,
 ```{r}
 get_sections = function(itinerary){
   sections = do.call(rbind, itinerary$itinerarySections)
-  sections
+  sections %>% arrange(order)
 }
 
 sections = get_sections(itinerary)
@@ -139,7 +141,7 @@ get_stages = function(sections){
     # Ensure that we create an identifier column (uses list names)
     bind_rows(.id='itinerarySectionId')
     
-  stages
+  stages %>% arrange(number)
 }
 
 stages = get_stages(sections)
