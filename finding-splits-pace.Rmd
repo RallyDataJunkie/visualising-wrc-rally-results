@@ -233,10 +233,11 @@ long_splits_rebased %>% head(3)
 At the start of the chart, it's convenient to add some zeroed values, so let's create a dataframe to help us add those data points:
 
 ```{r}
-zero_df = data.frame(code=unique(long_splits_rebased$code))
-zero_df$distance = 0
-zero_df$sectionDurationS=0
-zero_df$splitname = 'split_0'
+zero_df = data.frame(code=unique(long_splits_rebased$code)) %>%
+            mutate(distance=0, sectionDurationS=0, splitname = 'split_0')
+#zero_df$distance = 0
+#zero_df$sectionDurationS=0
+#zero_df$splitname = 'split_0'
 ```
 
 And add them in:
