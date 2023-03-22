@@ -2,6 +2,8 @@
 output:
   pdf_document: default
   html_document: default
+    keep_md: true
+    self_contained: true
 ---
 # Introduction
 
