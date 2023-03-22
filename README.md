@@ -1,3 +1,3 @@
 # visualising-wrc-rally-results
 
-Current home of `code` for WRC API.
+ebook: [Visualising WRC Rally Results](https://rallydatajunkie.com/visualising-wrc-rally-results/)
