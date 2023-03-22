@@ -383,7 +383,7 @@ Note that we need to be careful with the sense of how we read this table: a *neg
 
 ```{r}
 pos_gains = pos_diffs
-pos_gains[,stage_codes] = -pos_gains[,stage_codes[-1]]
+pos_gains[,stage_codes] = -pos_gains[,stage_codes]
 
 pos_gains %>% head(3)
 ```
