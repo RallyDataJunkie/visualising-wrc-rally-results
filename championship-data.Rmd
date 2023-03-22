@@ -1,6 +1,6 @@
 ```{r cache = T, echo = F, message=F}
 knitr::opts_chunk$set(error = TRUE)
-knitr::opts_chunk$set(fig.path = "images/champioship-data-")
+knitr::opts_chunk$set(fig.path = "images/championship-data-")
 ```
 # Accessing Championship Results Data
 
