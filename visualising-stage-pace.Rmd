@@ -356,10 +356,11 @@ We might also want to zero the origin, for example by adding a row for each driv
 Let's create some dummy data to represent that:
 
 ```{r warning=FALSE}
-zero_df = data.frame(code_driver=unique(off_the_pace_long$code_driver))
-zero_df$cum_dist = 0
-zero_df$totalDurationGapS = 0
-zero_df$code = 'SS0'
+zero_df = data.frame(code_driver=unique(off_the_pace_long$code_driver))  %>%
+            mutate(cum_dist=0, totalDurationGapS=0, code = 'SS0')
+#zero_df$cum_dist = 0
+#zero_df$totalDurationGapS = 0
+#zero_df$code = 'SS0'
 ```
 
 We can then bind that data into our long form splits data and view the result:
