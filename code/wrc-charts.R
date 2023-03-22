@@ -79,7 +79,7 @@ pace_map = function(pace_long, limits=NULL,
 off_the_pace_chart = function(pace_long, highlight=NULL,
                               label_typ='dl',
                               dist='cum_dist', t='totalDurationGapS',
-                              code='code_driver', ylim=NULL){
+                              code='code_driver', ylim=NULL, yflip=FALSE){
   
   g_otp = ggplot(pace_long, aes_string(x=dist, y=t,
                                        color=code)) +
@@ -89,7 +89,9 @@ off_the_pace_chart = function(pace_long, highlight=NULL,
     # We can also flip the coordinate axis
     coord_cartesian(ylim=ylim) + theme_classic()
   
-  off_the_pace_end =  pace_long[pace_long[dist] == max(pace_long[dist]),]
+  #off_the_pace_end =  pace_long[pace_long[dist] == max(pace_long[dist]),]
+  off_the_pace_end = pace_long[which.max(pace_long[[dist]]),]
+  
   if (!is.null(highlight))
     g_otp = g_otp + gghighlight::gghighlight(code_driver %in% c(highlight),
                                              unhighlighted_params=list(alpha=0.1))
@@ -101,6 +103,8 @@ off_the_pace_chart = function(pace_long, highlight=NULL,
     g_otp = g_otp + ggrepel::geom_text_repel(data = off_the_pace_end,
                                              aes_string(label = code),
                                              size = 3)
+  if (yflip)
+    g_otp = g_otp + scale_y_reverse()
   
   g_otp + theme(legend.position="none")
 }
