@@ -1,0 +1,142 @@
+```{r cache = T, echo = F, message=F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(fig.path = "images/itinerary-")
+```
+# Itinerary & Road Position
+
+The competitive phase of a full WRC Rally event typically extends over three days (Friday to Sunday), with either a ceremonial start or a short first stage on the Thursday evening. Shorter format events are also possible.
+
+Each day is referred to as a *leg*, and each leg is structured as a *section*, often referred to as a *loop*.
+
+## Load Base Data
+
+Start by loading in the base WRC API helper functions:
+
+```{r message=F, warning=F}
+source('code/wrc-api.R')
+library(tidyr)
+```
+
+And grab some minimal event metadata:
+
+```{r}
+s = get_active_season()
+eventId = get_eventId_from_name(s, 'arctic')
+```
+
+## Displaying the Itinerary
+
+We can grab the full itinerary with a single function call:
+
+```{r}
+itinerary = get_itinerary(eventId)
+itinerary
+```
+
+The *status* often does not get updated at the end of the event, so completed events may still describe the final day as *Running*.
+
+```{r}
+itinerary %>% select(c('name', 'legDate'))
+```
+
+### Itinerary Legs
+
+Let's have a look at the structure of a particular day:
+
+```{r message=FALSE, warning=FALSE}
+example_section = itinerary[[1, 'itinerarySections']]
+example_section
+```
+
+We can also get the full set of itinerary sections in one dataframe:
+
+```{r}
+itinerary_sections_full = do.call(rbind, itinerary$itinerarySections)
+
+itinerary_sections_full
+```
+
+### Itinerary Controls
+
+The *controls* column details information about all the timing controls:
+
+```{r}
+example_controls = example_section[[1, 'controls']]
+example_controls
+```
+
+Let's see the key information for the controls:
+
+```{r message=FALSE}
+controls_cols = c('controlId', 'eventId', 'type',
+                  'code', 'location', 'distance', 'firstCarDueDateTime')
+
+example_controls %>% select(controls_cols)
+```
+
+We can get a list of all the controls by combining data from the separate legs dataframes:
+
+```{r}
+get_multi_controls = function(itinerary_sections){
+  multi_controls = do.call(rbind, itinerary_sections$controls)
+
+  multi_controls %>% select(controls_cols)
+}
+```
+
+Let's see how it works:
+
+```{r}
+multi_controls = get_multi_controls(itinerary_sections_full)
+multi_controls %>% tail()
+```
+
+### Itinerary Stages
+
+The *stages* column provides more information about each stage:
+
+```{r}
+example_stages = example_section[[1, 'stages']]
+example_stages
+```
+
+Let's focus on the key columns:
+
+```{r meddage=FALSE}
+stages_cols = c('stageId', 'eventId', 'number', 'name',
+                'distance', 'stageType', 'code')
+
+stage_name_cleaner = function(df) {
+  df %>%
+    mutate(fullname=name,
+         name=stringr::str_replace(name, ' \\(Live TV\\)', '')) %>%
+    mutate(fullname=name,
+         name=stringr::str_replace(name, ' \\(Wolf Power Stage\\)', ''))
+}
+
+example_stages %>% 
+  select(stages_cols) %>%
+  stage_name_cleaner
+```
+
+Once again, we can pull all the information into a single dataframe:
+
+```{r}
+get_multi_stage_details = function(itinerary){
+  multi_stage_details = do.call(rbind, itinerary$stages)
+
+  multi_stage_details %>% 
+    select(stages_cols) %>%
+    stage_name_cleaner()
+}
+```
+
+Here's how it works:
+
+```{r}
+multi_stage_details = get_multi_stage_details(itinerary_sections_full)
+multi_stage_details %>% tail()
+```
+
+
+
