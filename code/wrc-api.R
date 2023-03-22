@@ -23,8 +23,9 @@ get_eventId_from_name = function(season, name){
 
 ## ---- get_itinerary --------
 get_itinerary = function(eventId) {
-  jsonlite::fromJSON(paste0(results_api,"/rally-event/",
+  itinerary = jsonlite::fromJSON(paste0(results_api,"/rally-event/",
                             eventId, "/itinerary"))$itineraryLegs
+  itinerary %>% arrange(order)
 }
 
 ## ---- get_startlist --------
@@ -49,7 +50,7 @@ get_startlist_id = function(itinerary, itinerarySectionId){
 ## ---- get_sections --------
 get_sections = function(itinerary){
   sections = do.call(rbind, itinerary$itinerarySections)
-  sections
+  sections %>% arrange(order)
 }
 
 ## ---- get_controls --------
@@ -73,7 +74,7 @@ get_stages = function(sections){
     # Ensure that we create an identifier column (uses list names)
     bind_rows(.id='itinerarySectionId')
   
-  stages
+  stages %>% arrange(number)
 }
 
 ## ---- get_stage_list --------
