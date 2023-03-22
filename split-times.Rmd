@@ -367,7 +367,7 @@ get_split_duration = function(df, split_cols,
     df_[[id_col]] = df[[id_col]]
   
     # Return the dataframe in a sensible column order
-    df_ %>% select(c(id_col, all_of(split_cols)))
+    df_ %>% select(c(all_of(id_col), all_of(split_cols)))
   } else {
     df_
   }
@@ -677,7 +677,7 @@ formattable(ultimate_between_split, align='c',
 
 We see that SOL was flying from the second split onwards, getting from one split to another in pretty much the fastest time after a relatively poor start.
 
-The variation in columns may also have something interesting to say. SOL somehow made time against pretty much every between split 4 and 5, but in the other sections (apart from the short last section to finish), there is quite a lot o variability. Checking this view against a split sectioned route map might help us understand whether there were particular features of the route that might explain these differences.
+The variation in columns may also have something interesting to say. SOL somehow made time against pretty much every between split 4 and 5, but in the other sections (apart from the short last section to finish), there is quite a lot of variability. Checking this view against a split sectioned route map might help us understand whether there were particular features of the route that might explain these differences.
 
 Let's compare that chart with how the accumulated stage time of each driver compares with the accumulated ultimate section times:
 
@@ -688,7 +688,7 @@ formattable(ultimate_accumulated, align='c',
                  entryId=FALSE))
 ```
 
-Here, we see that TAN was recording the best time compared the ultimate time as calculated against the sum of best split section times, but was still of the ultimate pace: it was his first split that made the difference.
+Here, we see that TAN was recording the best time compared the ultimate time as calculated against the sum of best split section times, but was still off the ultimate pace: it was his first split that made the difference.
 
 Finally, let's see how the driver's actual split times varied against the best recorded split time at each split:
 
