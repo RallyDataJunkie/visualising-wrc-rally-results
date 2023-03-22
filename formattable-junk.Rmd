@@ -78,3 +78,13 @@ pm_color_bar2 <- function(color1 = "lightgreen", color2 = "pink", ...){
 formattable(rov_rebased_gap,
             list(Gap = pm_color_bar2()))
 ```
+
+  # Get stage codes lookup id->code
+  stages_lookup_code = get_stages_lookup(stages, 'stageId', 'code')
+  
+  # Map stage ID column names to stage codes
+  stage_codes = unlist(purrr::map(stage_list,
+                                  function (x)
+                                    stages_lookup_code[[as.character(x)]]))
+
+  colnames(df) = c('entryId', stage_codes)
